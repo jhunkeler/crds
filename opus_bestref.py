@@ -10,7 +10,7 @@ from crds import pysh, log
 
 DMS_HOST = "dmsdevvm4.stsci.edu"
 
-BESTREF_PKL = "../../../datasets/opus_bestref.pkl"
+BESTREF_PKL = "../datasets/opus_bestref.pkl"
 
 def remote_bestrefs_output(dataset):
     dataset = dataset.lower()

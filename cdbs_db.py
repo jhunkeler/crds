@@ -21,7 +21,7 @@ import opus_bestref
 
 log.set_verbose(False)
 
-DEFAULT_PKL_PATH = "../../../datasets/"
+DEFAULT_PKL_PATH = "../datasets/"
 
 """  
 IPPPSSOOT   ---   dataset naming breakdown

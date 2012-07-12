@@ -8,12 +8,12 @@ else:
 
 def install():
     print "Installing"  
-    % ../../install >& /dev/null
+    % ../CRDS/install 
 
 install()
 
 for instr in INSTRUMENTS:
     % python gen_rmap.py ${instr}
-    % mv hst_${instr}_*.rmap ../mappings/hst
+    % mv hst_${instr}_*.rmap ../CRDS/hst/mappings/hst
 
 install()

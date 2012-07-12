@@ -20,13 +20,13 @@ def generate_imap(instr, filekinds):
       # ("description", ("Initially generated on " + now)),
     ])
 
-    imap = "../mappings/hst/hst_"  + instr + ".imap"
+    imap = "../CRDS/hst/mappings/hst/hst_"  + instr + ".imap"
     log.write("writing", imap)
 
     selector = {}
     for keyword in filekinds:
         eventually_generated_rmap = "hst_" + instr + "_" + keyword + ".rmap"
-        if os.path.exists("../mappings/hst/" + eventually_generated_rmap):
+        if os.path.exists("../CRDS/hst/mappings/hst/" + eventually_generated_rmap):
             selector[keyword] = eventually_generated_rmap
         else:
             log.warning("Skipping non-existent", eventually_generated_rmap)

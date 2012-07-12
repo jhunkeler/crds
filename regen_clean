@@ -1,6 +1,6 @@
 #! /bin/tcsh
 
-rm -f ../../../datasets/opus_bestref.pkl  opus_bestrefs.err
+rm -f ../datasets/opus_bestref.pkl  opus_bestrefs.err
 
 ./regen |& tee regen.out
 
@@ -9,4 +9,4 @@ rm -f ../../../datasets/opus_bestref.pkl  opus_bestrefs.err
 ./testall >& testall.err.2
 grep -E 'errors|warn|datasets' testall.err.2 | grep -v -E 'pickle'
 
-mv *.stats ../../../stats
+mv *.stats ../stats
