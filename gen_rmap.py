@@ -36,14 +36,6 @@ def generate_all_rmaps(instrument):
 
 # =======================================================================
 
-ROW_TABLES = {
-   "nicmos"  : "nic_row",
-}
-
-FILE_TABLES = {
-   "nicmos"  : "nic_file",
-}
-
 def generate_rmap(instrument, filekind):
     log.info("Processing", instrument, filekind)
     row_dicts = get_row_dicts(instrument, filekind, condition=False)
@@ -75,8 +67,8 @@ def get_row_dicts(instrument, kind, condition=True):
     db_parkeys = list(parkeys.get_db_parkeys(instrument, kind))
     extra_parkeys = list(parkeys.get_extra_keys(instrument, kind))
     reftype = parkeys.get_reftype(instrument, kind)
-    row_table = ROW_TABLES.get(instrument, instrument + "_row")
-    file_table = FILE_TABLES.get(instrument, instrument + "_file")
+    row_table = cdbs_db.get_row_table(instrument)
+    file_table = cdbs_db.get_file_table(instrument)
     columns = [ row_table + "." + key for key in db_parkeys + ["file_name", "comment"]]
     columns += [ file_table + "." + "useafter_date" ]
     tables = [row_table, file_table]
@@ -93,14 +85,14 @@ and {file_table}.reference_file_type = '{reference_file_type}'
            file_table = file_table,
            reference_file_type = reftype.upper())
     log.verbose("executing", sql)
-    fits_parkeys = parkeys.get_fits_parkeys(instrument, kind)
+#    fits_parkeys = parkeys.get_fits_parkeys(instrument, kind)
     fields = list(db_parkeys) + \
         ["file_name", "comment", "useafter_date"] + \
         list(extra_parkeys)
     try:
         generator = cdbs_db.get_reffile_ops().execute(sql)
-    except:
-        log.error("Database error")
+    except Exception, exc:
+        log.error("Database error", str(exc))
         return
 
     # Generate row dictionaries based on database values and N/A
@@ -120,10 +112,6 @@ and {file_table}.reference_file_type = '{reference_file_type}'
         rowd["file_name"] = rowd["file_name"].lower()
         row_dicts.append(rowd)
     return row_dicts    
-
-def get_reference_dicts(instrument, filekind, reffile):
-    """Returns a list of the row dictionaries which apply to `reffile`."""
-    return [ x for x in get_row_dicts(instrument, filekind, False) if x["file_name"] == reffile.lower()]
 
 # =======================================================================
 
@@ -383,7 +371,7 @@ def apply_restrictions(row, instrument, filekind):
     """Evaluate CDBS parameter restrictions in the context of a raw match 
     tuple dictionary,  mutating irrelevant parameters to "N/A".
     """
-    restrictions = parkeys.get_parkey_restrictions(instrument, filekind)
+    restrictions = parkeys.get_parkey_relevance(instrument, filekind)
     # Get a lowercase version of row for evaluating restriction expressions
     # Nominally this corresponds to the dataset header.
     header = {}
@@ -461,6 +449,11 @@ def write_rmap(observatory, instrument, filekind, kind_map):
     rmap_selector = selectors.MatchSelector(match_keys, matching_selections)
     rmapping = rmap.ReferenceMapping(outname, rmap_header, rmap_selector)
     rmapping.write()
+
+
+def get_reference_dicts(instrument, filekind, reffile):
+    """Returns a list of the row dictionaries which apply to `reffile`."""
+    return [ x for x in get_row_dicts(instrument, filekind, False) if x["file_name"] == reffile.lower()]
 
 # ==========================================================================
 
