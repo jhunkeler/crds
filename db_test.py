@@ -267,10 +267,56 @@ def dumpall(context="hst.pmap", suffix="_headers.pkl", path=DEFAULT_PKL_PATH):
     for instr in pmap.selections.keys():
         log.info("collecting", repr(instr))
         dump(instr, suffix, path)
-        
-def info(file):
-    instrument, files = cdbs_db.get_reference_info_files(file)
     
+class DictTable(object):
+    """DictTable supports printing a list of dicts as a table."""
+    def __init__(self, dicts, columns=None):
+        self.dicts = dicts
+        self.columns = tuple(columns if columns is not None else sorted(dicts[0].keys()))
+        self.format = self.get_format()
+    
+    def get_row(self, i):
+        d = self.dicts[i]
+        return tuple([ str(d[key]).replace("\n",";") for key in self.columns])
+    
+    @property
+    def rows(self):
+        return [self.get_row(i) for i in range(len(self.dicts))]
+    
+    def get_format(self):
+        lengths = [len(col) for col in self.columns ]
+        for i, col in enumerate(self.columns):
+            for d in self.dicts:
+                lengths[i] = max(lengths[i], len(str(d[col])))
+        return "  ".join(["%%%ds" % -l for l in lengths])
+    
+    def __str__(self):
+        s = [ self.format.replace("-","") % self.columns + "\n"]
+        for r in self.rows:
+            s.append(self.format % r + "\n")
+        return "".join(s)
+
+    @property
+    def width(self):
+        return len(self.format % self.get_row(0))-1
+        
+def reference_info(reference):
+    """Print out the CDBS database information about a reference file."""
+    _instrument, files = cdbs_db.get_reference_info_files(reference)
+    file_columns = "file_name,reject_flag,opus_flag,useafter_date,archive_date,general_availability_date,comment".split(",")
+    file_table = DictTable(files, file_columns)
+    
+    instrument, rows = cdbs_db.get_reference_info_rows(reference)
+    imap = rmap.get_cached_mapping("hst_" + instrument + ".imap")
+    row_columns = "observation_begin_date,observation_end_date,pedigree".split(",")
+    row_columns += [ key.lower() for key in imap.get_required_parkeys() if key.lower() in rows[0].keys()]
+    row_columns += ["comment"]
+    row_table = DictTable(rows, row_columns)
+
+    log.write("=" * file_table.width)
+    log.write(file_table)
+    log.write("-" * file_table.width)
+    log.write(row_table)
 
 def main():
     if "--verbose" in sys.argv:
@@ -296,6 +342,8 @@ def main():
         dumpall()
     elif sys.argv[1] == "dump":
         dump(sys.argv[2])
+    elif sys.argv[1] == "info":
+        reference_info(sys.argv[2])
     elif sys.argv[1] == "testall":
         testall(path=DEFAULT_PKL_PATH, profile=profile)
     elif sys.argv[1] == "test":
@@ -316,11 +364,13 @@ def main():
         testall(instruments=instruments, filekinds=filekinds, datasets=datasets,
                 path=DEFAULT_PKL_PATH, profile=profile, inject_errors=inject_errors)
     else:
-        print """usage:
+        log.write("""usage:
 python cdbs_db.py dumpall
+python cdbs_db.py dump <instrument>
+python cdbs_db.py info <reference_file>
 python cdbs_db.py testall
 python cdbs_db.py test [instrument [filekind [dataset]]]
-"""
+""")
         sys.exit(-1)
     sys.exit(0)   # Bypass Python garbage collection if possible.
 
