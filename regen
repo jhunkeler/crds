@@ -12,6 +12,10 @@ source env.csh
 # /grp/hst/cdbs dir listing to use to find CDBS file paths fast.
 (cd ../CRDS/hst; python locate.py)
 
+# Reparse the CDBS .rule files into <instrument>_expansion.dat files
+# for doing conditional header substitutions.
+(cd ../CRDS/hst; python substitutions.py compileall)
+
 # Process CDBS reference_file_defs.xml to extract information about when 
 # reference files are relevant to a parameter set,  when particular parameters
 # are relevant to a reference selection, what the relationship between FITS

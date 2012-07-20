@@ -6,6 +6,7 @@ import cPickle
 import random
 import datetime
 import cProfile
+import os.path
 
 import cdbs_db
 
@@ -270,14 +271,16 @@ def dumpall(context="hst.pmap", suffix="_headers.pkl", path=DEFAULT_PKL_PATH):
     
 class DictTable(object):
     """DictTable supports printing a list of dicts as a table."""
-    def __init__(self, dicts, columns=None):
+    def __init__(self, dicts, columns=None, max_field_len=80):
         self.dicts = dicts
         self.columns = tuple(columns if columns is not None else sorted(dicts[0].keys()))
+        self.max_field_len = max_field_len
         self.format = self.get_format()
     
     def get_row(self, i):
         d = self.dicts[i]
-        return tuple([ str(d[key]).replace("\n",";") for key in self.columns])
+        return tuple([ str(d[key]).replace("\n",";")[:self.max_field_len]
+                      for key in self.columns])
     
     @property
     def rows(self):
@@ -286,8 +289,8 @@ class DictTable(object):
     def get_format(self):
         lengths = [len(col) for col in self.columns ]
         for i, col in enumerate(self.columns):
-            for d in self.dicts:
-                lengths[i] = max(lengths[i], len(str(d[col])))
+            for r  in self.rows:
+                lengths[i] = min(max(lengths[i], len(str(r[i]))), self.max_field_len)
         return "  ".join(["%%%ds" % -l for l in lengths])
     
     def __str__(self):
@@ -300,23 +303,54 @@ class DictTable(object):
     def width(self):
         return len(self.format % self.get_row(0))-1
         
-def reference_info(reference):
+def reference_info(reference_filename):
     """Print out the CDBS database information about a reference file."""
-    _instrument, files = cdbs_db.get_reference_info_files(reference)
+    instrument, files = cdbs_db.get_reference_info_files(reference_filename)
+    if instrument.lower() not in crds.hst.INSTRUMENTS:
+        log.write("File " + repr(reference_filename) + " corresponds to unsupported instrument " + repr(instrument))
+    else:
+        log.write("File " + repr(reference_filename) + "corresponds to instrument " + repr(instrument))
+    if not files:
+        raise LookupError("Can't find reference " + repr(reference_filename))
     file_columns = "file_name,reject_flag,opus_flag,useafter_date,archive_date,general_availability_date,comment".split(",")
-    file_table = DictTable(files, file_columns)
+    file_table = DictTable(files[:1], file_columns)
     
-    instrument, rows = cdbs_db.get_reference_info_rows(reference)
+    instrument, rows = cdbs_db.get_reference_info_rows(reference_filename)
     imap = rmap.get_cached_mapping("hst_" + instrument + ".imap")
     row_columns = "observation_begin_date,observation_end_date,pedigree".split(",")
     row_columns += [ key.lower() for key in imap.get_required_parkeys() if key.lower() in rows[0].keys()]
     row_columns += ["comment"]
     row_table = DictTable(rows, row_columns)
 
-    log.write("=" * file_table.width)
+    log.write("=" * (row_table.width//2) + " reference " + "=" * (row_table.width//2))
     log.write(file_table)
-    log.write("-" * file_table.width)
+    log.write("-" * row_table.width)
     log.write(row_table)
+    
+def dataset_info(dataset_filename):
+    """Print out the CDBS database information about a dataset file."""
+    dataset_filename = os.path.basename(dataset_filename)
+    dataset_id = dataset_filename.split("_")[0]
+    header = cdbs_db.get_dataset_header(dataset_id)[0]
+    instrument = header["INSTRUME"]
+    header = { key.lower():value for (key,value) in header.items() }
+    imap = rmap.get_cached_mapping("hst_" + instrument + ".imap")
+    header["file_name"] = dataset_filename
+    row_columns = ["file_name"]
+    row_columns += [ key for key in imap.get_required_parkeys() if key in header.keys()]
+    row_table = DictTable([header], row_columns)
+    log.write("=" * (row_table.width//2) + " dataset " + "=" * (row_table.width//2))
+    log.write(row_table)
+        
+def info(file):
+    try:
+        reference_info(file)
+    except LookupError:
+        log.write("Couldn't find " + repr(file) + " as a reference or datsaset.")
+    try:
+        dataset_info(file)
+    except LookupError:
+        pass
 
 def main():
     if "--verbose" in sys.argv:
@@ -343,7 +377,7 @@ def main():
     elif sys.argv[1] == "dump":
         dump(sys.argv[2])
     elif sys.argv[1] == "info":
-        reference_info(sys.argv[2])
+        info(sys.argv[2])
     elif sys.argv[1] == "testall":
         testall(path=DEFAULT_PKL_PATH, profile=profile)
     elif sys.argv[1] == "test":
@@ -359,6 +393,7 @@ def main():
         if len(sys.argv) > 4:
             datasets = [d.lower() for d in sys.argv[4].split(",")]
             log.set_verbose(60)
+            profile = False
         else:
             datasets = []
         testall(instruments=instruments, filekinds=filekinds, datasets=datasets,

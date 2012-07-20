@@ -7,7 +7,7 @@ import os.path
 
 # import pyodbc  deferred...
 
-from crds import rmap, log, utils, timestamp
+from crds import rmap, log, utils, timestamp, data_file
 import crds.hst
 import crds.hst.parkeys as parkeys
 from collections import OrderedDict
@@ -350,10 +350,19 @@ def get_dataset_header(dataset, condition=True):
     """Get the header for a particular dataset,  nominally in a context where
     one only cares about a small list of specific datasets.
     """
-    instrument = dataset_to_instrument(dataset)
+    if dataset.endswith(".fits"):
+        instrument = dataset.get_header(dataset)["INSTRUME"].lower()
+    else:
+        instrument = dataset_to_instrument(dataset)
+    if instrument.lower() not in crds.hst.INSTRUMENTS:
+        raise ValueError("Unsupported instrument for dataset lookup " + repr(instrument))
     try:
         igen = HEADER_GENERATORS[instrument]
-        headers = list(igen.get_headers({"DATA_SET":dataset.upper()}, condition))
+        if dataset.endswith(".fits"):
+            constraints = {"FILE_NAME":dataset.upper()} 
+        else:
+            constraints = {"DATA_SET":dataset.upper()}
+        headers = list(igen.get_headers(constraints, condition))
     except Exception, exc:
         raise RuntimeError("Error accessing DADSOPS for dataset" + repr(dataset) + ":" + str(exc))
     if len(headers) == 1:
@@ -380,7 +389,7 @@ ROW_TABLES = {
 def get_row_table(instrument):
     return ROW_TABLES.get(instrument, instrument + "_row")
 
-def get_reference_info(reference, table_func, kind):
+def _get_reference_info(reference, table_func, kind):
     r = get_reffile_ops()
     db_filename = os.path.basename(reference).upper()
     for instrument in crds.hst.INSTRUMENTS:
@@ -389,13 +398,13 @@ def get_reference_info(reference, table_func, kind):
         if dicts:
             return (instrument, dicts)
     else:
-        raise ValueError("Reference file not found in " + kind + " table for any instrument.")
+        raise LookupError("Reference file not found in " + kind + " table for any instrument.")
 
 def get_reference_info_rows(reference):
-    return get_reference_info(reference, get_row_table, "row")
+    return _get_reference_info(reference, get_row_table, "row")
 
 def get_reference_info_files(reference):
-    return get_reference_info(reference, get_file_table, "file")
+    return _get_reference_info(reference, get_file_table, "file")
 
 
 
