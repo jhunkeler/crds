@@ -109,7 +109,10 @@ and {file_table}.reference_file_type = '{reference_file_type}'
                 val = val.strip()
             rowd[key] =  val
         rowd["file_name"] = rowd["file_name"].lower()
-        rowd = replace_unexpanded_wildcards(instrument, rowd)
+        rowd2 = replace_unexpanded_wildcards(instrument, rowd)
+        if rowd2 != rowd:
+            log.warning("Deleting row with unexpanded wildcards:", repr(rowd), "expands to", repr(rowd2))
+            continue
         if condition:
             rowd = utils.condition_header(rowd)
         row_dicts.append(rowd)
@@ -126,9 +129,7 @@ def replace_unexpanded_wildcards(instr, header):
     header2 = {key.upper():str(value) for (key,value) in header.items()}
     expanded = substitutions.expand_wildcards(instr, header2)
     if expanded != header2:
-        log.warning("Expanding wildcards", header2, "->", expanded)
-        expanded = {key.lower():value for (key,value) in header2.items()}
-        return expanded
+        return {key.lower():value for (key,value) in expanded.items()}
     else:
         return header
 
