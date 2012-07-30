@@ -14,6 +14,7 @@ import cdbs_db
 from crds import (rmap, log, timestamp, utils, selectors)
 from crds.compat import OrderedDict
 
+from crds.hst import substitutions
 import crds.hst.acs
 import crds.hst.cos
 import crds.hst.nicmos
@@ -104,14 +105,32 @@ and {file_table}.reference_file_type = '{reference_file_type}'
         row = tuple(row) + (len(extra_parkeys) * ("N/A",))
         rowd = dict(zip(fields, row))
         for key, val in rowd.items():
-            if condition:
-                val = utils.condition_value(val)
-            elif isinstance(val, str):
+            if isinstance(val, str):
                 val = val.strip()
             rowd[key] =  val
         rowd["file_name"] = rowd["file_name"].lower()
+        rowd = replace_unexpanded_wildcards(instrument, rowd)
+        if condition:
+            rowd = utils.condition_header(rowd)
         row_dicts.append(rowd)
     return row_dicts    
+
+def replace_unexpanded_wildcards(instr, header):
+    """This is for rare, generally bogus files which contain
+    wildcards which for some reason were not expanded by CDBS
+    when the reffile was delivered.
+
+    These files will hopefully have been replaced and will be
+    eliminated by subsequent useafter collisions.
+    """
+    header2 = {key.upper():str(value) for (key,value) in header.items()}
+    expanded = substitutions.expand_wildcards(instr, header2)
+    if expanded != header2:
+        log.warning("Expanding wildcards", header2, "->", expanded)
+        expanded = {key.lower():value for (key,value) in header2.items()}
+        return expanded
+    else:
+        return header
 
 # =======================================================================
 
@@ -415,7 +434,9 @@ def write_rmap(observatory, instrument, filekind, kind_map):
                       ])
     useafter_keys  = ('DATE-OBS', 'TIME-OBS',)
     now = str(timestamp.now())
-    rmap_header = OrderedDict([
+
+    # Add elements to rmap header,  excluding null valued parameters.
+    rmap_header = OrderedDict([(x,y) for (x,y) in [
         ("name", outname[2:]),
         ("derived_from", "generated from CDBS database " + now),
         ("mapping", "REFERENCE"),
@@ -426,7 +447,7 @@ def write_rmap(observatory, instrument, filekind, kind_map):
         # ("extra_keys", tuple([key.upper() for key in parkeys.get_extra_keys(instrument, filekind)])),
         ("rmap_relevance", parkeys.get_rmap_relevance(instrument, filekind)),
         ("parkey_relevance", parkeys.get_parkey_relevance(instrument, filekind)),
-    ])
+    ] if y])
 
     # Execute filekind specific customizations on header    
     rmap_header.update(HEADER_ADDITIONS.get((instrument, filekind), {}))

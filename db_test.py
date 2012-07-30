@@ -317,13 +317,15 @@ def reference_info(reference_filename):
     
     instrument, rows = cdbs_db.get_reference_info_rows(reference_filename)
     imap = rmap.get_cached_mapping("hst_" + instrument + ".imap")
-    row_columns = "observation_begin_date,observation_end_date,pedigree".split(",")
+    row_columns = "file_name,observation_begin_date,observation_end_date,pedigree".split(",")
     row_columns += [ key.lower() for key in imap.get_required_parkeys() if key.lower() in rows[0].keys()]
     row_columns += ["comment"]
     row_table = DictTable(rows, row_columns)
 
     log.write("=" * (row_table.width//2) + " reference " + "=" * (row_table.width//2))
     log.write(file_table)
+    log.write("-" * row_table.width)
+    log.write("Files rows = ", len(row_table.rows))
     log.write("-" * row_table.width)
     log.write(row_table)
     

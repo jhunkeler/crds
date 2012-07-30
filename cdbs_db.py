@@ -67,7 +67,7 @@ def dataset_to_instrument(dataset):
     try:
         return IPPPSSOOT_INSTR[instr]
     except KeyError:
-        raise ValueError("Can't determine instrument for dataset " + repr(dataset))
+        raise LookupError("Can't determine instrument for dataset " + repr(dataset))
 
 class DB(object):
     def __init__(self, dsn, user, password=None):
@@ -355,7 +355,7 @@ def get_dataset_header(dataset, condition=True):
     else:
         instrument = dataset_to_instrument(dataset)
     if instrument.lower() not in crds.hst.INSTRUMENTS:
-        raise ValueError("Unsupported instrument for dataset lookup " + repr(instrument))
+        raise LookupError("Unsupported instrument for dataset lookup " + repr(instrument))
     try:
         igen = HEADER_GENERATORS[instrument]
         if dataset.endswith(".fits"):

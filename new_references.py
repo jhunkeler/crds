@@ -22,6 +22,8 @@ def print_new_references(context="hst.pmap", date="1990-01-01", time="00:00",
 
     start_date = timestamp.reformat_date(date + " " + time)
 
+    new_references = []
+
     for instrument in hst.INSTRUMENTS:
 
         if instrument == "nicmos":
@@ -65,7 +67,11 @@ def print_new_references(context="hst.pmap", date="1990-01-01", time="00:00",
                 log.verbose("Skipping",repr(fname),"already known to context.")
                 continue
 
+            new_references.append((fdate, fname))
+
+        for fdate, fname in sorted(new_references):
             print fname, fdate
+
 
 if __name__ == "__main__":
     if "--verbose" in sys.argv:
