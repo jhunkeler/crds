@@ -123,7 +123,7 @@ def testit(header_spec, context="hst.pmap", datasets=[],
                 sys.exc_clear()
                 continue
 
-            if old_bestref in ["n/a", "*", "none"]:
+            if old_bestref in ["n/a", "*", "none",'']:
                 log.verbose("Ignoring", repr(filekind), "as n/a")
                 continue
     

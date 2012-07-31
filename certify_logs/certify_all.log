@@ -1,6 +1,6 @@
 ======================== acs =========================
 0 errors
-519 warnings
+510 warnings
 23 infos
 
 ======================== cos =========================
@@ -16,7 +16,7 @@
 ======================== wfc3 =========================
 0 errors
 194 warnings
-13 infos
+14 infos
 
 ======================== nicmos =========================
 0 errors
@@ -329,27 +329,18 @@ CRDS        : WARNING  Match tuple ('HRC', 'A|B|C|D', 'POL60UV', 'F814W', 'IMAGI
 CRDS        : WARNING  Match tuple ('HRC', 'D', 'CLEAR1L|CLEAR1S|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|G800L|POL0UV|POL120UV|POL60UV', 'PR200L', 'SPECTROSCOPIC', '0.0', '0.0', '0.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', 'CLEAR1L|CLEAR1S|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|G800L|POL0UV|POL120UV|POL60UV', 'PR200L', 'SPECTROSCOPIC', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('HRC', 'D', 'CLEAR1L|CLEAR1S|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|POL0UV|POL120UV|POL60UV', 'CLEAR2L|CLEAR2S|F220W|F250W|F330W|F344N|F410W|F435W|F814W|FR388N|FR459M|FR505N|FR647M|FR656N|FR716N|FR782N|FR914M|POL0V|POL120V|POL60V', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', 'CLEAR1L|CLEAR1S|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|POL0UV|POL120UV|POL60UV', 'CLEAR2L|CLEAR2S|F220W|F250W|F330W|F344N|F410W|F435W|F814W|FR388N|FR459M|FR505N|FR647M|FR656N|FR716N|FR782N|FR914M|POL0V|POL120V|POL60V', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('HRC', 'D', 'G800L', 'CLEAR2L|CLEAR2S|F220W|F250W|F330W|F344N|F410W|F435W|F814W|FR388N|FR459M|FR505N|FR647M|FR656N|FR716N|FR782N|FR914M|POL0V|POL120V|POL60V', 'SPECTROSCOPIC', '0.0', '0.0', '0.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', 'G800L', 'CLEAR2L|CLEAR2S|F220W|F250W|F330W|F344N|F410W|F435W|F814W|FR388N|FR459M|FR505N|FR647M|FR656N|FR716N|FR782N|FR914M|POL0V|POL120V|POL60V', 'SPECTROSCOPIC', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F115LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F115LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F115LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F122M', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F122M', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F122M', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F125LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F125LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F125LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F140LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F140LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F140LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F150LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F150LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F150LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
-CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', '*', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('SBC', 'N/A', 'F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('SBC', 'N/A', 'F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('WFC', 'ABCD', 'CLEAR1L', 'F660N', 'IMAGING', '0.0', '0.0', '0.0') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR1L', 'F660N', 'IMAGING', '0.0', '0.0', '0.0')  requiring dynamic merging.
@@ -565,7 +556,7 @@ CRDS        : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.4') is a
 CRDS        : INFO     Validating hst_acs_cfltfile.rmap
 CRDS        : INFO     Validating hst_acs_mdriztab.rmap
 0 errors
-519 warnings
+510 warnings
 23 infos
 
 ======================== cos =========================
@@ -890,10 +881,11 @@ CRDS        : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ889N'
 CRDS        : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ906N', '1.0', '1.0') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR|F200LP|F218W|F225W|F275W|F280N|F300X|F336W|F343N|F350LP|F373N|F390M|F390W|F395N|F410M|F438W|F467M|F469N|F475W|F475X|F487N|F502N|F547M|F555W|F588N|F600LP|F606W|F621M|F625W|F631N|F645N|F656N|F657N|F658N|F665N|F673N|F680N|F689M|F763M|F775W|F814W|F845M|F850LP|F953N|FQ232N|FQ243N|FQ378N|FQ387N|FQ422M|FQ436N|FQ437N|FQ492N|FQ508N|FQ575N|FQ619N|FQ634N|FQ672N|FQ674N|FQ727N|FQ750N|FQ889N|FQ906N|FQ924N|FQ937N', '1.0', '1.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ924N', '1.0', '1.0') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR|F200LP|F218W|F225W|F275W|F280N|F300X|F336W|F343N|F350LP|F373N|F390M|F390W|F395N|F410M|F438W|F467M|F469N|F475W|F475X|F487N|F502N|F547M|F555W|F588N|F600LP|F606W|F621M|F625W|F631N|F645N|F656N|F657N|F658N|F665N|F673N|F680N|F689M|F763M|F775W|F814W|F845M|F850LP|F953N|FQ232N|FQ243N|FQ378N|FQ387N|FQ422M|FQ436N|FQ437N|FQ492N|FQ508N|FQ575N|FQ619N|FQ634N|FQ672N|FQ674N|FQ727N|FQ750N|FQ889N|FQ906N|FQ924N|FQ937N', '1.0', '1.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ937N', '1.0', '1.0') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR|F200LP|F218W|F225W|F275W|F280N|F300X|F336W|F343N|F350LP|F373N|F390M|F390W|F395N|F410M|F438W|F467M|F469N|F475W|F475X|F487N|F502N|F547M|F555W|F588N|F600LP|F606W|F621M|F625W|F631N|F645N|F656N|F657N|F658N|F665N|F673N|F680N|F689M|F763M|F775W|F814W|F845M|F850LP|F953N|FQ232N|FQ243N|FQ378N|FQ387N|FQ422M|FQ436N|FQ437N|FQ492N|FQ508N|FQ575N|FQ619N|FQ634N|FQ672N|FQ674N|FQ727N|FQ750N|FQ889N|FQ906N|FQ924N|FQ937N', '1.0', '1.0')  requiring dynamic merging.
+CRDS        : INFO     Validating hst_wfc3_flshfile.rmap
 CRDS        : INFO     Validating hst_wfc3_mdriztab.rmap
 0 errors
 194 warnings
-13 infos
+14 infos
 
 ======================== nicmos =========================
 CRDS        : INFO     Certifying 'hst_nicmos.imap'
