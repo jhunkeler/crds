@@ -26,6 +26,7 @@ server cannot be contacted.
 7. The ability to fall back to pre-installed contexts if no context is defined
 through the network, parameter, or environment variable mechanisms.
 """
+import os
 import pprint
 
 import crds.client as light_client
@@ -73,27 +74,9 @@ def getreferences(parameters, reftypes=None, context=None, ignore_cache=False,
       returns a mapping from types requested in `reftypes` to the path for each
       cached reference file.
     """
-    log.verbose("getreferences() server:", light_client.get_crds_server())
-    log.verbose("getreferences() observatory:", observatory)
-    log.verbose("getreferences() parameters:\n", log.PP(parameters))
-    log.verbose("getreferences() reftypes:", reftypes)
-    log.verbose("getreferences() context:", repr(context))
+    final_context, bestrefs = _initial_recommendations("getreferences",
+        parameters, reftypes, context, ignore_cache, observatory)
     
-    check_observatory(observatory)
-    check_parameters(parameters)
-    check_reftypes(reftypes)
-    check_context(context)  
-
-    mode, final_context = get_processing_mode(observatory, context)
-
-    if mode == "local":
-        bestrefs = local_bestrefs(
-            parameters, reftypes=reftypes, context=final_context, ignore_cache=ignore_cache)
-    else:
-        log.verbose("Computing best references remotely.")
-        bestrefs = light_client.get_best_references(
-            final_context, parameters, reftypes=reftypes)
-
     # Attempt to cache the recommended references,  which unlike dump_mappings
     # should work without network access if files are already cached.
     best_refs_paths = light_client.cache_references(
@@ -137,6 +120,25 @@ def getrecommendations(parameters, reftypes=None, context=None, ignore_cache=Fal
       returns a mapping from types requested in `reftypes` to the path for each
       cached reference file.
     """
+    _final_context, bestrefs = _initial_recommendations("getrecommendations",
+        parameters, reftypes, context, ignore_cache, observatory)    
+
+    return bestrefs
+
+def _initial_recommendations(
+        name, parameters, reftypes=None, context=None, ignore_cache=False, observatory="jwst"):
+    """shared logic for getreferences() and getrecommendations()."""
+    
+    log.verbose(name + "() server:", light_client.get_crds_server())
+    log.verbose(name + "() observatory:", observatory)
+    log.verbose(name + "() parameters:\n", log.PP(parameters))
+    log.verbose(name + "() reftypes:", reftypes)
+    log.verbose(name + "() context:", repr(context))
+    
+    for var in os.environ:
+        if var.upper().startswith("CRDS"):
+            log.verbose(var, "=", repr(os.environ[var]))
+    
     check_observatory(observatory)
     check_parameters(parameters)
     check_reftypes(reftypes)
@@ -151,8 +153,9 @@ def getrecommendations(parameters, reftypes=None, context=None, ignore_cache=Fal
         log.verbose("Computing best references remotely.")
         bestrefs = light_client.get_best_references(
             final_context, parameters, reftypes=reftypes)
+        
+    return final_context, bestrefs
 
-    return bestrefs
 
 # ============================================================================
 def check_observatory(observatory):
@@ -264,16 +267,16 @@ def get_final_context(context, info):
     env_context = config.get_crds_env_context()
     if context:    # context parameter trumps all
         final_context = context
-        log.info("Using reference file selection rules", srepr(final_context), 
-                 "defined by caller.")
+        log.verbose("Using reference file selection rules", srepr(final_context), 
+                    "defined by caller.")
     elif env_context:
         final_context = env_context
-        log.info("Using reference file selection rules", srepr(final_context), 
-                 "defined by environment CRDS_CONTEXT.")
+        log.verbose("Using reference file selection rules", srepr(final_context), 
+                    "defined by environment CRDS_CONTEXT.")
     else:
         final_context = str(info["operational_context"])
-        log.info("Using reference selection rules", srepr(final_context), 
-                 "defined by", info["status"] + ".")
+        log.verbose("Using reference file selection rules", srepr(final_context), 
+                    "defined by", info["status"] + ".")
     return final_context
 
 def local_version_obsolete(server_version):
