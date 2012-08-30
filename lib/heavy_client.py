@@ -129,6 +129,7 @@ def _initial_recommendations(
         name, parameters, reftypes=None, context=None, ignore_cache=False, observatory="jwst"):
     """shared logic for getreferences() and getrecommendations()."""
     
+    log.verbose(name + "() CRDS version: ", version_info())
     log.verbose(name + "() server:", light_client.get_crds_server())
     log.verbose(name + "() observatory:", observatory)
     log.verbose(name + "() parameters:\n", log.PP(parameters))
@@ -138,7 +139,7 @@ def _initial_recommendations(
     for var in os.environ:
         if var.upper().startswith("CRDS"):
             log.verbose(var, "=", repr(os.environ[var]))
-    
+
     check_observatory(observatory)
     check_parameters(parameters)
     check_reftypes(reftypes)
@@ -275,7 +276,7 @@ def get_final_context(context, info):
                     "defined by environment CRDS_CONTEXT.")
     else:
         final_context = str(info["operational_context"])
-        log.verbose("Using reference file selection rules", srepr(final_context), 
+        log.verbose("Using reference selection rules", srepr(final_context), 
                     "defined by", info["status"] + ".")
     return final_context
 
@@ -343,7 +344,7 @@ def load_server_info(observatory):
                     "References may be sub-optimal.")
     except IOError:
         log.verbose_warning("Couldn't load cached server info from '%s'." % server_config,
-                    "Using pre-installed CRDS .pmap pipeline context.  References may be sub-optimal." )
+                            "Using pre-installed CRDS context.  References may be sub-optimal." )
         info = get_installed_info(observatory)
         info["status"] = "s/w install"
     return info
@@ -358,6 +359,15 @@ def get_installed_info(observatory):
             observatory = observatory,
             crds_version = dict( str="0.0.0"),
             )
+    
+def version_info():
+    """Return CRDS checkout URL and revision."""
+    try:
+        from . import svn_version
+        lines = svn_version.__full_svn_info__.strip().split("\n")
+        return ", ".join([line for line in lines if line.startswith(("URL","Revision"))])
+    except Exception:
+        return "unknown"
 # ============================================================================
 
 def srepr(obj):
