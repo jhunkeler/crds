@@ -4,6 +4,7 @@ it is used to define CRDS file cache paths and file location functions.
 
 import os
 import os.path
+import re
 
 # ===========================================================================
 
@@ -87,7 +88,7 @@ def get_crds_env_context():
         assert context.endswith(".pmap"), \
             "If set, CRDS_CONTEXT should specify a pipeline mapping,  e.g. 'jwst.pmap', not " + repr(context)
         assert os.path.exists(where), \
-            "Can't find pipeline mapping specified by CRDS_CONTEXT = " + repr(context)
+            "Can't find pipeline mapping specified by CRDS_CONTEXT = " + repr(context) + " at " + repr(where)
     return context
 
 # ===========================================================================
@@ -115,6 +116,27 @@ def is_mapping(mapping):
     file.
     """
     return mapping.endswith((".pmap", ".imap", ".rmap"))
+
+def is_reference(reference):
+    """Return True IFF file name `reference` is plausible as a reference file name.
+    is_reference() does not *guarantee* that `reference` is a reference file name.
+
+    >>> is_reference("something.fits")
+    True
+    >>> is_reference("something.finf")
+    True
+    >>> is_reference("something.r0h")
+    True
+    >>> is_reference("something.foo")
+    False
+    >>> is_reference("/some/path/something.fits")
+    True
+    >>> is_reference("/some/path/something.pmap")
+    False
+
+    """
+    extension = os.path.splitext(reference)[-1]
+    return re.match(".fits|.finf|.r\dh", extension) is not None
 
 def locate_mapping(mappath, observatory=None):
     """Return the path where CRDS mapping `mappath` should be."""

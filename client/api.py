@@ -7,6 +7,7 @@ import os.path
 import base64
 import re
 import urllib2
+import traceback
 
 from .proxy import CheckingProxy, ServiceError, CrdsError
 
@@ -25,15 +26,6 @@ class CrdsLookupError(CrdsError):
 class CrdsDownloadError(CrdsError):
     """Error downloading data for a reference or mapping file."""
 
-def download_exc(pipeline_context, name, exc):    
-    """Generate a standard exception message for download exceptions."""
-    return CrdsDownloadError("Error fetching data for " + srepr(name) + 
-                            " from context " + srepr(pipeline_context) + 
-                            " at server " + srepr(get_crds_server()) +
-                            " : " + str(exc))
-
-# ==============================================================================
-
 __all__ = [
            "get_default_context",
            "get_server_info",
@@ -43,11 +35,12 @@ __all__ = [
            "get_crds_server",
          
            "list_mappings",
+           "get_file_chunk",
+           "get_url",
+           "get_file_info",
+           
            "get_mapping_names",
-           "get_mapping_url", 
-
            "get_reference_names",
-           "get_reference_url",
            
            "dump_references",
            "dump_mappings",
@@ -67,6 +60,8 @@ __all__ = [
            ]
 
 # ============================================================================
+
+CRDS_DATA_CHUNK_SIZE = 2**26   # 64M, HTTP, sha1sum,  but maybe not RPC.
 
 # Server for CRDS services and mappings
 
@@ -134,15 +129,6 @@ def is_known_mapping(mapping):
     except ServiceError:
         return False
     
-def get_mapping_data(pipeline_context, mapping):
-    """Returns the contents of the specified pmap, imap, or rmap file
-    as a string.
-    """
-    try:
-        return S.get_mapping_data(pipeline_context, mapping)
-    except ServiceError, exc:
-        raise download_exc(pipeline_context, mapping, exc)
-        
 def get_mapping_names(pipeline_context):
     """Get the complete set of pmap, imap, and rmap basenames required
     for the specified pipeline_context.   context can be an observatory, 
@@ -155,14 +141,26 @@ def get_reference_url(pipeline_context, reference):
     """
     return S.get_reference_url(pipeline_context, reference)
     
-def get_reference_data(pipeline_context, reference):
-    """Returns the contents of the specified reference file as a string.
+def get_file_chunk(pipeline_context, file, chunk):
+    """Return the ith `chunk` of data from `file` as well as the
+    total number of chunks.   It is assumed that every file has
+    at least one chunk.
+    
+    Returns (chunks, size, sha1sum, chunk_str)
+    where chunks, size, and sha1sum are invariant totals.
+    
+    Note that `chunks` is determined by the server since it's a loading issue.
     """
-    try:
-        data = S.get_reference_data(pipeline_context, reference)
-    except ServiceError, exc:
-        raise download_exc(pipeline_context, reference, exc)
-    return base64.b64decode(data)
+    chunks, data = S.get_file_chunk(pipeline_context, file, chunk)
+    return chunks, base64.b64decode(data)
+
+def get_url(pipeline_context, filename):
+    """Return the URL for a CRDS reference or mapping file."""
+    return S.get_url(pipeline_context, filename)
+
+def get_file_info(pipeline_context, filename):
+    """Return a dictionary of CRDS information about `filename`."""
+    return S.get_file_info(pipeline_context, filename)
 
 def get_reference_names(pipeline_context):
     """Get the complete set of reference file basenames required
@@ -231,27 +229,6 @@ class FileCacher(object):
     """FileCacher is an abstract base class which gets remote files
     with simple names into a local cache.
     """
-    def _rpc_get_data(self, pipeline_context, name):
-        """Fetch the data for `name` via CRDS service and return it.
-        """
-        return self._get_data(pipeline_context, name)  # Get via jsonrpc
-
-    def _http_get_data(self, pipeline_context, name):
-        """Fetch the data for `name` as a URL and return it.
-        """
-        try:
-            url = self._get_url(pipeline_context, name)
-            log.verbose("Fetching URL ", repr(url))
-            return urllib2.urlopen(url).read()
-        except Exception, exc:
-            raise download_exc(pipeline_context, name, exc)
-        
-    def _download(self, pipeline_context, name):
-        if get_download_mode() == "http":
-            return self._http_get_data(pipeline_context, name)
-        else:
-            return self._rpc_get_data(pipeline_context, name)
-            
     def get_local_files(self, pipeline_context, names, ignore_cache=False):
         """Given a list of basename `mapping_names` which are pertinent to the 
         given `pipeline_context`,   cache the mappings locally where they can 
@@ -261,20 +238,16 @@ class FileCacher(object):
             names = names.values()
         localpaths = {}
         for i, name in enumerate(names):
-            localpath = self._locate(pipeline_context, name)
+            localpath = self.locate(pipeline_context, name)
             if (not os.path.exists(localpath)) or ignore_cache:
-                log.verbose("Cache miss. Fetching[%d]" % i, repr(name), 
-                            "to", repr(localpath))
-                utils.ensure_dir_exists(localpath)
-                contents = self._download(pipeline_context, name)
-                open(localpath,"w+").write(contents)
+                log.verbose("Cache miss. Fetching[%d]" % i, repr(name), "to", repr(localpath))
+                self.download(pipeline_context, name, localpath)
             else:
-                log.verbose("Cache hit.  Skipping[%d]" % i, repr(name), 
-                            "at", repr(localpath))
+                log.verbose("Cache hit.  Skipping[%d]" % i, repr(name), "at", repr(localpath))
             localpaths[name] = localpath
         return localpaths
 
-    def _locate(self, pipeline_context, name):
+    def locate(self, pipeline_context, name):
         if "jwst" in pipeline_context:
             observatory = "jwst"
         elif "hst" in pipeline_context:
@@ -284,33 +257,82 @@ class FileCacher(object):
             observatory = crds.get_cached_mapping(pipeline_context).observatory
         return config.locate_file(name, observatory=observatory)
 
-# ==============================================================================
-
-class MappingCacher(FileCacher):
-    _get_data = staticmethod(get_mapping_data)
-    _get_url = staticmethod(get_mapping_url)
+    def download(self, pipeline_context, name, localpath):
+        try:
+            utils.ensure_dir_exists(localpath)
+            if get_download_mode() == "http":
+                generator = self.get_data_http(pipeline_context, name)
+            else:
+                generator = self.get_data_rpc(pipeline_context, name, localpath)
+            with open(localpath, "wb+") as outfile:
+                for data in generator:
+                    outfile.write(data)
+            self.verify_file(pipeline_context, name, localpath)
+        except Exception, exc:
+            traceback.print_exc()
+            raise CrdsDownloadError("Error fetching data for " + srepr(name) + 
+                                     " from context " + srepr(pipeline_context) + 
+                                     " at server " + srepr(get_crds_server()) +
+                                     " : " + str(exc))
+            
+    def get_data_rpc(self, pipeline_context, file, localpath):
+        """Yields successive manageable chunks for `file` fetched via jsonrpc."""
+        chunk = 0
+        chunks = 1
+        while chunk < chunks:
+            chunks, data = get_file_chunk(pipeline_context, file, chunk)
+            log.verbose("Transferred RPC", repr(file), chunk, " of ", chunks)
+            chunk += 1
+            yield data
     
-MAPPING_CACHER = MappingCacher()
+    def get_data_http(self, pipeline_context, file):
+        """Yields successive manageable chunks of `file` fetched by http."""
+        url = get_url(pipeline_context, file)
+        log.verbose("Fetching URL ", repr(url))
+        try:
+            infile = urllib2.urlopen(url)
+            chunk = 0
+            data = infile.read(CRDS_DATA_CHUNK_SIZE)
+            while data:
+                log.verbose("Transferred HTTP", repr(file), "chunk", chunk)
+                yield data
+                chunk += 1
+                data = infile.read(CRDS_DATA_CHUNK_SIZE)
+        finally:
+            try:
+                infile.close()
+            except UnboundLocalError:   # maybe the open failed.
+                pass
+
+    def verify_file(self, pipeline_context, filename, localpath):
+        """Check that the size and checksum of downloaded `filename` match the server."""
+        remote_info = get_file_info(pipeline_context, filename)
+        local_length = os.stat(localpath).st_size
+        original_length = long(remote_info["size"])
+        basename = os.path.basename(localpath)
+        if original_length != local_length:
+            raise CrdsDownloadError("downloaded file size " + str(local_length) +
+                                    " does not match server size " + str(original_length))
+        original_sha1sum = remote_info["sha1sum"]
+        local_sha1sum = utils.checksum(localpath)
+        if original_sha1sum != local_sha1sum:
+            raise CrdsDownloadError("downloaded file sha1sum " + repr(local_sha1sum) +
+                                    " does not match server sha1sum " + repr(original_sha1sum))
+
+FILE_CACHER = FileCacher()
 
 # ==============================================================================
 
-class ReferenceCacher(FileCacher):
-    _get_data = staticmethod(get_reference_data)
-    _get_url = staticmethod(get_reference_url)
-
-REFERENCE_CACHER = ReferenceCacher()
-
-# ==============================================================================
-
-def dump_mappings(pipeline_context, ignore_cache=False):
+def dump_mappings(pipeline_context, ignore_cache=False, mappings=None):
     """Given a `pipeline_context`, determine the closure of CRDS mappings and 
     cache them on the local file system.
     
     Returns:   { mapping_basename :   mapping_local_filepath ... }   
     """
     assert isinstance(ignore_cache, bool)
-    mappings = get_mapping_names(pipeline_context)
-    return MAPPING_CACHER.get_local_files(
+    if mappings is None:
+        mappings = get_mapping_names(pipeline_context)
+    return FILE_CACHER.get_local_files(
         pipeline_context, mappings, ignore_cache=ignore_cache)
   
 def dump_references(pipeline_context, baserefs=None, ignore_cache=False):
@@ -327,7 +349,7 @@ def dump_references(pipeline_context, baserefs=None, ignore_cache=False):
         if "NOT FOUND" in refname:
             log.verbose("Skipping " + srepr(refname))
             baserefs.remove(refname)
-    return REFERENCE_CACHER.get_local_files(
+    return FILE_CACHER.get_local_files(
         pipeline_context, baserefs, ignore_cache=ignore_cache)
     
 def cache_references(pipeline_context, bestrefs, ignore_cache=False):
@@ -349,7 +371,7 @@ def cache_references(pipeline_context, bestrefs, ignore_cache=False):
                 raise CrdsLookupError("Error determining best reference for " + 
                                       repr(str(filetype)) + " = " + 
                                       str(refname)[len("NOT FOUND"):])
-    localrefs = REFERENCE_CACHER.get_local_files(
+    localrefs = FILE_CACHER.get_local_files(
         pipeline_context, bestrefs2, ignore_cache=ignore_cache)
     refs = {}
     for filetype, refname in bestrefs.items():
@@ -387,7 +409,7 @@ def get_minimum_header(context, dataset, ignore_cache=False):
     information from the `dataset`.
     """
     import crds.rmap
-    dump_mappings(context, ignore_cache)
+    dump_mappings(context, ignore_cache=ignore_cache)
     ctx = crds.get_cached_mapping(context)
     return ctx.get_minimum_header(dataset)
 
