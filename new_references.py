@@ -14,15 +14,15 @@ import cdbs_db
 def print_new_references(context="hst.pmap", date="1990-01-01", time="00:00", 
                          check_existing=True):
 
-    r = cdbs_db.get_reffile_ops()
+    ref_file_ops = cdbs_db.get_reffile_ops()
 
     if check_existing:
-        client.set_crds_server("http://etcbrady.stsci.edu:4997")
+        client.set_crds_server("http://hst-crds.stsci.edu")
         existing_references = client.get_reference_names(context)
 
     start_date = timestamp.reformat_date(date + " " + time)
 
-    new_references = []
+    new_references = {}
 
     for instrument in hst.INSTRUMENTS:
 
@@ -31,7 +31,7 @@ def print_new_references(context="hst.pmap", date="1990-01-01", time="00:00",
 
         already_checked = set()
 
-        files = r.make_dicts(instrument + "_file")
+        files = ref_file_ops.make_dicts(instrument + "_file")
         for f in files:
 
             adate = f["archive_date"]
@@ -67,10 +67,10 @@ def print_new_references(context="hst.pmap", date="1990-01-01", time="00:00",
                 log.verbose("Skipping",repr(fname),"already known to context.")
                 continue
 
-            new_references.append((fdate, fname))
+            new_references[fname.strip()] = fdate
 
-        for fdate, fname in sorted(new_references):
-            print fname, fdate
+    for fname in sorted(new_references):
+        print fname, new_references[fname]
 
 
 if __name__ == "__main__":
