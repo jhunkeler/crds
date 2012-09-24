@@ -104,8 +104,8 @@ class KeywordValidator(object):
                     if re.match(pat, value):
                         return
             raise ValueError("Value(s) for " + repr(self.name) + " of " +
-                            log.PP(value) + " is not one of " +
-                            log.PP(self._values))
+                            str(log.PP(value)) + " is not one of " +
+                            str(log.PP(self._values)))
             
     def check_header(self, filename, header=None):
         """Extract the value for this Validator's keyname,  either from `header`
@@ -454,8 +454,10 @@ def certify_reference(fitsname, context=None,
         return
 
     if dump_provenance:
-        dump_multi_key(fitsname, ["DESCRIP", "COMMENT", "PEDIGREE", "USEAFTER",
-                                  "HISTORY",])
+        provenance_keys = ["DESCRIP", "COMMENT", "PEDIGREE", "USEAFTER",
+                                  "HISTORY",]
+        parkeys = get_rmap_parkeys(fitsname, context)
+        dump_multi_key(fitsname, parkeys + provenance_keys)
 
     mode_checker = None # Initialize mode validation
     for checker in get_validators(fitsname):
@@ -493,7 +495,32 @@ def dump_multi_key(fitsname, keys):
         for key in keys:
             for card in cards:
                 if card.key == key:
-                    log.info("["+str(i)+"]", key, card.value, card.comment)
+                    if interesting_value(card.value):
+                        log.info("["+str(i)+"]", key, card.value, card.comment)
+
+def interesting_value(value):
+    """Return True IFF `value` isn't uninteresting."""
+    if value.strip().lower() in ["",
+                                 "*** end of mandatory fields ***",
+                                 "*** column names ***",
+                                 "*** column formats ***"]:
+        return False
+    return True
+
+def get_rmap_parkeys(refname, context):
+    """Determine required parkeys in reference path `refname` according to pipeline 
+    mapping `context`.
+    """
+    if context is None:
+        return
+    try:
+        header = data_file.get_header(refname)
+        pmap = rmap.get_cached_mapping(context)
+        instrument, filekind = pmap.locate.get_file_properties(refname)
+        return pmap.get_imap(instrument).get_rmap(filekind).get_required_parkeys()
+    except Exception, exc:
+        log.verbose_warning("Failed retrieving required parkeys:", str(exc))
+        return []
 
 def validate_file_format(fitsname):
     """ Run PyFITS verify method on file to report any FITS format problems
