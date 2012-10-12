@@ -407,9 +407,8 @@ def get_reference_info_files(reference):
     return _get_reference_info(reference, get_file_table, "file")
 
 
+# =================================================================================
 
-
-
-
-
-
+if __name__ == "__main__":
+    gen_header_tables()
+        
