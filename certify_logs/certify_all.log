@@ -1,34 +1,11 @@
 ======================== acs =========================
-0 errors
-510 warnings
-23 infos
-
-======================== cos =========================
-0 errors
-3 warnings
-20 infos
-
-======================== stis =========================
-0 errors
-49 warnings
-33 infos
-
-======================== wfc3 =========================
-0 errors
-278 warnings
-14 infos
-
-======================== nicmos =========================
-0 errors
-3 warnings
-19 infos
-
-======================== wfpc2 =========================
-0 errors
-22 warnings
-12 infos
-
-G  Match tuple ('HRC', 'C', '2.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
+CRDS        : INFO     Certifying 'hst_acs.imap' (1/1)
+CRDS        : INFO     Validating hst_acs.imap
+CRDS        : INFO     Validating hst_acs_pctetab.rmap
+CRDS        : INFO     Validating hst_acs_crrejtab.rmap
+CRDS        : INFO     Validating hst_acs_darkfile.rmap
+CRDS        : WARNING  Match tuple ('HRC', 'C', '1.0|2.0|4.0|8.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('HRC', 'C', '2.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('HRC', 'C', '2.0') is an equal weight special case of ('HRC', 'C', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('HRC', 'D', '1.0|2.0|4.0|8.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('WFC', 'ABCD', '1.0') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0')  requiring dynamic merging.
