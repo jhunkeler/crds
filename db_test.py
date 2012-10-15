@@ -150,39 +150,35 @@ def testit(header_spec, context="hst.pmap", datasets=[],
             # recommendations for this dataset.
             char = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[matches]
             log.write(char, end="", sep="")
-        
+
     elapsed = datetime.datetime.now() - start
     summarize_results(instrument, mismatched, dataset_count, elapsed)
 
 def summarize_results(instrument, mismatched, dataset_count, elapsed):
     """Output summary of mismatch errors."""
-    log.write()
-    log.write()
+    log.info("-"*80)
     totals = {}
     for category, datasets in mismatched.items():
         instrument, filekind, old, new = category
-        log.write("Erring Inputs:", instrument, filekind, len(datasets), old, new)
-        log.write("Datasets:", instrument, filekind, len(datasets), " ".join(sorted(datasets)))
+        log.info("Erring Inputs:", instrument, filekind, len(datasets), old, new)
+        log.info("Datasets:", instrument, filekind, len(datasets), " ".join(sorted(datasets)))
         if (instrument, filekind) not in totals:
             totals[(instrument, filekind)] = 0
         totals[(instrument, filekind)] += len(datasets)
-    log.write()
     for key in totals:
-        log.write(key, totals[key], "mismatch errors")
-    log.write()
-    log.write(instrument, dataset_count, "datasets")
-    log.write(instrument, elapsed, "elapsed")
-    log.write(instrument, dataset_count/elapsed.total_seconds(), "datasets / sec")
-    log.write()
+        log.info(key, totals[key], "mismatch errors")
+    log.info(instrument, dataset_count, "datasets")
+    log.info(instrument, elapsed, "elapsed")
+    log.info(instrument, dataset_count/elapsed.total_seconds(), "datasets / sec")
     log.standard_status()
 
 def get_headers(header_spec):
     """Get a header generator either as a database generator or a pickle."""
     if header_spec in crds.hst.INSTRUMENTS:
-        log.write("Getting headers from", repr(header_spec))
+        log.info("Getting headers from", repr(header_spec))
         headers = cdbs_db.HEADER_GENERATORS[header_spec].get_headers()
     elif isinstance(header_spec, str): 
-        log.write("Loading pickle", repr(header_spec))
+        log.info("Loading pickle", repr(header_spec))
         headers = cPickle.load(open(header_spec)).values()
     else:
         raise ValueError("header_spec should name an instrument or pickle file.")
@@ -197,8 +193,8 @@ def testall(context="hst.pmap", instruments=[],
         pmap = rmap.get_cached_mapping(context)
         instruments = pmap.selections
     for instr in instruments:
-        log.write(70*"=")
-        log.write("instrument", instr + ":")
+        log.info(70*"=")
+        log.info("instrument", instr + ":")
         headers = path+instr+suffix
         if profile:
             cProfile.runctx("testit(headers, context, "
@@ -209,7 +205,7 @@ def testall(context="hst.pmap", instruments=[],
         else:
             testit(headers, context, datasets=datasets, filekinds=filekinds,
                  alternate_headers=alternate_headers, inject_errors=inject_errors) 
-        log.write()
+        log.info("="*80)
 
 def inject_random_error(inject_errors, dataset, header):
     """Randomly set an element of dataset to 'foo'"""
@@ -223,7 +219,7 @@ def inject_random_error(inject_errors, dataset, header):
         assert mode in ["params", "bestrefs", "both"],"-random-errors=[params|bestrefs|both|<thresh>][,<thresh>]"
         thresh = float(words[1])
 
-    # log.write("mode",repr(mode),"thresh",repr(thresh))
+    # log.info("mode",repr(mode),"thresh",repr(thresh))
 
     if random.random() >= thresh:
         return header
@@ -256,7 +252,7 @@ def dump(instr, suffix="_headers.pkl", path=DEFAULT_PKL_PATH):
     headers = list(cdbs_db.HEADER_GENERATORS[instr].get_headers())
     samples = { h["DATA_SET"] : h for h in headers }
     pickle = path + instr + suffix
-    log.write("Saving pickle", repr(pickle))
+    log.info("Saving pickle", repr(pickle))
     cPickle.dump(samples, open(pickle, "w+"))
 
 def dumpall(context="hst.pmap", suffix="_headers.pkl", path=DEFAULT_PKL_PATH):
@@ -307,9 +303,9 @@ def reference_info(reference_filename):
     """Print out the CDBS database information about a reference file."""
     instrument, files = cdbs_db.get_reference_info_files(reference_filename)
     if instrument.lower() not in crds.hst.INSTRUMENTS:
-        log.write("File " + repr(reference_filename) + " corresponds to unsupported instrument " + repr(instrument))
+        log.info("File " + repr(reference_filename) + " corresponds to unsupported instrument " + repr(instrument))
     else:
-        log.write("File " + repr(reference_filename) + "corresponds to instrument " + repr(instrument))
+        log.info("File " + repr(reference_filename) + "corresponds to instrument " + repr(instrument))
     if not files:
         raise LookupError("Can't find reference " + repr(reference_filename))
     file_columns = "file_name,reject_flag,opus_flag,useafter_date,archive_date,general_availability_date,comment".split(",")
@@ -322,12 +318,12 @@ def reference_info(reference_filename):
     row_columns += ["comment"]
     row_table = DictTable(rows, row_columns)
 
-    log.write("=" * (row_table.width//2) + " reference " + "=" * (row_table.width//2))
-    log.write(file_table)
-    log.write("-" * row_table.width)
-    log.write("Files rows = ", len(row_table.rows))
-    log.write("-" * row_table.width)
-    log.write(row_table)
+    log.info("=" * (row_table.width//2) + " reference " + "=" * (row_table.width//2))
+    log.info(file_table)
+    log.info("-" * row_table.width)
+    log.info("Files rows = ", len(row_table.rows))
+    log.info("-" * row_table.width)
+    log.info(row_table)
     
 def dataset_info(dataset_filename):
     """Print out the CDBS database information about a dataset file."""
@@ -341,14 +337,14 @@ def dataset_info(dataset_filename):
     row_columns = ["file_name"]
     row_columns += [ key for key in imap.get_required_parkeys() if key in header.keys()]
     row_table = DictTable([header], row_columns)
-    log.write("=" * (row_table.width//2) + " dataset " + "=" * (row_table.width//2))
-    log.write(row_table)
+    log.info("=" * (row_table.width//2) + " dataset " + "=" * (row_table.width//2))
+    log.info(row_table)
         
 def info(file):
     try:
         reference_info(file)
     except LookupError:
-        log.write("Couldn't find " + repr(file) + " as a reference or datsaset.")
+        log.info("Couldn't find " + repr(file) + " as a reference or datsaset.")
     try:
         dataset_info(file)
     except LookupError:
@@ -401,7 +397,7 @@ def main():
         testall(instruments=instruments, filekinds=filekinds, datasets=datasets,
                 path=DEFAULT_PKL_PATH, profile=profile, inject_errors=inject_errors)
     else:
-        log.write("""usage:
+        log.info("""usage:
 python cdbs_db.py dumpall
 python cdbs_db.py dump <instrument>
 python cdbs_db.py info <reference_file>

@@ -329,7 +329,7 @@ def replace_full_sets_with_star(instrument, filekind, kmap):
         for match in kmap.keys():
             valset = set(match[i].split("|"))
             if keyset <= valset and len(keyset) > 1:
-                log.write("Replacing", repr(match[i]), "with '*' in", repr(match))
+                log.info("Replacing", repr(match[i]), "with '*' in", repr(match))
                 files = kmap.pop(match)
                 match = list(match)
                 match[i] = '*'

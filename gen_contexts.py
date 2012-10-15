@@ -21,7 +21,7 @@ def generate_imap(instr, filekinds):
     ])
 
     imap = "../CRDS/hst/mappings/hst/hst_"  + instr + ".imap"
-    log.write("writing", imap)
+    log.info("writing", imap)
 
     selector = {}
     for keyword in filekinds:
