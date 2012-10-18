@@ -1,5 +1,5 @@
 header = {
-    'derived_from' : 'generated from CDBS database 2012-09-14 08:17:56.402783',
+    'derived_from' : 'generated from CDBS database 2012-10-12 11:53:07.765575',
     'filekind' : 'DARKFILE',
     'instrument' : 'ACS',
     'mapping' : 'REFERENCE',
@@ -11,7 +11,7 @@ header = {
         'ccdgain' : '(DETECTOR != "SBC")',
     },
     'rmap_relevance' : 'ALWAYS',
-    'sha1sum' : '57de5d9b0192eab3158131dd1e9df3c61e4f81c0',
+    'sha1sum' : 'a31791c1a0304d876d7153398ae9870f1a8471cf',
 }
 
 selector = Match({
@@ -2579,6 +2579,19 @@ selector = Match({
         '2006-07-26 00:08:15' : 'q8121108j_drk.fits',
         '2006-07-28 00:05:37' : 'q812110aj_drk.fits',
     }),
+    ('WFC', 'A|ABCD|AD|B|BC|C|D', -999.0) : UseAfter({
+        '2003-03-02 16:45:00' : 'u641457ej_drk.fits',
+        '2009-05-16 00:00:00' : 't941348gj_drk.fits',
+        '2009-07-06 17:00:00' : 'taf18113j_drk.fits',
+        '2009-07-10 15:36:02' : 'taf18114j_drk.fits',
+        '2009-07-18 00:00:00' : 'taf18115j_drk.fits',
+        '2009-07-21 09:00:00' : 'taf18116j_drk.fits',
+        '2009-07-30 00:00:00' : 'taf18117j_drk.fits',
+        '2009-08-05 07:00:19' : 'taf18118j_drk.fits',
+        '2009-08-16 00:00:00' : 'taf18119j_drk.fits',
+        '2009-08-20 00:00:00' : 'taf1811aj_drk.fits',
+        '2009-08-29 00:00:00' : 'taf1811bj_drk.fits',
+    }),
     ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.0|1.4|2.0') : UseAfter({
         '2008-01-01 00:00:00' : 't7d1504dj_drk.fits',
         '2009-05-16 00:00:00' : 'tam17023j_drk.fits',
@@ -3087,6 +3100,18 @@ selector = Match({
         '2012-07-27 02:25:27' : 'w8k1825ej_drk.fits',
         '2012-07-30 04:08:33' : 'w8k1825gj_drk.fits',
         '2012-08-01 03:13:28' : 'w8k1825ij_drk.fits',
+        '2012-08-01 11:01:34' : 'wa12030bj_drk.fits',
+        '2012-08-08 00:04:37' : 'wa12030dj_drk.fits',
+        '2012-08-10 00:04:36' : 'wa12030fj_drk.fits',
+        '2012-08-13 03:57:30' : 'wa12030hj_drk.fits',
+        '2012-08-15 04:24:10' : 'wa12030jj_drk.fits',
+        '2012-08-17 08:41:42' : 'wa12030lj_drk.fits',
+        '2012-08-20 09:17:35' : 'wa12030nj_drk.fits',
+        '2012-08-22 00:30:27' : 'wa12030pj_drk.fits',
+        '2012-08-24 03:58:31' : 'wa12030rj_drk.fits',
+        '2012-08-27 09:15:24' : 'wa12030tj_drk.fits',
+        '2012-08-29 00:09:48' : 'wa120311j_drk.fits',
+        '2012-08-31 03:16:44' : 'wa120313j_drk.fits',
     }),
     ('WFC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0') : UseAfter({
         '2006-07-30 02:04:10' : 'q9520146j_drk.fits',

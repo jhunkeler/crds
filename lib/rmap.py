@@ -434,7 +434,7 @@ class Mapping(object):
                 sel.validate_mapping(trap_exceptions)
             except Exception, exc:
                 if trap_exceptions == mapping_type(self):
-                    log.error()
+                    log.error("invalid mapping:", str(exc))
                 elif trap_exceptions == "debug":
                     raise
                 else:
@@ -457,7 +457,7 @@ class Mapping(object):
         for key in self.selections:
             if key not in other.selections:
                 msg = repr(other.basename) + " deleted " + repr(key)
-                differences.append(msg)
+                differences.append(((self.basename, other.basename), msg))
             else:
                 differences.extend(self.selections[key].difference(
                     other.selections[key],
@@ -465,7 +465,7 @@ class Mapping(object):
         for key in other.selections:
             if key not in self.selections:
                 msg = repr(other.basename) + " added " + repr(key)
-                differences.append(msg)
+                differences.append(((self.basename, other.basename), msg))
         return sorted(differences)
 
 # ===================================================================
@@ -498,9 +498,10 @@ class PipelineContext(Mapping):
         is None,  collect all filekinds,  else only those listed.
         """
         header = dict(header)   # make a copy
-        instrument = self.get_instrument(header)
+        parkey_header = self.locate.fits_to_parkeys(header)
+        instrument = self.get_instrument(parkey_header)
         imap = self.get_imap(instrument)
-        return imap.get_best_references(header, include)
+        return imap.get_best_references(parkey_header, include)
 
     def reference_names(self):
         """Return the list of reference files associated with this pipeline
@@ -867,7 +868,7 @@ class ReferenceMapping(Mapping):
             self.selector.validate_selector(self._tpn_valid_values, trap_exceptions)
         except Exception, exc:
             if trap_exceptions == mapping_type(self):
-                log.error()
+                log.error("invalid mapping:", self.instrument, self.filekind, ":", str(exc))
             elif trap_exceptions == "debug":
                 raise
             else:
@@ -879,6 +880,8 @@ class ReferenceMapping(Mapping):
             derived_file = self.header['derived_from']
             if 'generated' not in derived_file:
                 derived_from = get_cached_mapping(derived_file)
+                log.info('Comparing context file "'+self.basename+
+                        '" against "'+ derived_from.basename+'"')
                 diffs = derived_from.difference(self)
                 if len(diffs) > 0:
                     replacements = []

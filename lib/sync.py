@@ -3,32 +3,33 @@ mappings required to support a set of contexts from the CRDS server:
 
 Synced contexts can be explicitly listed:
 
-  % python -m crds.client.sync  --contexts hst_0001.pmap hst_0002.pmap
-
-Synced datasets can be explicitly listed:
-
-  % python -m crds.client.sync --datasets  *.fits
+  % python -m crds.sync  --contexts hst_0001.pmap hst_0002.pmap
 
 Synced contexts can be specified as a range:
 
-  % python -m crds.client.sync --range 1:2
+  % python -m crds.sync --range 1:2
 
 Synced contexts can be specified as --all contexts:
 
-  % python -m crds.client.sync --all
-
-XXX TODO
-Or explicitly list the files you want cached:
-
-  % python -m crds.client.sync <references or mappings to cache>
+  % python -m crds.sync --all
 
 Old references and mappings which are no longer needed can be automatically
 removed by specifying --purge:
 
-  % python -m crds.client.sync --range 1:2 --purge
+  % python -m crds.sync --range 1:2 --purge
 
 will remove references or mappings not required by hst_0001.pmap or 
 hst_0002.pmap in addition to downloading the required files.
+
+XXX TODO
+Or explicitly list the files you want cached:
+
+  % python -m crds.sync <references or mappings to cache>
+
+Synced datasets can be explicitly listed:
+
+  % python -m crds.sync --contexts hst_0001.pmap hst_0002.pmap --datasets *.fits
+
 """
 import sys
 import os
@@ -38,6 +39,8 @@ import re
 
 import crds.client.api as api
 from crds import (rmap, pysh, log, data_file)
+
+# ============================================================================
 
 def get_context_mappings(contexts):
     """Return the set of mappings which are pointed to by the mappings
@@ -57,13 +60,18 @@ def sync_context_mappings(only_contexts, purge=False):
     if not only_contexts:
         return
     for context in only_contexts:
+        log.verbose("Syncing mapping", repr(context))
         api.dump_mappings(context)
+    if purge:
+        purge_mappings(only_contexts)
+        
+def purge_mappings(only_contexts):
+    """Remove all mappings not references under pmaps `only_contexts."""
     pmap = rmap.get_cached_mapping(only_contexts[0])
     purge_maps = rmap.list_mappings('*.[pir]map', pmap.observatory)
     keep = get_context_mappings(only_contexts)
-    if purge:
-        remove_files(pmap.observatory, purge_maps-keep, "mapping")
-    
+    remove_files(pmap.observatory, purge_maps-keep, "mapping")
+        
 def get_context_references(contexts):
     """Return the set of mappings which are pointed to by the mappings
     in `contexts`.
@@ -81,13 +89,18 @@ def sync_context_references(only_contexts, purge=False):
     if not only_contexts:
         return
     for context in only_contexts:
+        log.verbose("Syncing references for", repr(context))
         api.dump_references(context)
+    if purge:
+        purge_references(only_contexts)
+
+def purge_references(only_contexts):
+    """Remove all references not references under pmaps `only_contexts`."""
     pmap = rmap.get_cached_mapping(only_contexts[0])
     purge_refs = rmap.list_references("*", pmap.observatory)
     keep = get_context_references(only_contexts)
-    if purge:
-        remove = purge_refs - keep
-        remove_files(pmap.observatory, remove, "reference")
+    remove = purge_refs - keep
+    remove_files(pmap.observatory, remove, "reference")
     
 def remove_files(observatory, files, kind):
     """Remove the list of `files` basenames which are converted to fully
@@ -102,6 +115,37 @@ def remove_files(observatory, files, kind):
             os.remove(where)
         except Exception, exc:
             log.error("exception during file removal")
+
+# ============================================================================
+
+def sync_datasets(contexts, datasets):
+    """Sync mappings and references for datasets with respect to `contexts`."""
+    for context in contexts:
+        try:
+            sync_context_mappings([context])
+        except Exception, exc:
+            log.error("Filed to sync mappings for context", repr(context), str(exc))
+            continue
+        try:
+            pmap = rmap.get_cached_mapping(context)
+        except Exception, exc:
+            log.error("Failed to load context", repr(context), ":", str(exc))
+            continue
+        for dataset in datasets:
+            try:
+                header = data_file.get_header(dataset, observatory=pmap.observatory)
+            except Exception, exc:
+                log.error("Failed to get matching parameters from", repr(dataset))
+                continue
+            try:
+                bestrefs = crds.getrecommendations(dataset, context=context, 
+                                                   observatory=pmap.observatory)
+                api.dump_references(context, bestrefs.values())
+            except Exception, exc:
+                log.error("Failed to sync references for dataset", repr(dataset), 
+                          "under context", repr(context), ":", str(exc))
+
+# ============================================================================
 
 def mapping(string):
     if api.is_known_mapping(string):
@@ -166,7 +210,7 @@ def main():
                     'the given contexts, removing files not referenced.')
     parser.add_argument(
         '--contexts', metavar='CONTEXT', type=mapping, nargs='*',
-        help='a list of contexts to sync.')
+        help='a list of contexts to sync.  dependent mappings are loaded recursively.')
     parser.add_argument('--mappings-only', action='store_true', 
         dest="mappings_only",
         help='just get the mapping files, not the references')

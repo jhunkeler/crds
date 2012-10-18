@@ -1,8 +1,9 @@
 import re
+import os.path
 
 import pyfits
 from . import rmap
-from crds import client
+from crds import client, log
 
 filekind_kw = 'FILETYPE'
 
@@ -30,6 +31,8 @@ def determine_filekind(reffile,imap):
     """
     newkind = pyfits.getval(reffile,filekind_kw)
     newkind = newkind.replace(' ','_') # get kw value into same format as tpninfo
+    newkind = newkind.upper().strip()
+
     filetype = None # return value
     filekinds = get_filekind_vals(imap)
     for fkind in filekinds:
@@ -69,8 +72,8 @@ def find_current_reffile(reffile,pmap):
 
     filetype = pyfits.getval(reffile,filekind_kw)
     dateobs,timeobs = split_useafter(pyfits.getval(reffile,'USEAFTER'))
-
     filekind = determine_filekind(reffile, i)
+
     if filekind:
         r = i.get_rmap(filekind)
     else:
@@ -94,8 +97,11 @@ def find_current_reffile(reffile,pmap):
     try:
         match_files = client.dump_references(pmap, baserefs=[match_refname], ignore_cache=False)
         match_file = match_files[match_refname]
-    except Exception:
-        log.warning("Failed to obtain reference comparison file", repr(match_refname))
+        if not os.path.exists(match_file):   # For server-less mode in debug environments w/o Central Store
+            raise IOError("Comparison reference " + repr(match_refname) + " is defined but does not exist.")
+        log.info("Comparing reference", repr(reffile), "against", repr(match_file))
+    except Exception, exc:
+        log.warning("Failed to obtain reference comparison file", repr(match_refname), ":", str(exc))
         match_file = None
 
     return match_file

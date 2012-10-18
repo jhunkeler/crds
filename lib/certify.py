@@ -106,7 +106,7 @@ class KeywordValidator(object):
             raise ValueError("Value(s) for " + repr(self.name) + " of " +
                             str(log.PP(value)) + " is not one of " +
                             str(log.PP(self._values)))
-            
+
     def check_header(self, filename, header=None):
         """Extract the value for this Validator's keyname,  either from `header`
         or from `filename`'s header if header is None.   Check the value.
@@ -198,19 +198,29 @@ class KeywordValidator(object):
         uniq_new = new_set.difference(current_set)
         uniq_current = current_set.difference(new_set)
 
+        # Report on any repeated values
+        if len(current_set) != len(current_values):
+            # duplicates found, so report which ones
+            seen = sets.Set()
+            duplicates = []
+            for n in new_values:
+                if n in seen:
+                    duplicates.append(n)
+                else:
+                    seen.add(n)
+            if len(duplicates) > 0:
+                log.warning("The following values were duplicated for column "+
+                            str(self.name)+": \n"+str(log.PP(duplicates)))
         # report how input values compare to current values, if different
         if len(uniq_new) > 0:
-            log.warning("Value(s) for", repr(self.name), "of", log.PP(list(uniq_new)), 
+            log.warning("Value(s) for", repr(self.name), "of", log.PP(list(uniq_new)),
                 "is/are not one of", log.PP(current_values), sep='\n')
             return True
 
         if len(uniq_current) > 0:
-            log.info("These values for "+repr(self.name)+
+            log.warning("These values for "+repr(self.name)+
                     " were not present in new input:\n"+
-                    repr(list(uniq_current)))
-            raise ValueError("These values for "+repr(self.name)+
-                    " were not present in new input:\n"+
-                    repr(list(uniq_current)))
+                    str(log.PP(list(uniq_current))))
         # if no differences, return True
         return True
 
@@ -459,27 +469,40 @@ def certify_reference(fitsname, context=None,
         parkeys = get_rmap_parkeys(fitsname, context)
         dump_multi_key(fitsname, parkeys + provenance_keys)
 
-    mode_checker = None # Initialize mode validation
+    header = data_file.get_header(fitsname)
+
+    certify_simple_parameters(fitsname, context, trap_exceptions, header)
+
+    certify_reference_modes(fitsname, context, trap_exceptions, header)
+
+def certify_simple_parameters(fitsname, context, trap_exceptions, header):
+    """Check non-column parameters."""
     for checker in get_validators(fitsname):
-        # Treat column validations together as a 'mode'
-        if checker._info.keytype == 'C':
-            checker.check(fitsname) # validate values against TPN valid values
-            if mode_checker is None:
-                mode_checker = ModeValidator(checker._info)
-            mode_checker.add_column(checker)
-        else:
+        if checker._info.keytype != 'C':
             # validate other values independently
             try:
-                checker.check(fitsname) # validate against TPN values
+                checker.check(fitsname, header=header) # validate against TPN values
             except Exception, exc:
                 if trap_exceptions:
                     log.error("Checking", repr(checker._info.name), "in",
                               repr(fitsname), ":", str(exc))
                 else:
                     raise
+
+def certify_reference_modes(fitsname, context, trap_exceptions, header):
+    """Check column parameters row-by-row."""
+    mode_checker = None # Initialize mode validation
+    for checker in get_validators(fitsname):
+        # Treat column validations together as a 'mode'
+        if checker._info.keytype == 'C':
+            checker.check(fitsname, header=header) # validate values against TPN valid values
+            if mode_checker is None:
+                mode_checker = ModeValidator(checker._info)
+            mode_checker.add_column(checker)
+
     if mode_checker: # Run validation on all collected modes
         try:
-            mode_checker.check(fitsname,context=context)
+            mode_checker.check(fitsname, context=context, header=header)
         except Exception, exc:
             if trap_exceptions:
                 log.error("Checking", repr(mode_checker.names), "in",
@@ -500,7 +523,7 @@ def dump_multi_key(fitsname, keys):
 
 def interesting_value(value):
     """Return True IFF `value` isn't uninteresting."""
-    if value.strip().lower() in ["",
+    if str(value).strip().lower() in ["",
                                  "*** end of mandatory fields ***",
                                  "*** column names ***",
                                  "*** column formats ***"]:
@@ -508,13 +531,12 @@ def interesting_value(value):
     return True
 
 def get_rmap_parkeys(refname, context):
-    """Determine required parkeys in reference path `refname` according to pipeline 
+    """Determine required parkeys in reference path `refname` according to pipeline
     mapping `context`.
     """
     if context is None:
-        return
+        return []
     try:
-        header = data_file.get_header(refname)
         pmap = rmap.get_cached_mapping(context)
         instrument, filekind = pmap.locate.get_file_properties(refname)
         return pmap.get_imap(instrument).get_rmap(filekind).get_required_parkeys()
@@ -542,16 +564,16 @@ def validate_file_format(fitsname):
         raise IOError
     return VALID_FITS
 
-def certify_context(context, check_references=None, trap_exceptions=False):
+def certify_context(filename, context=None, check_references=None, trap_exceptions=False):
     """Certify `context`.  Unless `shallow` is True,  recursively certify all
     referenced files as well.
     """
-    ctx = rmap.get_cached_mapping(context)
+    ctx = rmap.get_cached_mapping(filename)
     ctx.validate_mapping(trap_exceptions=trap_exceptions)
-    if check_references is None:
+    if not check_references: # Accept None or False
         return
     assert check_references in ["exist", "contents"], \
-        "invalid check_references parameter"
+        "invalid check_references parameter " + repr(check_references)
     references = []
     for ref in ctx.reference_names():
         log.info('Validating reference file: '+ref)
@@ -590,10 +612,12 @@ def certify_files(files, context=None, dump_provenance=False,
     for filename in files:
         n += 1
         bname = os.path.basename(filename)
-        log.info("Certifying", repr(bname)+' ('+str(n)+'/'+str(len(files))+')')
+        print ('#'*40)+'\n#' # Serves as demarkation for each file's report
+        log.info("Certifying", repr(bname)+ ' ('+str(n)+'/'+str(len(files))+')')
         try:
             if is_mapping or rmap.is_mapping(filename):
-                certify_context(filename, check_references=check_references,
+                certify_context(filename, context=context,
+                                check_references=check_references,
                                 trap_exceptions=trap_exceptions)
             else:
                 certify_reference(filename, context=context,
