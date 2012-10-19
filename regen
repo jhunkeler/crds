@@ -34,7 +34,7 @@ echo "Generating contexts"
 (python gen_contexts.py >& gen_contexts.out; grep -E 'error|warn' gen_contexts.out)
 
 echo "Dumping catalog datasets"
-(python cdbs_db.py dumpall;)
+(python db_test.py dumpall;)
 
 # Examine cdbscatalog.dat to generate the maps relating filekinds,
 # CDBS file suffixes, etc.

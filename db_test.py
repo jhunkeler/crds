@@ -249,6 +249,7 @@ def dump(instr, suffix="_headers.pkl", path=DEFAULT_PKL_PATH):
     """Store `ncases` header records taken from DADSOPS for `instr`ument in 
     a pickle file,  optionally sampling randomly from all headers.
     """
+    log.info("Collecting", repr(instr))
     headers = list(cdbs_db.HEADER_GENERATORS[instr].get_headers())
     samples = { h["DATA_SET"] : h for h in headers }
     pickle = path + instr + suffix
@@ -262,7 +263,6 @@ def dumpall(context="hst.pmap", suffix="_headers.pkl", path=DEFAULT_PKL_PATH):
     """
     pmap = rmap.get_cached_mapping(context)
     for instr in pmap.selections.keys():
-        log.info("collecting", repr(instr))
         dump(instr, suffix, path)
     
 class DictTable(object):
@@ -398,11 +398,11 @@ def main():
                 path=DEFAULT_PKL_PATH, profile=profile, inject_errors=inject_errors)
     else:
         log.info("""usage:
-python cdbs_db.py dumpall
-python cdbs_db.py dump <instrument>
-python cdbs_db.py info <reference_file>
-python cdbs_db.py testall
-python cdbs_db.py test [instrument [filekind [dataset]]]
+python db_test.py dumpall
+python db_test.py dump <instrument>
+python db_test.py info <reference_file>
+python db_test.py testall
+python db_test.py test [instrument [filekind [dataset]]]
 """)
         sys.exit(-1)
     sys.exit(0)   # Bypass Python garbage collection if possible.

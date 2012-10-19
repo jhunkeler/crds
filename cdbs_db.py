@@ -12,6 +12,10 @@ import crds.hst
 import crds.hst.parkeys as parkeys
 from collections import OrderedDict
 
+# DATABASE_DSN = "ReffileOpsRepDsn"
+REFFILE_OPS_DSN = "HarpoReffileOpsRepDsn"
+DADSOPS_DSN = "HarpoDadsOpsRepDsn"
+
 """  
 IPPPSSOOT   ---   dataset naming breakdown
 
@@ -91,11 +95,11 @@ class DB(object):
 
     def get_tables(self):
         """Return a list of table names for this database."""
-        return [row.table_name for row in self.cursor.tables()]
+        return [str(row.table_name) for row in self.cursor.tables()]
 
     def get_columns(self, table):
         """Return a list of column names for table."""
-        return [col.column_name for col in self.cursor.columns(table=table)]
+        return [str(col.column_name) for col in self.cursor.columns(table=table)]
 
     def get_column_info(self, table):
         """Return a list/table of column information for this table."""
@@ -151,13 +155,13 @@ def get_password():
 def get_dadsops(user="jmiller"):
     """Cache and return a database connection to DADSOPS."""
     if not hasattr(get_dadsops, "_dadsops"):
-        get_dadsops._dadsops = DB("DadsopsDsn", user, get_password())
+        get_dadsops._dadsops = DB(DADSOPS_DSN, user, get_password())
     return get_dadsops._dadsops
 
 def get_reffile_ops(user="jmiller"):
     """Cache and return a database connection to REFFILE_OPS."""
     if not hasattr(get_reffile_ops, "_reffile_ops"):
-        get_reffile_ops._reffile_ops = DB("ReffileOpsRepDsn", user, get_password())
+        get_reffile_ops._reffile_ops = DB(REFFILE_OPS_DSN, user, get_password())
     return get_reffile_ops._reffile_ops
 
 def get_instrument_db_parkeys(instrument):

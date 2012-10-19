@@ -4,7 +4,8 @@
 # to define the root of a single tree of CRDS mapping and reference cache files.
 
 # Set the CRDS_PATH to the package where rmaps are installed for development
-setenv CRDS_PATH /Users/jmiller/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/crds
+# setenv CRDS_PATH /Users/jmiller/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/crds
+setenv CRDS_PATH /Users/jmiller/work/debug/lib/python2.7/site-packages/crds
 # unsetenv CRDS_PATH
 
 # The URL for the CRDS server used by remote service calls,  
