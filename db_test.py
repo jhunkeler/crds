@@ -12,7 +12,7 @@ import cdbs_db
 
 # import pyodbc  deferred...
 
-from crds import rmap, log
+from crds import rmap, log, pysh
 import crds.hst
 
 import opus_bestref
@@ -137,6 +137,15 @@ def testit(header_spec, context="hst.pmap", datasets=[],
             if old_bestref != new_bestref:
                 mismatches += 1
                 log.error("mismatch:", dataset, instrument, filekind, old_bestref, new_bestref)
+                if log.get_verbose():
+                    try:
+                        reference_info(old_bestref)
+                    except Exception, exc:
+                        log.warning("No info for", repr(new_bestref), ":", str(exc))
+                    try:
+                        reference_info(new_bestref)
+                    except Exception, exc:
+                        log.warning("No info for", repr(new_bestref), ":", str(exc))
                 category = (instrument, filekind, old_bestref, new_bestref)
                 if category not in mismatched:
                     mismatched[category] = set()
@@ -299,8 +308,9 @@ class DictTable(object):
     def width(self):
         return len(self.format % self.get_row(0))-1
         
-def reference_info(reference_filename):
+def reference_info(reference_filename, context="hst.pmap"):
     """Print out the CDBS database information about a reference file."""
+    vstate = log.set_verbose(False)
     instrument, files = cdbs_db.get_reference_info_files(reference_filename)
     if instrument.lower() not in crds.hst.INSTRUMENTS:
         log.info("File " + repr(reference_filename) + " corresponds to unsupported instrument " + repr(instrument))
@@ -318,12 +328,16 @@ def reference_info(reference_filename):
     row_columns += ["comment"]
     row_table = DictTable(rows, row_columns)
 
-    log.info("=" * (row_table.width//2) + " reference " + "=" * (row_table.width//2))
-    log.info(file_table)
-    log.info("-" * row_table.width)
-    log.info("Files rows = ", len(row_table.rows))
-    log.info("-" * row_table.width)
-    log.info(row_table)
+    print("=" * (row_table.width//2) + " reference " + "=" * (row_table.width//2))
+    print(file_table)
+    print("-" * row_table.width)
+    print("Files rows = %d" % len(row_table.rows))
+    print("-" * row_table.width)
+    print(row_table)
+    print("=" * row_table.width)
+    print(("Matches for " + repr(reference_filename) + " in '%s': ") % context)
+    print(pysh.out_err("python -m crds.matches ${context} ${reference_filename}"))
+    log.set_verbose(vstate)
     
 def dataset_info(dataset_filename):
     """Print out the CDBS database information about a dataset file."""
@@ -337,8 +351,8 @@ def dataset_info(dataset_filename):
     row_columns = ["file_name"]
     row_columns += [ key for key in imap.get_required_parkeys() if key in header.keys()]
     row_table = DictTable([header], row_columns)
-    log.info("=" * (row_table.width//2) + " dataset " + "=" * (row_table.width//2))
-    log.info(row_table)
+    print("=" * (row_table.width//2) + " dataset " + "=" * (row_table.width//2))
+    print(row_table)
         
 def info(file):
     try:
@@ -351,9 +365,11 @@ def info(file):
         pass
 
 def main():
+    if len(sys.argv) == 1:
+        sys.argv.append("--help")
     if "--verbose" in sys.argv:
         sys.argv.remove("--verbose")
-        log.set_verbose(60)
+        log.set_verbose(50)
     if "--no-profile" in sys.argv:
         sys.argv.remove("--no-profile")
         profile = False
@@ -390,7 +406,7 @@ def main():
             filekinds = []
         if len(sys.argv) > 4:
             datasets = [d.lower() for d in sys.argv[4].split(",")]
-            log.set_verbose(60)
+            log.set_verbose(80)
             profile = False
         else:
             datasets = []
