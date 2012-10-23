@@ -46,7 +46,7 @@ def main():
             alternates[dataset] = bestrefs
             log.info("Bestrefs for", dataset, "=", bestrefs)
         except Exception, exc:
-            log.error("Exception on dataset", dataset)
+            log.error("Exception on dataset", dataset, ":", str(exc))
     with open(BESTREF_PKL, "w+") as f:
         cPickle.dump(alternates, f)
     log.standard_status()

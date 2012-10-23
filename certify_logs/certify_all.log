@@ -534,10 +534,9 @@ CRDS        : INFO     Validating hst_acs_drkcfile.rmap
 CRDS        : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.4') is an equal weight special case of ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.0|1.4|2.0')  requiring dynamic merging.
 CRDS        : INFO     Validating hst_acs_cfltfile.rmap
 CRDS        : INFO     Validating hst_acs_mdriztab.rmap
-0 errors
-510 warnings
-23 infos
-
+CRDS        : INFO     0 errors
+CRDS        : INFO     510 warnings
+CRDS        : INFO     23 infos
 ======================== cos =========================
 ########################################
 #
@@ -564,17 +563,15 @@ CRDS        : WARNING  Match tuple ('FUV', 'G130M') is an equal weight special c
 CRDS        : WARNING  Match tuple ('FUV', 'G160M') is an equal weight special case of ('FUV', 'G130M|G140L|G160M')  requiring dynamic merging.
 CRDS        : INFO     Validating hst_cos_disptab.rmap
 CRDS        : INFO     Validating hst_cos_walktab.rmap
-0 errors
-3 warnings
-20 infos
-
+CRDS        : INFO     0 errors
+CRDS        : INFO     3 warnings
+CRDS        : INFO     20 infos
 ======================== stis =========================
 ########################################
 #
 CRDS        : INFO     Certifying 'hst_stis.imap' (1/1)
 CRDS        : INFO     Validating hst_stis.imap
 CRDS        : INFO     Validating hst_stis_lfltfile.rmap
-CRDS        : ERROR    invalid mapping: stis lfltfile :  parameter 'CENWAVE' value ='2112.0' is not in ('1173.0', '1200.0', '1218.0', '1222.0', '1234.0', '1271.0', '1272.0', '1307.0', '1321.0', '1343.0', '1371.0', '1380.0', '1387.0', '1400.0', '1416.0', '1420.0', '1425.0', '1453.0', '1470.0', '1489.0', '1518.0', '1526.0', '1540.0', '1550.0', '1562.0', '1567.0', '1575.0', '1598.0', '1616.0', '1640.0', '1665.0', '1687.0', '1713.0', '1714.0', '1763.0', '1769.0', '1813.0', '1851.0', '1854.0', '1863.0', '1884.0', '1913.0', '1933.0', '1963.0', '1978.0', '1995.0', '2013.0', '2014.0', '2063.0', '2095.0', '2113.0', '2124.0', '2125.0', '2135.0', '2163.0', '2176.0', '2213.0', '2257.0', '2263.0', '2269.0', '2276.0', '2313.0', '2338.0', '2363.0', '2375.0', '2376.0', '2413.0', '2415.0', '2416.0', '2419.0', '2463.0', '2499.0', '2513.0', '2557.0', '2561.0', '2563.0', '2579.0', '2600.0', '2613.0', '2659.0', '2663.0', '2697.0', '2707.0', '2713.0', '2739.0', '2762.0', '2794.0', '2800.0', '2812.0', '2818.0', '2828.0', '2836.0', '2862.0', '2898.0', '2912.0', '2962.0', '2976.0', '2977.0', '3012.0', '3055.0', '3115.0', '3165.0', '3305.0', '3423.0', '3680.0', '3843.0', '3936.0', '4194.0', '4300.0', '4451.0', '4706.0', '4781.0', '4961.0', '5093.0', '5216.0', '5471.0', '5734.0', '6094.0', '6252.0', '6581.0', '6768.0', '7283.0', '7751.0', '7795.0', '8311.0', '8561.0', '8825.0', '8975.0', '9286.0', '9336.0', '9806.0', '9851.0', '10363.0', '1232.0', '1269.0', '1305.0', '1341.0', '1378.0', '1414.0', '1451.0', '1487.0', '1523.0', '1560.0', '1587.0', '1760.0', '2010.0', '2261.0', '2511.0', '2760.0', '3010.0', '1975.0', '2703.0', '1597.0', '1810.0', '1860.0', '1910.0', '1960.0', '2060.0', '2110.0', '2160.0', '2210.0', '2310.0', '2360.0', '2410.0', '2460.0', '2560.0', '2610.0', '2660.0', '2710.0', '2810.0', '2860.0', '2910.0', '2960.0', '2122.0', '2268.0', '2414.0', '2560.0', '-999.0')
 CRDS        : INFO     Validating hst_stis_mofftab.rmap
 CRDS        : INFO     Validating hst_stis_halotab.rmap
 CRDS        : INFO     Validating hst_stis_riptab.rmap
@@ -654,10 +651,9 @@ CRDS        : INFO     Validating hst_stis_ccdtab.rmap
 CRDS        : INFO     Validating hst_stis_apdestab.rmap
 CRDS        : INFO     Validating hst_stis_apertab.rmap
 CRDS        : INFO     Validating hst_stis_tdctab.rmap
-1 errors
-49 warnings
-33 infos
-
+CRDS        : INFO     0 errors
+CRDS        : INFO     49 warnings
+CRDS        : INFO     33 infos
 ======================== wfc3 =========================
 ########################################
 #
@@ -952,12 +948,10 @@ CRDS        : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ906N'
 CRDS        : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ924N', '1.0', '1.0') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR|F200LP|F218W|F225W|F275W|F280N|F300X|F336W|F343N|F350LP|F373N|F390M|F390W|F395N|F410M|F438W|F467M|F469N|F475W|F475X|F487N|F502N|F547M|F555W|F588N|F600LP|F606W|F621M|F625W|F631N|F645N|F656N|F657N|F658N|F665N|F673N|F680N|F689M|F763M|F775W|F814W|F845M|F850LP|F953N|FQ232N|FQ243N|FQ378N|FQ387N|FQ422M|FQ436N|FQ437N|FQ492N|FQ508N|FQ575N|FQ619N|FQ634N|FQ672N|FQ674N|FQ727N|FQ750N|FQ889N|FQ906N|FQ924N|FQ937N', '1.0', '1.0')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ937N', '1.0', '1.0') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR|F200LP|F218W|F225W|F275W|F280N|F300X|F336W|F343N|F350LP|F373N|F390M|F390W|F395N|F410M|F438W|F467M|F469N|F475W|F475X|F487N|F502N|F547M|F555W|F588N|F600LP|F606W|F621M|F625W|F631N|F645N|F656N|F657N|F658N|F665N|F673N|F680N|F689M|F763M|F775W|F814W|F845M|F850LP|F953N|FQ232N|FQ243N|FQ378N|FQ387N|FQ422M|FQ436N|FQ437N|FQ492N|FQ508N|FQ575N|FQ619N|FQ634N|FQ672N|FQ674N|FQ727N|FQ750N|FQ889N|FQ906N|FQ924N|FQ937N', '1.0', '1.0')  requiring dynamic merging.
 CRDS        : INFO     Validating hst_wfc3_flshfile.rmap
-CRDS        : ERROR    invalid mapping: wfc3 flshfile :  parameter 'FLASHCUR' value ='NONE' is not in ('LOW', 'MED', 'HIGH')
 CRDS        : INFO     Validating hst_wfc3_mdriztab.rmap
-1 errors
-278 warnings
-14 infos
-
+CRDS        : INFO     0 errors
+CRDS        : INFO     278 warnings
+CRDS        : INFO     14 infos
 ======================== nicmos =========================
 ########################################
 #
@@ -983,10 +977,9 @@ CRDS        : WARNING  Match tuple ('3.0', 'FAST', '1.0') is an equal weight spe
 CRDS        : INFO     Validating hst_nicmos_saacntab.rmap
 CRDS        : INFO     Validating hst_nicmos_pmskfile.rmap
 CRDS        : INFO     Validating hst_nicmos_zprattab.rmap
-0 errors
-3 warnings
-19 infos
-
+CRDS        : INFO     0 errors
+CRDS        : INFO     3 warnings
+CRDS        : INFO     19 infos
 ======================== wfpc2 =========================
 ########################################
 #
@@ -995,7 +988,27 @@ CRDS        : INFO     Validating hst_wfpc2.imap
 CRDS        : INFO     Validating hst_wfpc2_offtab.rmap
 CRDS        : INFO     Validating hst_wfpc2_flatfile.rmap
 CRDS        : WARNING  Match Parameter  'LRFWAVE'  is unchecked.
-CRDS        : ERROR    invalid mapping: wfpc2 flatfile :  parameter 'IMAGETYP' value ='EXT' is not in ('SPECIAL', 'CDBS')
+CRDS        : WARNING  Match tuple ('FULL', '15.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '15.0|28.0|31.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '15.0', '53.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '15.0|31.0', '53.0|54.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '15.0', '54.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '15.0|31.0', '53.0|54.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '18.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '18.0|24.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '18.0', '53.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '18.0|25.0', '53.0|54.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '18.0', '54.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '18.0|25.0', '53.0|54.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '18.0', '55.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '18.0|25.0', '53.0|54.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '2.0', '4.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '2.0', '4.0|51.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '2.0', '51.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '2.0', '4.0|51.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '24.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '18.0|24.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '25.0', '53.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '18.0|25.0', '53.0|54.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '25.0', '54.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '18.0|25.0', '53.0|54.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '25.0', '55.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '18.0|25.0', '53.0|54.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '28.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '15.0|28.0|31.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '31.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '15.0|28.0|31.0', '48.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '31.0', '53.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '15.0|31.0', '53.0|54.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '31.0', '54.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '15.0|31.0', '53.0|54.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '34.0', '53.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '34.0', '53.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '34.0', '55.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '34.0', '53.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '4.0', '5.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '4.0', '5.0|7.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
+CRDS        : WARNING  Match tuple ('FULL', '4.0', '7.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '4.0', '5.0|7.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS        : INFO     Validating hst_wfpc2_idctab.rmap
 CRDS        : INFO     Validating hst_wfpc2_darkfile.rmap
 CRDS        : INFO     Validating hst_wfpc2_biasfile.rmap
@@ -1004,7 +1017,6 @@ CRDS        : INFO     Validating hst_wfpc2_wf4tfile.rmap
 CRDS        : INFO     Validating hst_wfpc2_atodfile.rmap
 CRDS        : INFO     Validating hst_wfpc2_maskfile.rmap
 CRDS        : INFO     Validating hst_wfpc2_shadfile.rmap
-1 errors
-1 warnings
-12 infos
-
+CRDS        : INFO     0 errors
+CRDS        : INFO     22 warnings
+CRDS        : INFO     12 infos

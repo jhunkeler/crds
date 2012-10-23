@@ -12,10 +12,10 @@ def get_mismatched_objects(filename="testall.err"):
     objects = []
     for line in lines("grep 'Datasets:' ${filename}"):
         words = line.strip().split()
-        instrument = words[1]
-        filekind = words[2]
-        count = int(words[3])
-        datasets = words[4:]
+        instrument = words[4]
+        filekind = words[5]
+        count = int(words[6])
+        datasets = words[7:]
         objects.append((count, datasets))
     return objects
 
