@@ -115,6 +115,8 @@ and {file_table}.reference_file_type = '{reference_file_type}'
             continue
         if condition:
             rowd = utils.condition_header(rowd)
+        # log.info("rowdict:", rowd)
+        rowd = parkeys.evaluate_parkey_relevance(instrument, kind, rowd)
         row_dicts.append(rowd)
     return row_dicts    
 

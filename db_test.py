@@ -134,6 +134,10 @@ def testit(header_spec, context="hst.pmap", datasets=[],
                 sys.exc_clear()
                 continue
 
+            if "n/a" in new_bestref.lower():
+                log.warning("N/A mismatch:", dataset, instrument, filekind, old_bestref, new_bestref)
+                continue
+
             if old_bestref != new_bestref:
                 mismatches += 1
                 log.error("mismatch:", dataset, instrument, filekind, old_bestref, new_bestref)
@@ -143,7 +147,10 @@ def testit(header_spec, context="hst.pmap", datasets=[],
                     except Exception, exc:
                         log.warning("No info for", repr(new_bestref), ":", str(exc))
                     try:
-                        reference_info(new_bestref)
+                        if "NOT FOUND" not in new_bestref:
+                            reference_info(new_bestref)
+                        else:
+                            log.warning("No info", new_bestref)
                     except Exception, exc:
                         log.warning("No info for", repr(new_bestref), ":", str(exc))
                 category = (instrument, filekind, old_bestref, new_bestref)

@@ -6,3 +6,7 @@ do
 	python -m crds.certify --verbose 50 hst_${instr}.imap -t rmap $*
 done | tee certify_all.log
 
+echo "============================================================"
+echo "==================== summary ==============================="
+echo "============================================================"
+grep -E 'error|warn|Certifying' certify_all.log
