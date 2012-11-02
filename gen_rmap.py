@@ -8,6 +8,7 @@ import cProfile
 import glob
 import re
 import pprint
+import datetime
 
 import cdbs_db
 
@@ -49,8 +50,22 @@ def generate_rmap(instrument, filekind):
     
     write_rmap("hst", instrument, filekind, kind_map)
 
-def get_row_dicts(instrument, kind, condition=True):
-    """get_row_dicts() dumps the CDBS "row" table for `instrument` and
+def get_row_dicts(instrument, filekind, condition=True):
+    rowcache = "../hst_refcache/" + instrument + "_" + filekind + ".rows"
+    if os.path.exists(rowcache):
+        log.info("Loading cached rowdicts", repr(rowcache))
+        rowdicts = eval(open(rowcache).read(), globals(), locals())
+        log.info("Loaded rowdicts from", repr(rowcache))
+        return rowdicts
+    rowdicts = gen_row_dicts(instrument, filekind, condition)
+    log.info("Caching rowdicts at", repr(rowcache))
+    utils.ensure_dir_exists(rowcache)
+    open(rowcache, "w+").write(pprint.pformat(rowdicts))
+    log.info("Caching rowdicts done at", repr(rowcache))
+    return rowdicts
+
+def gen_row_dicts(instrument, kind, condition=True):
+    """gen_row_dicts() dumps the CDBS "row" table for `instrument` and
     file`kind`.  It is complicated because not all match parameters
     are in the database (hence extra_parkeys) and sometimes the
     database name for a key differs from the FITS name of a key.
@@ -63,7 +78,7 @@ def get_row_dicts(instrument, kind, condition=True):
     can once again be used in match relations but actual values for the
     extra keys must be added to the rmap through another mechanism such
     as an rmap customization filter.   By default,  extra parkeys are
-    assigned the value "*" in all match tuples.
+    assigned the value "N/A" in all match tuples.
     """
     db_parkeys = list(parkeys.get_db_parkeys(instrument, kind))
     extra_parkeys = list(parkeys.get_extra_keys(instrument, kind))
@@ -111,7 +126,8 @@ and {file_table}.reference_file_type = '{reference_file_type}'
         rowd["file_name"] = rowd["file_name"].lower()
         rowd2 = replace_unexpanded_wildcards(instrument, rowd)
         if rowd2 != rowd:
-            log.warning("Deleting row with unexpanded wildcards:", repr(rowd), "expands to", repr(rowd2))
+            log.warning("Deleting row with unexpanded wildcards:", repr(rowd), 
+                        "expands to", repr(rowd2))
             continue
         if condition:
             rowd = utils.condition_header(rowd)
@@ -179,6 +195,16 @@ def dicts_to_kind_map(instr, kind, row_dicts):
 # =======================================================================
 
 def unexplode_kmap(kmap):
+    """unexplode_kmap works by creating what is essentially the inverse of an
+    rmap,  mapping single Filemaps's (useafter + filename) onto a list of
+    the discrete match tuples mapping to that file.  (Strictly speaking, the final 
+    succinct pattern-oriented match tuples are being created *now* by clustering
+    discrete cases.   Ultimately,  reference files can be found under more 
+    than one match tuple after clustering...  because there's no guarantee
+    that the discrete cases for a reference file in the CDBS database actually
+    enumerate a full pararmeter cross-product...  consequently there may be
+    some "fractional" tuples used to cover smaller partitions of cases.)
+    """
     useafters = {}
     for match_tuple, useafter_files in kmap.items():
         for use in useafter_files:
@@ -188,8 +214,9 @@ def unexplode_kmap(kmap):
             useafters[use].append(match_tuple)
     matches_view = {}
     for use, matches in useafters.items():
-        cluster_key = tuple(sorted(matches))
+        cluster_key = sorted(set(matches))
         collapsed = roll_up_n_vars(cluster_key)
+        log.info("Rolled up", log.PP(cluster_key), "as", collapsed)
         for key in collapsed:
             if key not in matches_view:
                 matches_view[key] = []
@@ -342,8 +369,8 @@ def replace_full_sets_with_star(instrument, filekind, kmap):
 # =======================================================================
 
 REFTYPE_FILTER = {
-    ("wfc3", "biasfile") : crds.hst.wfc3.wfc3_biasfile_filter,
-    ("wfpc2", "flatfile") : crds.hst.wfpc2.wfpc2_flatfile_filter,
+    # ("wfc3", "biasfile") : crds.hst.wfc3.wfc3_biasfile_filter,
+    # ("wfpc2", "flatfile") : crds.hst.wfpc2.wfpc2_flatfile_filter,
     # ("acs",  "pfltfile") : crds.hst.acs.acs_pfltfile_filter
 }
 

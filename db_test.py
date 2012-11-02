@@ -322,7 +322,7 @@ def reference_info(reference_filename, context="hst.pmap"):
     if instrument.lower() not in crds.hst.INSTRUMENTS:
         log.info("File " + repr(reference_filename) + " corresponds to unsupported instrument " + repr(instrument))
     else:
-        log.info("File " + repr(reference_filename) + "corresponds to instrument " + repr(instrument))
+        log.info("File " + repr(reference_filename) + " corresponds to instrument " + repr(instrument))
     if not files:
         raise LookupError("Can't find reference " + repr(reference_filename))
     file_columns = "file_name,reject_flag,opus_flag,useafter_date,archive_date,general_availability_date,comment".split(",")
@@ -343,7 +343,8 @@ def reference_info(reference_filename, context="hst.pmap"):
     print(row_table)
     print("=" * row_table.width)
     print(("Matches for " + repr(reference_filename) + " in '%s': ") % context)
-    print(pysh.out_err("python -m crds.matches ${context} ${reference_filename}"))
+    basename = os.path.basename(reference_filename)
+    print(pysh.out_err("python -m crds.matches ${context} ${basename}"))
     log.set_verbose(vstate)
     
 def dataset_info(dataset_filename):
@@ -412,7 +413,7 @@ def main():
         else:
             filekinds = []
         if len(sys.argv) > 4:
-            datasets = [d.lower() for d in sys.argv[4].split(",")]
+            datasets = [d.lower() for d in sys.argv[4:]]
             log.set_verbose(80)
             profile = False
         else:
@@ -425,7 +426,7 @@ python db_test.py dumpall
 python db_test.py dump <instrument>
 python db_test.py info <reference_file>
 python db_test.py testall
-python db_test.py test [instrument [filekind [dataset]]]
+python db_test.py test [instrument [filekind [dataset...]]]
 """)
         sys.exit(-1)
     sys.exit(0)   # Bypass Python garbage collection if possible.
