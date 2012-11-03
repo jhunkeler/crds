@@ -216,7 +216,12 @@ def unexplode_kmap(kmap):
     for use, matches in useafters.items():
         cluster_key = sorted(set(matches))
         collapsed = roll_up_n_vars(cluster_key)
-        log.info("Rolled up", log.PP(cluster_key), "as", collapsed)
+        original_len = len(expand_all_ors(cluster_key))
+        exploded_cluster_len = len(expand_all_ors(collapsed))
+        if original_len != exploded_cluster_len:
+            log.info("Clustering", len(cluster_key), "discrete choices.")
+            log.info("Exploded cluster has", exploded_cluster_len, "discrete choices.")
+            log.info("Rolled up", log.PP(cluster_key), "as", collapsed)
         for key in collapsed:
             if key not in matches_view:
                 matches_view[key] = []
@@ -248,37 +253,27 @@ def roll_up_n_vars(matches):
     if not matches:
         return []
     for i in range(len(matches[0])):
-        matches = roll_up_one_var(original_matches, matches)
+        matches = roll_up_one_var(original_matches, matches, i)
+    assert set(original_matches) == set(expand_all_ors(matches)), \
+        "Clustering error for " + repr(original_matches) + " as " + repr(matches)
     return matches
 
-def roll_up_one_var(original_matches, matches):
+def roll_up_one_var(original_matches, matches, i):
     """Given a list of match tuples `matches`,  or-together any tuples which
     differ by only a single variable.
     """
-    remainder = list(matches[:])
+    remainder = matches[:]
     rolled = []
     while remainder:
-        match = remainder.pop()
-        combined, remainder = _roll_up_one_var(original_matches, match, remainder)
+        combined = remainder.pop()
+        for match in remainder[:]:
+            if differ_by_one(combined, match, i):
+                candidate_fold = fold_one(combined, match)
+                if verify_completeness(candidate_fold, original_matches):
+                    combined = candidate_fold
+                    remainder.remove(match)
         rolled.append(combined)
     return rolled
-
-def _roll_up_one_var(original_matches, match, matches):
-    """Combine tuple `match` with every tuple in `matches` which differs by only
-    a single variable.   After each fold,  verify that the expansion of the folded
-    tuple is fully covered by the `origninal_matches` cases.
-    
-    Returns  (folded_tuple,  unfolded_matches)
-    """
-    remainder = matches[:]
-    combined = match
-    for match2 in matches:
-        if differ_by_one(combined, match2):
-            candidate_fold = fold_one(combined, match2)
-            if verify_completeness(candidate_fold, original_matches):
-                combined = candidate_fold
-                remainder.remove(match2)
-    return combined, remainder
 
 def verify_completeness(candidate_fold, original_matches):
     """The folding algorithm is over aggressive.   This check ensures that the
@@ -297,7 +292,7 @@ def expand_all_ors(matches):
     result = []
     for match in matches:
         result.extend(expand_ors(match))
-    return result
+    return sorted(set(result))
 
 def expand_ors(match):
     """For a single match tuple containing or'ed items,  explode into the list
@@ -313,8 +308,16 @@ def expand_ors(match):
                 expanded.append((val,) + nested)
         return expanded
                   
-def differ_by_one(match1, match2):
-    return len(set(match1) - set(match2)) == 1
+def differ_by_one(match1, match2, i):
+    """Return True IFF `match1` and `match2` differ only at index `i`."""
+    for j in range(len(match1)):
+        if j == i:
+            if match1[i] == match2[i]:
+                return False
+        else:
+            if match1[j] != match2[j]:
+                return False
+    return True
 
 def fold_one(match1, match2):
     """Combined two match tuples which differ in only a single variable."""
