@@ -10,6 +10,7 @@ source env.csh
 
 # Regenerate the CDBS reference file map, basically a cache of the 
 # /grp/hst/cdbs dir listing to use to find CDBS file paths fast.
+echo "Dumping CDBS file locations"
 (cd ../CRDS/hst; python locate.py)
 
 # Reparse the CDBS .rule files into <instrument>_expansion.dat files
@@ -32,9 +33,6 @@ echo "Generating rmaps"
 (./gen_rmaps >& gen_rmaps.out; grep -E 'error|warn' gen_rmaps.out)
 echo "Generating contexts"
 (python gen_contexts.py >& gen_contexts.out; grep -E 'error|warn' gen_contexts.out)
-
-echo "Dumping catalog datasets"
-(python db_test.py dumpall;)
 
 # Examine cdbscatalog.dat to generate the maps relating filekinds,
 # CDBS file suffixes, etc.

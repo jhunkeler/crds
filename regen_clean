@@ -2,7 +2,14 @@
 
 source env.csh
 
-rm -f ../datasets/opus_bestref.pkl  opus_bestrefs.err
+echo "Clearing reference database caches"
+rm -f ../hst_refcache/*
+
+echo "Clearing dataset database caches"
+rm -f ../datasets/*.pkl  opus_bestrefs.err
+
+echo "Dumping catalog datasets"
+(python db_test.py dumpall;)
 
 ./regen |& tee regen.out
 
