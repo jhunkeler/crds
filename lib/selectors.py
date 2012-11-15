@@ -429,8 +429,15 @@ class Selector(object):
 
 # ==============================================================================
 
-def match_superset(tuple1, tuple2, match_na=True):
-    """Return True IFF match tuple1 is equal to or more general than tuple2.
+def match_superset(reference_tuple, rmap_tuple, match_na=False):
+    """Return True IFF match reference_tuple is equal to or more general than
+    rmap_tuple.
+    
+     A specific reference_tuple should match an rmap_tuple N/A.   
+     
+    A specific rmap_tuple should not match
+    a reference_tuple N/A since it means the reference file isn't guaranteeing
+    the condition of the rmap.
     
     >>> match_superset(('1','2'),  ('1','2'))
     True
@@ -447,7 +454,7 @@ def match_superset(tuple1, tuple2, match_na=True):
     >>> match_superset(('1','2'),  ('1','3'))
     False
     >>> match_superset(('1','N/A'), ('1','3'))
-    True
+    False
     >>> match_superset(('1','3'), ('1','N/A'))  # controversial
     True
     >>> match_superset(('1','*'), ('1','N/A'))
@@ -459,14 +466,18 @@ def match_superset(tuple1, tuple2, match_na=True):
     >>> match_superset(('A|B|C','1'), ('A|B|C|D', '1'))
     False
     """
-    for i in range(len(tuple1)):
-        v1 = tuple1[i]
-        v2 = tuple2[i]
+    for i in range(len(reference_tuple)):
+        v1 = reference_tuple[i]
+        v2 = rmap_tuple[i]
         if v1 == v2:
             continue
         if v1 == "*":
             continue
-        if match_na and "N/A" in [v1, v2]:
+        if v2 == "N/A":
+            continue
+        if v1=="N/A" and v2=="*":
+            continue
+        if match_na and v1 == "N/A":
             continue
         if v2 == "*":
             return False

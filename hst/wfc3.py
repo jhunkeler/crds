@@ -48,8 +48,6 @@ source values no longer appear in the rmaps.
 
 """
 
-
-
 header_substitutions = {
     "APERTURE" : {
         "FULLFRAME_4AMP" : (
@@ -85,7 +83,7 @@ header_substitutions = {
     },
 }
 
-header_additions = [
+biasfile_header_additions = [
     ("substitutions", header_substitutions),
 ]
 
@@ -93,12 +91,19 @@ header_additions = [
 
 """example of adding a hard-coded rmap clause in HST:"""
 
-def wfc3_biasfile_filter(kmap):
+# def wfc3_biasfile_filter(kmap):
 #     log.info("Hacking WFC3 Biasfile  APERTURE macros.   Adding t6i1733ei_bia.fits special case.")
 #     kmap[('UVIS', 'G280_AMPS', 1.5, 1.0, 1.0, 'G280-REF', 'T')] = \
 #       [rmap.Filemap(date='1990-01-01 00:00:00', file='t6i1733ei_bia.fits',
 #               comment='Placeholder file. All values set to zero.--------------------------, 12047, Jun 18 2009 05:36PM')]
-    return kmap, header_additions
+#    return kmap, []   # biasfile_header_additions
+
+def wfc3_flshfile_filter(kmap):
+    kmap[('N/A', 'N/A', 'N/A', 'N/A', 'ZERO|ZEROCUR|OFF', 'N/A')] = [
+        rmap.Filemap(date='1990-01-01 00:00:00', file='w7j1705di_fls.fits', 
+                     comment='Hack to support matching CDBS irrelevant answers to irrelevant FLASHCUR cases.'),
+        ]
+    return kmap, []
 
 # =========================================================================
 """Example of mutating dataset header values prior to match based on header."""

@@ -84,41 +84,39 @@ def do_refactoring(context, new_rmap_path, old_rmap_path, new_refpath, old_refpa
     actions = refactor.rmap_insert_references(old_rmap_path, new_rmap_path, [new_refpath])
 
     as_expected = True
-    if expected_action_type == "replace":
+    if not actions:
+        log.warning("No actions for", os.path.basename(old_rmap_path), new_refpath)
+        as_expected = False
+    elif expected_action_type == "replace":
          expected_matches = matches.find_match_tuples(context, os.path.basename(old_refpath))    
          log.info("Expected matches:", expected_matches)
          for action in actions:
-             log.info(action)
-             if action.action != "replace":
-                 log.warning("Unexpected action:", action.action.upper())
+             if action.rmap_match_tuple not in expected_matches or action.action != "replace":
+                 log.warning("Unexpected action:", action)
                  as_expected = False
-             for expected in expected_matches:
-                 if selectors.match_equivalent(action.rmap_match_tuple, expected):
-                     break
              else:
-                 if action.action != "replace":
-                     log.info("New match at", action.rmap_match_tuple)
-                     as_expected = False
+                 log.info(action)
          for expected in expected_matches:
-             for action in actions:
-                 if selectors.match_equivalent(action.rmap_match_tuple, expected):
-                     break
-             else:
-                 log.info("Missing expected match at", expected)
-                 as_expected = False    
-    else:
+            if expected not in [ action.rmap_match_tuple for action in actions ]:
+                log.error("Missing expected match", expected)
+                as_expected = False
+    else:  # insert
         for action in actions:
             if action.action != "insert":
                 log.warning("Unexpected action:", action)
                 as_expected = False
             else:
                 log.info(action)
-        if not actions:
-            expected_matches = matches.find_match_tuples(context, os.path.basename(new_refpath))    
-            log.warning("No actions for", new_refpath, "matches", expected_matches)
-            as_expected = False
 
     if not as_expected or verbosity:
+        generation_info = pysh.out_err("grep %s ../../hst_gentools/gen_rmaps.out" % 
+                                       os.path.basename(old_refpath))
+        generation_info += pysh.out_err("grep %s ../../hst_gentools/gen_rmaps.out" % 
+                                        os.path.basename(new_refpath))
+        if generation_info.strip():
+            separator()
+            log.warning("rmap generation anomalies in gen_rmaps.out:")
+            log.write(generation_info.strip())
         pysh.sh("rm -f ${new_rmap_path}")
         actions = refactor.rmap_insert_references(old_rmap_path, new_rmap_path, [new_refpath])
         separator()
@@ -149,7 +147,7 @@ if __name__ == "__main__":
        
     if "--verbose" in sys.argv:
         sys.argv.remove("--verbose")
-        log.set_verbose()
+        log.set_verbose(55)
 
     if len(sys.argv) < 3:
         log.write("usage: %s  [--verbose] [--replace] <context>  @file_list | <reference_file>..." % sys.argv[0])
