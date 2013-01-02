@@ -14,7 +14,7 @@ BESTREF_PKL = "../datasets/opus_bestref.pkl"
 
 def remote_bestrefs_output(dataset):
     dataset = dataset.lower()
-    lines = pysh.lines("ssh ${DMS_HOST} bestref.py -m dball -d ${dataset}")
+    lines = pysh.lines("ssh ${DMS_HOST} 'source /home/jmiller/overrides/defs/opus_login.csh; bestref.py -m dball -d ${dataset}'")
     return lines
 
 def opus_bestrefs(dataset):
