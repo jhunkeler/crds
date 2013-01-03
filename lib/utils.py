@@ -131,6 +131,13 @@ def checksum(pathname):
     return sum.hexdigest()
 
 
+def str_checksum(str):
+    """Return the CRDS hexdigest for small strings.""" 
+    sum = sha.new()
+    sum.update(str)
+    return sum.hexdigest()
+
+
 
 # ===================================================================
 
@@ -295,7 +302,7 @@ def reference_to_instrument(filename):
     except KeyError:
         header = data_file.get_conditioned_header(filename, needed_keys=["META.INSTRUMENT.TYPE"])
         return header["META.INSTRUMENT.TYPE"]
-
+    
 def reference_to_locator(filename):
     """Given reference file `filename`,  return the associated observatory 
     locator module.
@@ -308,3 +315,9 @@ def reference_to_observatory(filename):
     """
     return instrument_to_observatory(reference_to_instrument(filename))
 
+
+# These functions should actually be general,  working on both references and
+# dataset files.
+file_to_instrument = reference_to_instrument
+file_to_locator = reference_to_locator
+file_to_observatory = reference_to_observatory
