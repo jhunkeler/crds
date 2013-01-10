@@ -120,12 +120,26 @@ class BadValueError(crds.CrdsError):
 class UseAfterError(crds.CrdsError):
     """None of the dates in the RMAP precedes the processing date.
     """
-
-# ==============================================================================
+    
+class ModificationError(crds.CrdsError):
+    """Failed attempt to modify rmap, e.g. replacement vs. addition.
+    """
 
 class ValidationError(crds.CrdsError):
     """Some Selector key did not match the set of legal values.
     """
+
+# ==============================================================================
+
+def dict_wo_dups(items):
+    d = {}
+    for key, value in items:
+        if key in d:
+            raise ValueError("Key " + repr(key) + " appears more than once ")
+        d[key] = value
+    return d
+
+# ==============================================================================
 
 class Selector(object):
     """Baseclass for CRDS file selectors defining the basic protocol
@@ -150,7 +164,7 @@ class Selector(object):
         assert isinstance(parameters, (list, tuple)), \
             "parameters should be a list or tuple of header keys"
         self._parameters = tuple(parameters)
-        if selections:
+        if selections is not None:
             assert isinstance(selections, dict),  \
                 "selections should be a dictionary { key: selection, ... }."
             self._raw_selections = sorted(selections.items())
@@ -161,7 +175,7 @@ class Selector(object):
             # for uses beyond that capacity and the resulting rmap
             # is really only good for a single lookup operation.
             assert isinstance(_selections, list),  \
-                "_selections should be a list of key,value tuples."
+                "_selections should be a list of key,value tuples, not: " + repr(_selections)
             self._raw_selections = _selections
             self._selections = _selections
         self._rmap_header = rmap_header or {}
@@ -172,6 +186,8 @@ class Selector(object):
         which all the values have passed through self.condition_key().
         """
         result = [(self.condition_key(key), value) for (key,value) in selections.items()]
+        if len(result) != len(dict(result).keys()):    # fast check
+            dict_wo_dups(result)  # slow generate more informative message
         return sorted(result)
     
     @classmethod
@@ -406,15 +422,14 @@ class Selector(object):
             return p2 + (" ".join(args),)
         if self.__class__ != other.__class__:
             return [msg(None, "different classes", 
-                    repr(self.short_name), ":",
-                    repr(other.short_name))]
+                        repr(self.short_name), ":", repr(other.short_name))]
         if self._parameters != other._parameters:
             return [msg(None, "different parameter lists ", 
-                    repr(self._parameters), ":", 
-                    repr(other._parameters))]
+                    repr(self._parameters), ":", repr(other._parameters))]
         differences = []
         other_keys = other.keys()
-        other_map = dict(other._selections)
+        self_keys = self.keys()
+        other_map = dict_wo_dups(other._selections)
         # Warning:  the message formats here are important to client code.
         # don't change without doing a survey. e.g. replaced blank1 with blank2.
         for key, choice in self._selections:
@@ -423,12 +438,10 @@ class Selector(object):
             else:
                 other_choice = other_map[key]
                 if isinstance(choice, Selector):
-                    differences.extend(choice.difference(
-                        other_choice, path + (key,)))
+                    differences.extend(choice.difference(other_choice, path + (key,)))
                 elif choice != other_choice:
-                    differences.append(msg(key, "replaced", repr(choice), 
-                                           "with", repr(other_choice)))
-        self_keys = self.keys()
+                    differences.append(
+                        msg(key, "replaced", repr(choice), "with", repr(other_choice)))
         for key in other_keys:
             if key not in self_keys:
                 other_choice = other_map[key]
@@ -439,17 +452,9 @@ class Selector(object):
         raise AmbiguousMatchError("More than one match was found at the same weight and " +
             self.short_name + " does not support merging.")
         
-    @property
-    def class_list(self):
-        """Return the pattern of selector nesting for this rmap."""
-        if "classes" in self._rmap_header:
-            return tuple(self._rmap_header["classes"])
-        elif self._rmap_header["observatory"] == "jwst":
-            return ("Match",)
-        else:  # nominally HST / CDBS
-            return ("Match", "UseAfter")
+    # ------------------------------------------------------------------------
 
-    def insert(self, header, value, valid_values_map):
+    def modify(self, header, value, valid_values_map):
         """Based on `header` recursively insert `value` into the Selector hierarchy,
         either adding it as a new choice or replacing the existing choice with 
         the same parameter set.   Add nested Selectors as required.
@@ -460,64 +465,114 @@ class Selector(object):
         at all levels of the hierarchy.
         
         This call defines the starting point for parkeys and classes,  whereas
-        _insert has gradually diminishing lists passed down to nested Selectors.
+        _modify has diminishing lists passed down to nested Selectors.
         """
-        self._insert(header, value, self._rmap_header["parkey"], self.class_list, valid_values_map)
+        self._modify(header, value, self._rmap_header["parkey"], self.class_list, valid_values_map)
 
-    def _insert(self, header, value, parkey, classes, valid_values_map):
-        """Execute the insertion,  popping off parkeys and classes on the way down."""
-        key = self.get_key(header, parkey[0])
-        self._validate_key(self.condition_key(key), valid_values_map)
-        for i, (old_key, old_value) in enumerate(self._raw_selections):
-            if key == old_key:
-                if isinstance(old_value, Selector):
-                    log.verbose("insert found", repr(key),"adding to", repr(old_value))
-                    old_value._insert(header, value, parkey[1:], classes[1:], valid_values_map)
-                    return
-                else:
-                    log.verbose("insert found", repr(key), "as primitive", repr(old_value), "replacing with", repr(value))
-                    self._raw_selections[i] = (old_key, value)
-                    break
-        else:
-            if parkey:
-                log.verbose("insert couldn't find", repr(key),"adding new selector.")
-                new_value = self.create_nested(header, value, parkey[1:], classes[1:])
-            else:
-                log.verbose("insert couldn't find", repr(key),"adding new value.")
-                new_value = value
-            self._raw_selections.append((key, new_value))
-        self.__init__(self._parameters, dict(self._raw_selections), rmap_header=self._rmap_header)
+    @property
+    def class_list(self):
+        """Return the pattern of selector nesting for this rmap."""
+        if "classes" in self._rmap_header:
+            return tuple(self._rmap_header["classes"])
+        elif self._rmap_header["observatory"] == "jwst":
+            return ("Match",)
+        else:  # nominally HST / CDBS
+            return ("Match", "UseAfter")
         
-    def get_key(self, header, parkeys):
-        """Make a typical key from `header` corresponding to `parkeys`,  one 
-        member of an rmap parkey tuple.
-        """
-        key = tuple([header[par] for par in parkeys])
-        if len(key) == 1:
-            key = key[0]
-        return key
-
-    def create_nested(self, header, value, parkey, classes):
-        """Based on reference file `header`,  a portion of the `parkey` tuple,
-        a portion of the class list for the rmap, create the nested chain of 
-        Selectors enumerated in `classes`,   terminating with `value`.  The 
-        returned expansion is essentially linear,  not yet a tree.  This is used
-        to create portions of a hierarchy where the parameter keys don't exist 
-        yet, adding new Selectors rather than replacing the values for existing
-        keys.   This works for an arbitrary class chain.   It assumes that the 
-        class nesting of an rmap is homogeneous,  that all areas follow the same
-        nesting pattern.
+    @property
+    def parkey(self):
+        return self._rmap_header["parkey"]
+    
+    def _modify(self, header, value, parkey, classes, valid_values_map):
+        """Execute the insertion,  popping off parkeys and classes on the way down."""
+        key = self._make_key(header, parkey[0])
+        self._validate_key(key, valid_values_map)
+        i = self._find_key(key)
+        if len(classes) > 1:
+            if i is None:
+                log.verbose("insert couldn't find", repr(key),"adding new selector.")
+                new_value = self._create_path(header, value, parkey[1:], classes[1:])
+                self._add_item(key, new_value)
+            else:
+                old_key, old_value = self._raw_selections[i]
+                log.verbose("insert found", repr(old_key),"augmenting", repr(old_value), "with", repr(value))
+                old_value._modify(header, value, parkey[1:], classes[1:], valid_values_map)
+        else:
+            if i is None:
+                log.verbose("insert couldn't find", repr(key),"adding new value", repr(value))
+                self._add_item(key, value)
+            else:
+                old_key, old_value = self._raw_selections[i]
+                log.verbose("insert found", repr(key), "as primitive", repr(old_value), "replacing with", repr(value))
+                self._replace_item(old_key, value)
+        
+    def _create_path(self, header, value, parkey, classes):
+        """Create the Selector tree corresponding to `header` and `value` based on the
+        current position in the hierarchy defined by `parkey` and `classes`.
         """
         if classes:
-            key = self.get_key(header, parkey[0])
-            nested = self.create_nested(header, value, parkey[1:], classes[1:])
+            selector_class = utils.get_object("crds.selectors." + classes[0] + "Selector")
+            key = selector_class._make_key(header, parkey[0])
+            nested = self._create_path(header, value, parkey[1:], classes[1:])
             selections = { key : nested }
-            classname = "crds.selectors." + classes[0] + "Selector"
-            selector_class = utils.get_object(classname)
+            log.verbose("creating nested", repr(classes[0]),"with", repr(key), "=", repr(nested))
             return selector_class(parkey[0], selections, rmap_header=self._rmap_header)
         else:
             return value
+    
+    def _add_item(self, key, value):
+        """Add a new `value` to selections at `key`.  Flat:  this selector only."""
+        i = self._find_key(key)
+        assert i is None, self.__class__.__name__ + " already contains " + repr(key)
+        self._raw_selections.append((key, value))
+        self.__init__(self._parameters, dict_wo_dups(self._raw_selections), rmap_header=self._rmap_header)
 
+    def _remove_item(self, key):
+        """Remove the selection at `key`.   Flat:  this selector only."""
+        i = self._find_key(key)
+        assert i is not None, self.__class__.__name__ + " doesn't contain " + repr(key)
+        del self._raw_selections[i]
+        self.__init__(self._parameters, dict_wo_dups(self._raw_selections), rmap_header=self._rmap_header)
+
+    def _replace_item(self, key, value):
+        """Replace the selection at `key` with `value`.   Flat:  this selector only."""
+        self._remove_item(key)
+        self._add_item(key, value)
+        
+    def _find_key(self, key):
+        """Return the index of `key` in selections."""
+        for i, (old_key, _old_value) in enumerate(self._raw_selections):
+            if self._equal_keys(key, old_key):
+                return i
+        else:
+            return None
+
+    def _equal_keys(self, key1, key2):
+        """Return True IFF `key1` is equivalent to `key2` for rmap modification."""
+        return self._normalize_key(key1) == self._normalize_key(key2)
+    
+    def _normalize_key(self, key):
+        """Return the simple version of single element keys.   Include key
+        conditioning so that numbers are matched as float strings, times are
+        uniform, etc.
+        
+        e.g.   ('something',) -->   'something'
+        e.g.   ('something','else') --> ('something','else')
+        """
+        if isinstance(key, tuple) and len(key) == 1:
+            key = key[0]
+        return self.condition_key(key)
+    
+    @classmethod    
+    def _make_key(self, header, parameters):
+        """For rmap modification,  make a key for this Selector based on reference
+        file `header` and lookup `parameters`.
+        """
+        key = tuple([header[par] for par in parameters])
+        if len(key) == 1:
+            key = key[0]
+        return key
+    
 # ==============================================================================
 
 def match_superset(reference_tuple, rmap_tuple, match_na=False):
@@ -972,7 +1027,7 @@ of uniform rmap structure for HST:
         Selector.__init__(self, parameters, selects, rmap_header)  # largely overridden
         self._raw_selections = sorted(selections.items())  # override __init__ using selects
 
-        self._match_selections = self.get_matcher_selections(dict(self._selections))
+        self._match_selections = self.get_matcher_selections(dict_wo_dups(self._selections))
         self._value_map = self.get_value_map()
      
     @classmethod
@@ -1170,6 +1225,8 @@ of uniform rmap structure for HST:
         values in `valid_values_map`.   Note that each `key` is 
         nominally a tuple with values for multiple parkeys.
         """
+        if isinstance(key, (basestring, int, float)):
+            key = (key,)
         if len(key) != len(self._parameters):
             raise ValidationError("wrong length for parameter list " + 
                                   repr(self._parameters) + " for key " + repr(key))
@@ -1189,7 +1246,7 @@ of uniform rmap structure for HST:
                     log.verbose_warning("Match tuple " + repr(key) + 
                                         " is an equal weight special case of " + repr(other),
                                         " requiring dynamic merging.")
-
+    
 # ==============================================================================
 
 class UseAfterSelector(Selector):
@@ -1352,7 +1409,9 @@ Alternate date/time formats are accepted as header parameters.
     def get_parkey_map(self):
         return { par:"*" for par in self._parameters}
     
-    def get_key(self, header, parkeys):
+    @classmethod
+    def _make_key(self, header, parkeys):
+        """Join reference file datetime parameters with spaces."""
         return " ".join([header[par] for par in parkeys])
 
 # ==============================================================================
@@ -1468,6 +1527,11 @@ Effective_wavelength doesn't have to be covered by valid_values_map:
     def _validate_value(self, name, value, valid_list):
         self._validate_number(name, value)
 
+    @classmethod
+    def _make_key(self, header, parkeys):
+        """Always return key as a simple float."""
+        return float(header[parkeys[0]])
+
 # ==============================================================================
 
 class BracketSelector(Selector):
@@ -1535,7 +1599,12 @@ class BracketSelector(Selector):
         self._check_defined(header)
         parname = self._parameters[0]
         return self._validate_number(parname, header[parname])
-        
+    
+    @classmethod
+    def _make_key(self, header, parkeys):
+        """Always return key as a simple float."""
+        return float(header[parkeys[0]])
+
 # ==============================================================================
 
 class ComparableMixin(object):

@@ -345,7 +345,6 @@ class Mapping(object):
         else:
             self.filename = filename
         self.header["sha1sum"] = "99999"
-        self.header["name"] = os.path.basename(filename)
         with open(filename, "w+") as file:
             file.write(self.format())
         self.rewrite_checksum()  # inefficient, but rare and consistent
@@ -358,7 +357,7 @@ class Mapping(object):
         if old is None:
             raise ChecksumError("sha1sum is missing in " + repr(self.basename))
         if self._get_checksum() != self.header["sha1sum"]:
-            raise ChecksumError("sha1sum mismatch.")
+            raise ChecksumError("sha1sum mismatch in " + repr(self.basename))
 
     def _get_checksum(self):
         """Compute the rmap checksum over the original file contents.
@@ -397,11 +396,9 @@ class Mapping(object):
                 newsource.append(line)
         newsource = "".join(newsource)
 
-        # If user specified a filename,  copy the new file to that.
-        # Otherwise,  overwrite the original mapping file.
-        where = filename if filename is not None else self.filename
-
-        with open(where, "w+") as newfile:
+        if filename is None:
+            filename = self.filename
+        with open(filename, "w+") as newfile:
             newfile.write(newsource)
 
 
@@ -436,7 +433,7 @@ class Mapping(object):
         """Recursively validate this mapping,  performing the checks
         required by crds.certify.
         """
-        log.info("Validating", self.basename)
+        log.info("Validating", repr(self.basename))
         for key, sel in self.selections.items():
             try:
                 sel.validate_mapping(trap_exceptions)
@@ -476,61 +473,10 @@ class Mapping(object):
                                     "added " + repr(other.selections[key].basename)))
         return sorted(differences)
     
-    def warn_derivation_diffs(self):
-        """Issue warnings for *deletions* in self relative to parent derived_from
-        mapping.  Issue infos for *additions* and *replacements*.    This is 
-        intended to provide mode checking,  predominantly to check for missing
-        modes.
-        """
-        derived_from = self._get_derived_from()
-        if not derived_from:
-            return
-        log.info('Comparing mapping file', repr(self.basename),
-                 'against derived_from mapping', repr(derived_from.basename))
-        diffs = derived_from.difference(self)
-        infos = [d for d in diffs if "deleted" not in d[-1]]
-        warnings = [d for d in diffs if "deleted" in d[-1]]
-        if infos:
-            log.info('Additions and replacements in', repr(self.basename), ':')
-            for msg in infos:
-                log.info("In", _diff_tail(msg)[:-1], msg[-1])
-        if warnings:
-            log.warning("Deletions found in/under", repr(self.basename), ":")
-            for msg in warnings:
-                tail = _diff_tail(msg)[:-1]
-                log.warning("In", tail[:-1], "deleted", repr(tail[-1]))
-
-    def _get_derived_from(self):
-        """Return the mapping `self` was derived from, or None."""
-        derived_from = None
-        try:
-            derived_file = self.header['derived_from']
-            if 'generated' not in derived_file:
-                derived_from = get_cached_mapping(derived_file)
-        except Exception, exc:
-            log.verbose_warning("No parent mapping for", repr(self.basename), ":", str(exc))
-        return derived_from
-    
     def copy(self):
         """Return an in-memory copy of this rmap as a new object."""
         return self.from_string(self.format(), self.filename)
     
-def _diff_tail(msg):
-    """`msg` is an arbitrary length difference "path",  which could
-    be coming from any part of the hierarchy and ending in any kind of selector tree.
-    The last item is always the change message: add, replace, delete <blah>.  The
-    next to last should always be a selector key of some kind.  Back up from 
-    there to find the first mapping tuple.
-    """
-    tail = []
-    for part in msg[::-1]:
-        if isinstance(part, tuple) and len(part) == 2 and isinstance(part[0], str) and part[0].endswith("map"):
-            tail.append(part[1])
-            break
-        else:
-            tail.append(part)
-    return tuple(reversed(tail))
-
 # ===================================================================
 
 class PipelineContext(Mapping):
@@ -977,9 +923,9 @@ class ReferenceMapping(Mapping):
         """Dynamically add a new selection case to a copy of this rmap and
         return the copy.
         """
-        copy = self.copy()
-        copy.selector.insert(header, value, self._tpn_valid_values)
-        return copy
+        new = self.copy()
+        new.selector.modify(header, value, self._tpn_valid_values)
+        return new
         
 # ===================================================================
 
@@ -1087,7 +1033,7 @@ def get_best_references(context_file, header, include=None):
 def test():
     """Run module doctests."""
     import doctest
-    from . import doctest
+    from crds import rmap
     return doctest.testmod(rmap)
 
 if __name__ == "__main__":
