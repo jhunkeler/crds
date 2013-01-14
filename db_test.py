@@ -132,7 +132,7 @@ def testit(header_spec, context="hst.pmap", datasets=[],
         if inject_errors:
             header = inject_random_error(inject_errors, dataset, header)
             
-        instrument = header["INSTRUME"]
+        instrument = pmap.get_instrument(header)        
         imap = pmap.get_imap(instrument)
         if not filekinds:
             filekinds = imap.get_filekinds()
@@ -141,7 +141,9 @@ def testit(header_spec, context="hst.pmap", datasets=[],
 
         mismatches = 0
         matches = 0
-        for filekind in filekinds:
+        for filekind in filekinds:            
+            if filekind.upper() not in imap.get_filekinds():
+                raise ValueError("Unknown filekind " + repr(filekind) + " for " + repr(instrument))
             try:
                 old_bestref = header[filekind.upper()].lower()
             except KeyError:
