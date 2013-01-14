@@ -155,6 +155,7 @@
           'flashcur': 'wfc3_ref_data.w3r_flashcur',
           'flshfile': 'wfc3_ref_data.w3r_best_flshfile',
           'idctab': 'wfc3_ref_data.w3r_best_idctab',
+          'imphttab': 'wfc3_ref_data.w3r_best_imphttab',
           'mdriztab': 'wfc3_ref_data.w3r_best_mdriztab',
           'nlinfile': 'wfc3_ref_data.w3r_best_nlinfile',
           'oscntab': 'wfc3_ref_data.w3r_best_oscntab',
