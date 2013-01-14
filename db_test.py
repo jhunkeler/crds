@@ -71,6 +71,34 @@ def same_keys(dict1, dict2):
     """return a copy of dict2 reduced to the same keywords as dict1"""
     return { key:val for (key, val) in dict2 if key in dict1 }
 
+def dump_header(title, pmap, header):
+    """Pretty print header as lookup parameters and results in verbose mode."""
+    if log.get_verbose():
+        header = dict(header)
+        log.verbose("-"*60)
+        log.verbose(title, ": lookup parameters")
+        lookup = pmap.minimize_header(header)
+        log.verbose(log.PP(lookup))
+        log.verbose(title, ": results")
+        results = { key:val for (key,val) in header.items() if key not in lookup }
+        log.verbose(log.PP(results))
+        return results
+    else:
+        return None
+
+def dump_results_differences(db, opus):
+    """Show changes in results between DB and OPUS"""
+    if db is None or opus is None:
+        return
+    log.verbose("Results difference between DB and OPUS")
+    log.verbose("In DB, not OPUS")
+    log.verbose(log.PP({ key:db[key] for key in db if key not in opus}))        
+    log.verbose("In OPUS, not DB")
+    log.verbose(log.PP({ key:opus[key] for key in opus if key not in db}))        
+    log.verbose("DB != OPUS")
+    log.verbose(log.PP({ key:(db[key], opus[key]) for key in db if key in opus and opus[key] != db[key]}))        
+    
+
 def testit(header_spec, context="hst.pmap", datasets=[], 
          filekinds=[], alternate_headers={}, inject_errors=None):
     """Evaluate the best references cases from `header_generator` against 
@@ -94,15 +122,13 @@ def testit(header_spec, context="hst.pmap", datasets=[],
             continue
         dataset_count += 1
         
-        log.verbose("Header from database")
-        log.verbose(log.PP(header))
-            
+        db_results = dump_header("Header From Database", pmap, header)
         
         if dataset in alternate_headers:
             header.update(alternate_headers[dataset])
-            log.verbose("Alternate header")
-            log.verbose(log.PP(header))
-        
+            opus_results = dump_header("Alternate header from OPUS", pmap, header)
+            dump_results_differences(db_results, opus_results)
+
         if inject_errors:
             header = inject_random_error(inject_errors, dataset, header)
             
