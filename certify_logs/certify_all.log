@@ -1,7 +1,7 @@
 ======================== acs =========================
 CRDS        : INFO     ########################################
-CRDS        : INFO     Certifying 'hst_acs.imap' (1/1)
-CRDS        : INFO     Validating hst_acs.imap
+CRDS        : INFO     Certifying 'hst_acs.imap' (1/1) relative to context None
+CRDS        : INFO     Validating 'hst_acs.imap'
 CRDS        : INFO     Validating hst_acs_pctetab.rmap
 CRDS        : INFO     Validating hst_acs_crrejtab.rmap
 CRDS        : INFO     Validating hst_acs_darkfile.rmap
@@ -455,8 +455,8 @@ CRDS        : INFO     427 warnings
 CRDS        : INFO     24 infos
 ======================== cos =========================
 CRDS        : INFO     ########################################
-CRDS        : INFO     Certifying 'hst_cos.imap' (1/1)
-CRDS        : INFO     Validating hst_cos.imap
+CRDS        : INFO     Certifying 'hst_cos.imap' (1/1) relative to context None
+CRDS        : INFO     Validating 'hst_cos.imap'
 CRDS        : INFO     Validating hst_cos_phatab.rmap
 CRDS        : INFO     Validating hst_cos_wcptab.rmap
 CRDS        : INFO     Validating hst_cos_badttab.rmap
@@ -483,8 +483,8 @@ CRDS        : INFO     3 warnings
 CRDS        : INFO     21 infos
 ======================== stis =========================
 CRDS        : INFO     ########################################
-CRDS        : INFO     Certifying 'hst_stis.imap' (1/1)
-CRDS        : INFO     Validating hst_stis.imap
+CRDS        : INFO     Certifying 'hst_stis.imap' (1/1) relative to context None
+CRDS        : INFO     Validating 'hst_stis.imap'
 CRDS        : INFO     Validating hst_stis_lfltfile.rmap
 CRDS        : INFO     Validating hst_stis_mofftab.rmap
 CRDS        : INFO     Validating hst_stis_halotab.rmap
@@ -573,9 +573,10 @@ CRDS        : INFO     52 warnings
 CRDS        : INFO     34 infos
 ======================== wfc3 =========================
 CRDS        : INFO     ########################################
-CRDS        : INFO     Certifying 'hst_wfc3.imap' (1/1)
-CRDS        : INFO     Validating hst_wfc3.imap
+CRDS        : INFO     Certifying 'hst_wfc3.imap' (1/1) relative to context None
+CRDS        : INFO     Validating 'hst_wfc3.imap'
 CRDS        : INFO     Validating hst_wfc3_nlinfile.rmap
+CRDS        : INFO     Validating hst_wfc3_crrejtab.rmap
 CRDS        : INFO     Validating hst_wfc3_idctab.rmap
 CRDS        : INFO     Validating hst_wfc3_darkfile.rmap
 CRDS        : WARNING  Match Parameter  'BINAXIS1'  is unchecked.
@@ -613,7 +614,7 @@ CRDS        : WARNING  Match Parameter  'SUBARRAY'  is unchecked.
 CRDS        : WARNING  Match tuple ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-IR-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|1.5|2.0|4.0', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'CONT|LINE10|LINE17|LINE25|NONE', 'N/A')  requiring dynamic merging.
 CRDS        : WARNING  Match tuple ('UVIS', 'A|B|C|D', '1.5', '1.0', '1.0', 'UVIS-QUAD-SUB|UVIS1-C512A-SUB|UVIS1-C512B-SUB|UVIS2-C512C-SUB|UVIS2-C512D-SUB', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'A|B|C|D', '1.5', '1.0', '1.0', 'UVIS-QUAD-SUB|UVIS1-2K2A-SUB|UVIS1-2K2B-SUB|UVIS1-C512A-SUB|UVIS1-C512B-SUB|UVIS2-2K2C-SUB|UVIS2-2K2D-SUB|UVIS2-C1K1C-SUB|UVIS2-C512C-SUB|UVIS2-C512D-SUB|UVIS2-M1K1C-SUB|UVIS2-M512C-SUB', 'NONE', 'N/A')  requiring dynamic merging.
-CRDS        : INFO     Validating hst_wfc3_crrejtab.rmap
+CRDS        : INFO     Validating hst_wfc3_imphttab.rmap
 CRDS        : INFO     Validating hst_wfc3_pfltfile.rmap
 CRDS        : WARNING  Match Parameter  'BINAXIS1'  is unchecked.
 CRDS        : WARNING  Match Parameter  'BINAXIS2'  is unchecked.
@@ -867,11 +868,11 @@ CRDS        : INFO     Validating hst_wfc3_flshfile.rmap
 CRDS        : INFO     Validating hst_wfc3_mdriztab.rmap
 CRDS        : INFO     0 errors
 CRDS        : INFO     278 warnings
-CRDS        : INFO     15 infos
+CRDS        : INFO     16 infos
 ======================== nicmos =========================
 CRDS        : INFO     ########################################
-CRDS        : INFO     Certifying 'hst_nicmos.imap' (1/1)
-CRDS        : INFO     Validating hst_nicmos.imap
+CRDS        : INFO     Certifying 'hst_nicmos.imap' (1/1) relative to context None
+CRDS        : INFO     Validating 'hst_nicmos.imap'
 CRDS        : INFO     Validating hst_nicmos_nlinfile.rmap
 CRDS        : INFO     Validating hst_nicmos_flatfile.rmap
 CRDS        : INFO     Validating hst_nicmos_illmfile.rmap
@@ -897,8 +898,8 @@ CRDS        : INFO     3 warnings
 CRDS        : INFO     20 infos
 ======================== wfpc2 =========================
 CRDS        : INFO     ########################################
-CRDS        : INFO     Certifying 'hst_wfpc2.imap' (1/1)
-CRDS        : INFO     Validating hst_wfpc2.imap
+CRDS        : INFO     Certifying 'hst_wfpc2.imap' (1/1) relative to context None
+CRDS        : INFO     Validating 'hst_wfpc2.imap'
 CRDS        : INFO     Validating hst_wfpc2_offtab.rmap
 CRDS        : INFO     Validating hst_wfpc2_flatfile.rmap
 CRDS        : WARNING  Match Parameter  'LRFWAVE'  is unchecked.
@@ -937,21 +938,21 @@ CRDS        : INFO     13 infos
 ============================================================
 ==================== summary ===============================
 ============================================================
-CRDS        : INFO     Certifying 'hst_acs.imap' (1/1)
+CRDS        : INFO     Certifying 'hst_acs.imap' (1/1) relative to context None
 CRDS        : INFO     0 errors
 CRDS        : INFO     427 warnings
-CRDS        : INFO     Certifying 'hst_cos.imap' (1/1)
+CRDS        : INFO     Certifying 'hst_cos.imap' (1/1) relative to context None
 CRDS        : INFO     0 errors
 CRDS        : INFO     3 warnings
-CRDS        : INFO     Certifying 'hst_stis.imap' (1/1)
+CRDS        : INFO     Certifying 'hst_stis.imap' (1/1) relative to context None
 CRDS        : INFO     0 errors
 CRDS        : INFO     52 warnings
-CRDS        : INFO     Certifying 'hst_wfc3.imap' (1/1)
+CRDS        : INFO     Certifying 'hst_wfc3.imap' (1/1) relative to context None
 CRDS        : INFO     0 errors
 CRDS        : INFO     278 warnings
-CRDS        : INFO     Certifying 'hst_nicmos.imap' (1/1)
+CRDS        : INFO     Certifying 'hst_nicmos.imap' (1/1) relative to context None
 CRDS        : INFO     0 errors
 CRDS        : INFO     3 warnings
-CRDS        : INFO     Certifying 'hst_wfpc2.imap' (1/1)
+CRDS        : INFO     Certifying 'hst_wfpc2.imap' (1/1) relative to context None
 CRDS        : INFO     0 errors
 CRDS        : INFO     22 warnings
