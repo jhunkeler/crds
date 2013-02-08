@@ -137,7 +137,7 @@ def testit(header_spec, context="hst.pmap", datasets=[],
         if not filekinds:
             filekinds = imap.get_filekinds()
 
-        crds_refs = pmap.get_best_references(header, include=filekinds)
+        crds_refs = rmap.get_best_references(pmap, header, include=filekinds)
 
         mismatches = 0
         matches = 0
