@@ -24,7 +24,8 @@ def main(filename, important):
     for mismatched in get_mismatched_objects(filename):
         if mismatched[0] >= important:
             ids.extend(mismatched[1])
-    print " ".join(ids)
+    for id in ids:
+        print id
 
 if __name__ == "__main__":
     usage("<source_file> <test_count_importance_threshhold>", 2, 2);

@@ -40,7 +40,9 @@ def load_alternate_dataset_headers():
 
 def main():
     alternates = load_alternate_dataset_headers()
-    for dataset in sys.argv[1:]:
+
+    for dataset in open(sys.argv[1]):
+        dataset = dataset.strip()
         try:
             bestrefs = opus_bestrefs(dataset)
             alternates[dataset] = bestrefs
