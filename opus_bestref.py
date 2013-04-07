@@ -36,7 +36,15 @@ def load_alternate_dataset_headers():
     except:
         alternate_headers = {}
         log.warning("Loading opus headers failed.")
+    log.info("Loaded", BESTREF_PKL)
     return alternate_headers
+
+def save_alternate_dataset_headers(alternates):
+    log.info("Saving improved opus dataset headers", BESTREF_PKL)
+    with open(BESTREF_PKL, "w+") as f:
+        cPickle.dump(alternates, f)
+    log.info("Saved", BESTREF_PKL)
+    
 
 def main():
     alternates = load_alternate_dataset_headers()
@@ -49,8 +57,7 @@ def main():
             log.info("Bestrefs for", dataset, "=", bestrefs)
         except Exception, exc:
             log.error("Exception on dataset", dataset, ":", str(exc))
-    with open(BESTREF_PKL, "w+") as f:
-        cPickle.dump(alternates, f)
+    save_alternate_dataset_headers(alternates)
     log.standard_status()
 
 if __name__ == "__main__":
