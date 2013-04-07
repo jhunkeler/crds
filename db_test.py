@@ -163,12 +163,12 @@ def testit(header_spec, context="hst.pmap", datasets=[],
                 continue
 
             if "n/a" in new_bestref.lower():
-                log.warning("N/A mismatch:", dataset, instrument, filekind, old_bestref, new_bestref)
+                log.warning("N/A MISMATCH:", dataset, instrument, filekind, old_bestref, new_bestref)
                 continue
 
             if old_bestref != new_bestref:
                 mismatches += 1
-                log.error("mismatch:", dataset, instrument, filekind, old_bestref, new_bestref)
+                log.error("MISMATCH:", dataset, instrument, filekind, old_bestref, new_bestref)
                 if log.get_verbose():
                     try:
                         reference_info(old_bestref)
