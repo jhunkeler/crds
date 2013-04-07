@@ -477,7 +477,7 @@ def write_rmap(observatory, instrument, filekind, kind_map):
         ("instrument", instrument.upper()),
         ("filekind", filekind.upper()),
         ("parkey", (match_keys, useafter_keys)),
-        # ("extra_keys", tuple([key.upper() for key in parkeys.get_extra_keys(instrument, filekind)])),
+        ("extra_keys", tuple([key.upper() for key in parkeys.get_extra_keys(instrument, filekind)])),
         ("rmap_relevance", parkeys.get_rmap_relevance(instrument, filekind)),
         ("parkey_relevance", parkeys.get_parkey_relevance(instrument, filekind)),
     ] if y])
