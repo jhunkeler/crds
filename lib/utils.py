@@ -1,27 +1,32 @@
 """Generic utility routines used by a variety of modules.
 """
-
+import sys
 import os.path
 import re
 import sha
+import cStringIO
+import functools
 
 # from crds import data_file,  import deferred until required
 
-from crds import compat
+from crds import compat, log
 
 CRDS_CHECKSUM_BLOCK_SIZE = 2**26
 
 # ===================================================================
-
 def cached(func):
     """The cached decorator embeds a dictionary in a function wrapper to
-    capture prior results.   The wrapped function works like the original,
-    except it's faster because it fetches results for prior calls from the
-    cache.   The wrapped function has two extra attributes
+    capture prior results.   
     
-    .cache         -- { parameters: old_result } dictionary
-    .uncached      -- original unwrapped function
-        
+    The wrapped function works like the original, except it's faster because it
+    fetches results for prior calls from the cache.   The wrapped function has
+    extra attributes:
+    
+    .cache                      -- { key(parameters): old_result } dictionary
+    .uncached(*args, **keys)    -- original unwrapped function
+    .readonly(*args, **keys)    -- function variant which uses but doesn't update cache
+    .cache_key(*args, **keys)   -- returns tuple used to locate a function call result
+
     >>> @cached
     ... def sum(x,y):
     ...   print "really doing it."
@@ -55,26 +60,190 @@ def cached(func):
     >>> sum(1,2)
     really doing it.
     3
+    
+    A variant of the function which reads but does not update the cache is available.
+    After calling the read_only variant the cache is not updated:
+    
+    >>> sum.cache.clear()
+    >>> sum.readonly(1,2)
+    really doing it.
+    3
+    >>> sum(1,2)
+    really doing it.
+    3
+    
+    However,  the readonly variant will exploit any values in the cache already:
+
+    >>> sum(1,2)
+    3
     """
-    cache = dict()
-    def cacher(*args):
-        if args not in cache:
-            cache[args] = func(*args)
-        return cache[args]
-    cacher.func_name = func.func_name
-    cacher.__dict__["cache"] = cache
-    cacher.__dict__["uncached"] = func
-    return cacher
+    return CachedFunction(func)
+
+class xcached(object):
+    """Caching decorator which supports auxilliary caching parameters.
+    
+    omit_from_key lists keywords or positional indices to be excluded from cache
+    key creation:
+    
+    >>> @xcached(omit_from_key=[0, "x"])
+    ... def sum(x, y, z):
+    ...     return x + y + z
+    
+    >>> sum(1,2,3)
+    6
+    
+    >>> sum(2,2,3)
+    6
+    
+    >>> sum.uncached(2,2,3)
+    7
+    
+    >>> sum.readonly(2,2,3)
+    6
+    """
+    def __init__(self, *args, **keys):
+        """Stash the decorator parameters"""
+        self.args = args
+        self.keys = keys
+
+    def __call__(self, func):
+        """Create a CachedFunction for `func` with extra qualifiers *args and **keys.
+        Nomnially executes at import time.
+        """
+        return CachedFunction(func, *self.args, **self.keys)
+
+class CachedFunction(object):
+    """Class to support the @cached function decorator.   Called at runtime
+    for typical caching version of function.
+    """
+    def __init__(self, func, omit_from_key=None):
+        self.cache = dict()
+        self.uncached = func
+        self.omit_from_key = [] if omit_from_key is None else omit_from_key
+    
+    def cache_key(self, *args, **keys):
+        """Compute the cache key for the given parameters."""
+        args = tuple([ a for (i, a) in enumerate(args) if i not in self.omit_from_key])
+        keys = tuple([item for item in keys.items() if item[0] not in self.omit_from_key])
+        return args + keys
+    
+    def _readonly(self, *args, **keys):
+        """Compute (cache_key, func(*args, **keys)).   Do not add to cache."""
+        key = self.cache_key(*args, **keys)
+        if key in self.cache:
+            log.verbose("Cached call", self.uncached.func_name, repr(key), verbosity=80)
+            return key, self.cache[key]
+        else:
+            log.verbose("Uncached call", self.uncached.func_name, repr(key), verbosity=80)
+            return key, self.uncached(*args, **keys)
+
+    def readonly(self, *args, **keys):
+        """Compute or fetch func(*args, **keys) but do not add to cache.
+        Return func(*args, **keys)
+        """
+        _key, result = self._readonly(*args, **keys)
+        return result
+
+    def __call__(self, *args, **keys):
+        """Compute or fetch func(*args, **keys).  Add the result to the cache.
+        return func(*args, **keys)
+        """
+        key, result = self._readonly(*args, **keys)
+        self.cache[key] = result
+        return result
+    
+    def __get__(self, obj, objtype):
+        '''Support instance methods.'''
+        return functools.partial(self.__call__, obj)
 
 # ===================================================================
 
-def invert_dict(d):
+def capture_output(func):
+    """Decorate a function with @capture_output to define a CapturedFunction()
+    wrapper around it.   
+    
+    Doesn't currently capture non-python output but could with dup2.
+    
+    Decorate any function to wrap it in a CapturedFunction() wrapper:
+    
+    >>> @capture_output
+    ... def f(x,y): 
+    ...    print "hi"
+    ...    return x + y
+    
+    >>> f
+    CapturedFunction('f')
+
+    Calling a captured function suppresses its output:
+    
+    >>> f(1, 2)
+    3
+    
+    To call the original undecorated function:
+    
+    >>> f.uncaptured(1, 2)
+    hi
+    3
+    
+    If you don't care about the return value,  but want the output:
+    
+    >>> f.outputs(1, 2)
+    'hi\\n'
+    
+    If you need both the return value and captured output:
+    
+    >>> f.returns_outputs(1, 2)
+    (3, 'hi\\n')
+       
+    """
+    class CapturedFunction(object):
+        """Closure on `func` which supports various forms of output capture."""
+        
+        def __repr__(self):
+            return "CapturedFunction('%s')" % func.func_name
+
+        def returns_outputs(self, *args, **keys):
+            """Call the wrapped function,  capture output,  return (f(), output_from_f)."""
+            oldout, olderr = sys.stdout, sys.stderr
+            out = cStringIO.StringIO()
+            sys.stdout, sys.stderr = out, out
+            # handler = log.add_stream_handler(out)
+            try:
+                result = func(*args, **keys)
+            finally:
+                out.flush()
+                # log.remove_stream_handler(handler)
+                sys.stdout, sys.stderr = oldout, olderr
+            out.seek(0)
+            return result, out.read()
+        
+        def suppressed(self, *args, **keys):
+            """Call the wrapped function, suppress output,  return f() normally."""
+            return self.returns_outputs(*args, **keys)[0]
+
+        def outputs(self, *args, **keys):
+            """Call the wrapped function, capture output,  return output_from_f."""
+            return self.returns_outputs(*args, **keys)[1]
+        
+        def __call__(self, *args, **keys):
+            """Call the undecorated function,  capturing and discarding it's output,  returning the result."""
+            return self.suppressed(*args, **keys)
+        
+        def uncaptured(self, *args, **keys):
+            """Call the undecorated function and return the result."""
+            return func(*args, **keys)
+
+    return CapturedFunction()
+
+# ===================================================================
+
+def invert_dict(dictionary):
     """Return the functional inverse of a dictionary,  raising an exception
     for values in `d` which map to more than one key producing an undefined
     inverse.
     """
     inverse = {}
-    for key, value in d.items():
+    for key, value in dictionary.items():
         if value in inverse:
             raise ValueError("Undefined inverse because of duplicate value " + \
                              repr(value))
@@ -102,15 +271,15 @@ def create_path(path, mode=0755):
     if os.path.exists(path):
         return
     current = []
-    for c in path.split("/"):
-        if not c:
+    for part in path.split("/"):
+        if not part:
             current.append("/")
             continue
-        current.append(str(c))
-        d = os.path.join(*current)
-        d.replace("//","/")
-        if not os.path.exists(d):
-            os.mkdir(d, mode)
+        current.append(str(part))
+        subdir = os.path.join(*current)
+        subdir.replace("//","/")
+        if not os.path.exists(subdir):
+            os.mkdir(subdir, mode)
 
 def ensure_dir_exists(fullpath, mode=0755):
     """Creates dirs from `fullpath` if they don't already exist.
@@ -120,45 +289,34 @@ def ensure_dir_exists(fullpath, mode=0755):
 
 def checksum(pathname):
     """Return the CRDS hexdigest for file at `pathname`.""" 
-    sum = sha.new()
+    xsum = sha.new()
     with open(pathname) as infile:
         size = 0
         insize = os.stat(pathname).st_size
         while size < insize:
             block = infile.read(CRDS_CHECKSUM_BLOCK_SIZE)
             size += len(block)
-            sum.update(block)
-    return sum.hexdigest()
+            xsum.update(block)
+    return xsum.hexdigest()
 
 
-def str_checksum(str):
+def str_checksum(data):
     """Return the CRDS hexdigest for small strings.""" 
-    sum = sha.new()
-    sum.update(str)
-    return sum.hexdigest()
-
-
+    xsum = sha.new()
+    xsum.update(data)
+    return xsum.hexdigest()
 
 # ===================================================================
 
-LOCATORS = {
-    }
-
 def get_file_properties(observatory, filename):
-    """Return instrument,filekind,id fields associated with filename.
-    """
-    if observatory not in LOCATORS:
-        locator = get_object("crds." + observatory + ".locate")
-        LOCATORS[observatory] = locator
-    else:
-        locator = LOCATORS[observatory]
-    return locator.get_file_properties(filename)        
+    """Return instrument,filekind fields associated with filename."""
+    return get_locator_module(observatory).get_file_properties(filename)        
 
 # ===================================================================
 
 MODULE_PATH_RE = re.compile(r"^crds(\.\w+)+$")
 
-def get_object(dotted_name):
+def get_object(*args):
     """Import the given `dotted_name` and return the object.
     
     >>> rmap = get_object("crds.rmap")
@@ -166,7 +324,9 @@ def get_object(dotted_name):
     Traceback (most recent call last):
     ...
     AssertionError: Invalid dotted name for get_object() : "crds.rmap; eval('2+2')"
+    >>> rmap = get_object("crds","rmap")
     """
+    dotted_name = ".".join(args)
     assert MODULE_PATH_RE.match(dotted_name), \
         "Invalid dotted name for get_object() : " + repr(dotted_name)   
     parts = dotted_name.split(".")
@@ -178,13 +338,13 @@ def get_object(dotted_name):
 
 # ==============================================================================
 
-DONT_CARE_RE = re.compile("^" + "|".join([
+DONT_CARE_RE = re.compile(r"^" + r"|".join([
     # "-999","-999\.0",
     # "4294966297.0",
-    "-2147483648.0",
-    "\(\)","N/A","NOT APPLICABLE"]) + "$|^$")
+    r"-2147483648.0",
+    r"\(\)","N/A","NOT APPLICABLE"]) + "$|^$")
 
-NUMBER_RE = re.compile("^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$|^[+-]?[0-9]+\.$")
+NUMBER_RE = re.compile(r"^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$|^[+-]?[0-9]+\.$")
 
 def condition_value(value):
     """Condition `value`,  ostensibly taken from a FITS header or CDBS
@@ -256,29 +416,36 @@ def condition_header(header, needed_keys=None):
 
 # ==============================================================================
 
+@cached
 def instrument_to_observatory(instrument):
-    """Given the name of an instrument,  return the associated observatory."""
+    """Given the name of an instrument,  return the associated observatory.
+    
+    >>> instrument_to_observatory("acs")
+    'hst'
+    >>> instrument_to_observatory("miri")
+    'jwst'
+    """
     instrument = instrument.lower()
     try:
         import crds.hst
-    except ImportError:
-        pass
-    else:
         if instrument in crds.hst.INSTRUMENTS:
             return "hst"
-    try:
-        import crds.jwst
     except ImportError:
         pass
-    else:
+    try:
+        import crds.jwst
         if instrument in crds.jwst.INSTRUMENTS:
             return "jwst"
+    except ImportError:
+        pass
     raise ValueError("Unknown instrument " + repr(instrument))
 
+@cached
 def get_locator_module(observatory):
     """Return the observatory specific module for handling naming, file location, etc."""
     return get_object("crds." + observatory + ".locate")
 
+@cached
 def get_observatory_package(observatory):
     """Return the base observatory package."""
     return get_object("crds." + observatory)
@@ -290,11 +457,8 @@ def instrument_to_locator(instrument):
     return get_locator_module(instrument_to_observatory(instrument))
 
 
-# XXXX TODO  use of INSTRUME probably won't work with .finf metadata but does
-# work with JWST .fits references typically accessed through the data model.
 def reference_to_instrument(filename):
-    """Given reference file `filename`,  return the associated instrument.
-    """
+    """Given reference file `filename`,  return the associated instrument."""
     from crds import data_file
     try:
         header = data_file.get_conditioned_header(filename, needed_keys=["INSTRUME"])
@@ -304,15 +468,11 @@ def reference_to_instrument(filename):
         return header["META.INSTRUMENT.TYPE"]
     
 def reference_to_locator(filename):
-    """Given reference file `filename`,  return the associated observatory 
-    locator module.
-    """
+    """Given reference file `filename`,  return the associated observatory locator module."""
     return instrument_to_locator(reference_to_instrument(filename))
 
 def reference_to_observatory(filename):
-    """Return the name of the observatory corresponding to reference
-    `filename`.
-    """
+    """Return the name of the observatory corresponding to reference `filename`."""
     return instrument_to_observatory(reference_to_instrument(filename))
 
 
@@ -321,3 +481,10 @@ def reference_to_observatory(filename):
 file_to_instrument = reference_to_instrument
 file_to_locator = reference_to_locator
 file_to_observatory = reference_to_observatory
+
+def test():
+    """Run doctests."""
+    import doctest
+    from . import utils
+    return doctest.testmod(utils)
+

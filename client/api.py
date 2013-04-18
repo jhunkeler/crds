@@ -227,6 +227,42 @@ def get_server_info():
 
 # ==============================================================================
 
+HARD_DEFAULT_OBS = "jwst"
+
+def get_server_observatory():
+    """Return the default observatory according to the server, or None."""
+    try:
+        pmap = get_default_context()
+    except Exception:
+        server_obs = None
+    else:
+        server_obs = observatory_from_string(pmap)
+    return server_obs
+
+def get_default_observatory():
+    """Based on the environment, cache, and server,  determine the default observatory.
+    
+    1. CRDS_OBSERVATORY env var
+    2. CRDS_SERVER_URL env var
+    3. Observatory(Server default context)
+    4. jwst
+    """
+    return os.environ.get("CRDS_OBSERVATORY", None) or \
+           observatory_from_string(get_crds_server()) or \
+           get_server_observatory() or \
+           "jwst"
+
+def observatory_from_string(string):
+    """If "jwst" or "hst" is in `string`, return it,  otherwise return None."""
+    if "jwst" in string:
+        return "jwst"
+    elif "hst" in string:
+        return "hst"
+    else:
+        return None
+
+# ==============================================================================
+
 class FileCacher(object):
     """FileCacher gets remote files with simple names into a local cache.
     """
@@ -247,7 +283,7 @@ class FileCacher(object):
         if downloads:
             self.download_files(pipeline_context, downloads, localpaths)
         else:
-            log.verbose("Skipping download for cached files", names)
+            log.verbose("Skipping download for cached files", names, verbosity=10)
         return localpaths
 
     def locate(self, pipeline_context, name):
@@ -267,7 +303,7 @@ class FileCacher(object):
 
     def download(self, pipeline_context, name, localpath):
         """Download a single file."""
-        log.verbose("Fetching", repr(name), "to", repr(localpath))
+        log.verbose("Fetching", repr(name), "to", repr(localpath), verbosity=10)
         try:
             utils.ensure_dir_exists(localpath)
             if get_download_mode() == "http":
@@ -338,11 +374,14 @@ class FileCacher(object):
         if original_length != local_length:
             raise CrdsDownloadError("downloaded file size " + str(local_length) +
                                     " does not match server size " + str(original_length))
-        original_sha1sum = remote_info["sha1sum"]
-        local_sha1sum = utils.checksum(localpath)
-        if original_sha1sum != local_sha1sum:
-            raise CrdsDownloadError("downloaded file sha1sum " + repr(local_sha1sum) +
-                                    " does not match server sha1sum " + repr(original_sha1sum))
+        if remote_info["sha1sum"] not in ["", "none"]:
+            original_sha1sum = remote_info["sha1sum"]
+            local_sha1sum = utils.checksum(localpath)
+            if original_sha1sum != local_sha1sum:
+                raise CrdsDownloadError("downloaded file sha1sum " + repr(local_sha1sum) +
+                                        " does not match server sha1sum " + repr(original_sha1sum))
+        else:
+            log.verbose("Skipping sha1sum check since server doesn't know it.")
 
 FILE_CACHER = FileCacher()
 
@@ -359,7 +398,7 @@ class BundleCacher(FileCacher):
         utils.ensure_dir_exists(bundlepath, 0700)
         for name in localpaths:
             if name not in downloads:
-                log.verbose("Skipping existing file", repr(name), level=60)
+                log.verbose("Skipping existing file", repr(name), verbosity=10)
         self.fetch_bundle(bundlepath, downloads)
         self.unpack_bundle(bundlepath, downloads, localpaths)
         
@@ -371,7 +410,7 @@ class BundleCacher(FileCacher):
         url = get_crds_server() + "/get_archive/" + bundle + "?"
         for i, name in enumerate(sorted(downloads)):
             url = url + "file" + str(i) + "=" + name + "&"
-            log.verbose("Adding", repr(name), "to download request.", level=60)
+            log.verbose("Adding", repr(name), "to download request.", verbosity=60)
         url = url[:-1]
         generator = self._get_data_http(url)
         with open(bundlepath, "wb+") as outfile:
@@ -388,7 +427,7 @@ class BundleCacher(FileCacher):
                 file = tar.extractfile(member)
                 utils.ensure_dir_exists(localpaths[name])
                 with open(localpaths[name], "w+") as localfile:
-                    log.verbose("Unpacking download", repr(name), "to", repr(localpaths[name]))
+                    log.verbose("Unpacking download", repr(name), "to", repr(localpaths[name]), verbosity=10)
                     contents = file.read()
                     localfile.write(contents)
                     

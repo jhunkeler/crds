@@ -1,11 +1,11 @@
 header = {
-    'derived_from' : 'generated 2012-11-03 20:32:33.860513',
+    'derived_from' : 'generated 2013-04-06 08:06:00.805957',
     'instrument' : 'WFC3',
     'mapping' : 'INSTRUMENT',
     'name' : 'hst_wfc3.imap',
     'observatory' : 'HST',
     'parkey' : ('REFTYPE',),
-    'sha1sum' : '3d3b19916102351d4a2c6b49fdcbd1dd86b21f9d',
+    'sha1sum' : '786a55823728dd03b6212fa3ccc6f8cd43d12e13',
 }
 
 selector = {
@@ -17,6 +17,7 @@ selector = {
     'darkfile' : 'hst_wfc3_darkfile.rmap',
     'flshfile' : 'hst_wfc3_flshfile.rmap',
     'idctab' : 'hst_wfc3_idctab.rmap',
+    'imphttab' : 'hst_wfc3_imphttab.rmap',
     'mdriztab' : 'hst_wfc3_mdriztab.rmap',
     'nlinfile' : 'hst_wfc3_nlinfile.rmap',
     'oscntab' : 'hst_wfc3_oscntab.rmap',

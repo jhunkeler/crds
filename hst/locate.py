@@ -109,12 +109,15 @@ def get_file_properties(filename):
     >>> get_file_properties("./hst_acs_biasfile_0001.pmap")
     Traceback (most recent call last):
     ...
-    AssertionError: Invalid .pmap filename './hst_acs_biasfile_0001.pmap'
+    IOError: [Errno 2] No such file or directory: './hst_acs_biasfile_0001.pmap'
 
     >> get_file_properties("test_data/s7g1700gl_dead.fits")
     """
     if config.is_mapping(filename):
-        return decompose_newstyle_name(filename)[2:4]
+        try:
+            return decompose_newstyle_name(filename)[2:4]
+        except Exception, exc:
+            return properties_inside_mapping(filename)
     elif REF_EXT_RE.search(filename):
         result = get_reference_properties(filename)[2:4]
     else:
@@ -188,7 +191,7 @@ def properties_inside_mapping(filename):
     """Load `filename`s mapping header to discover and 
     return (instrument, filekind).
     """
-    map = rmap.load_mapping(filename)
+    map = rmap.fetch_mapping(filename)
     if map.filekind == "PIPELINE":
         result = "", ""
     elif map.filekind == "INSTRUMENT":

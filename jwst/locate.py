@@ -12,7 +12,7 @@ import gzip
 import re
 
 # import crds.pysh as pysh
-from crds import (log, rmap, pysh, data_file, config)
+from crds import (log, rmap, pysh, data_file, config, utils)
 from . import tpn
 
 # =======================================================================
@@ -150,7 +150,7 @@ def properties_inside_mapping(filename):
     """Load `filename`s mapping header to discover and 
     return (instrument, filekind).
     """
-    map = rmap.load_mapping(filename)
+    map = rmap.fetch_mapping(filename)
     if map.filekind == "PIPELINE":
         result = "", ""
     elif map.filekind == "INSTRUMENT":
@@ -223,17 +223,42 @@ def ref_properties_from_cdbs_path(filename):
         assert False, "Couldn't map extension " + repr(ext) + " to filekind."
     return path, "jwst", instrument, filekind, serial, ext
 
+# =======================================================================
+
+REFTYPE_TO_FILEKIND = {
+    "DETECTOR PARAMETERS" : "AMPLIFIER",
+    "PIXEL-TO-PIXEL FLAT" : "FLAT",
+    "PHOTOMETRIC CALIBRATION" : "PHOTOM",
+}
+
+FILEKIND_TO_REFTYPE = utils.invert_dict(REFTYPE_TO_FILEKIND)
+
+def reftype_to_filekind(reftype):
+    reftype = reftype.upper()
+    if reftype in REFTYPE_TO_FILEKIND:
+        return REFTYPE_TO_FILEKIND[reftype].lower()
+    else:
+        return reftype.lower()
+
+def filekind_to_reftype(filekind):
+    filekind = filekind.upper()
+    if filekind in FILEKIND_TO_REFTYPE:
+        return FILEKIND_TO_REFTYPE[filekind]
+    else:
+        return filekind
+
 def ref_properties_from_header(filename):
     """Look inside FITS `filename` header to determine instrument, filekind.
     """
     # For legacy files,  just use the root filename as the unique id
     path, parts, ext = _get_fields(filename)
     serial = os.path.basename(os.path.splitext(filename)[0])
-    header = data_file.get_header(filename)
+    header = data_file.get_fits_header_union(filename)
     instrument = header.get("INSTRUME", "UNDEFINED").lower()
     assert instrument in INSTRUMENTS, \
         "Invalid instrument " + repr(instrument) + " in file " + repr(filename)
-    filekind = header.get("FILEKIND", "UNDEFINED").lower()
+    reftype = header.get("REFTYPE", "UNDEFINED").lower()
+    filekind = reftype_to_filekind(reftype)
     assert filekind in FILEKINDS, \
         "Invalid file type " + repr(filekind) + " in file " + repr(filename)    
     return path, "jwst", instrument, filekind, serial, ext
@@ -288,6 +313,7 @@ def fits_to_parkeys(fits_header):
     """Map a FITS header onto rmap parkeys appropriate for JWST."""
     parkeys = {}
     for key, value in fits_header.items():
+        key, value = str(key), str(value)
         if not key.lower().startswith("meta."):
             pk = MODEL.find_fits_keyword(key.upper(), return_result=True)
             if not pk:
@@ -298,7 +324,8 @@ def fits_to_parkeys(fits_header):
                 pk = pk[0]
         else:
             pk = key
-        parkeys[str(pk).upper()] = str(value)
+        pk = pk.upper()
+        parkeys[pk] = value
     return parkeys
 
 # ============================================================================

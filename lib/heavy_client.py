@@ -135,6 +135,7 @@ def _initial_recommendations(
     log.verbose(name + "() parameters:\n", log.PP(parameters))
     log.verbose(name + "() reftypes:", reftypes)
     log.verbose(name + "() context:", repr(context))
+    log.verbose(name + "() ignore_cache:", ignore_cache)
     
     for var in os.environ:
         if var.upper().startswith("CRDS"):
@@ -152,8 +153,7 @@ def _initial_recommendations(
             parameters, reftypes=reftypes, context=final_context, ignore_cache=ignore_cache)
     else:
         log.verbose("Computing best references remotely.")
-        bestrefs = light_client.get_best_references(
-            final_context, parameters, reftypes=reftypes)
+        bestrefs = light_client.get_best_references(final_context, parameters, reftypes=reftypes)
         
     return final_context, bestrefs
 
@@ -186,11 +186,11 @@ def check_reftypes(reftypes):
                 "each reftype must be a string, .e.g. biasfile or darkfile."
                 
 def check_context(context):
-    """Make sure `context` is a pipeline mapping."""
+    """Make sure `context` is a pipeline or instrument mapping."""
     if context is None:
         return
-    assert isinstance(context, basestring) and context.endswith(".pmap"), \
-                "context should specify a pipeline mapping, .e.g. hst_0023.pmap"
+    assert isinstance(context, basestring) and context.endswith((".pmap", ".imap")), \
+                "context should specify a pipeline or instrument mapping, .e.g. hst_0023.pmap"
 
 # ============================================================================
 
@@ -217,10 +217,8 @@ def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
             import traceback
             traceback.print_exc()
             raise crds.CrdsNetworkError("Network failure caching mapping files: " + str(exc))
-        pmap = rmap.get_cached_mapping(context)
     # Finally do the best refs computation using pmap methods from local code.
-    min_header = pmap.minimize_header(parameters)
-    bestrefs = pmap.get_best_references(min_header, reftypes)
+    bestrefs = rmap.get_best_references(context, parameters, reftypes)
     return bestrefs
 
 # ============================================================================

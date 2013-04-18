@@ -1,8 +1,4 @@
 """
-The special case handlers for WFC3 are now obsolete and this file does 
-essentially nothing.   It is left as an illustration of implementing
-rmap header substitutions,  dataset driven header overrides, and hard-coded
-HST rmap files.
 """
 
 import crds.log as log
@@ -102,13 +98,15 @@ def wfc3_flshfile_filter(kmap):
     kmap[('N/A', 'N/A', 'N/A', 'N/A', 'ZERO|ZEROCUR|OFF', 'N/A')] = [
         rmap.Filemap(date='1990-01-01 00:00:00', file='w7j1705di_fls.fits', 
                      comment='Hack to support matching CDBS irrelevant answers to irrelevant FLASHCUR cases.'),
+        rmap.Filemap(date='2012-01-01 00:00:00', file='wc52031pi_fls.fits', 
+                     comment='post-flash created from in-flight wfc3/uvis frames.----------------')
         ]
     return kmap, []
 
 # =========================================================================
 """Example of mutating dataset header values prior to match based on header."""
 
-
+'''
 def precondition_header(rmap, header):
     if rmap.filekind == "biasfile":
         return header   # XXX do nothing
@@ -126,6 +124,7 @@ def _precondition_header_biasfile(header_in):
     if subarray == "T" and "SUB" not in aperture:
         header["APERTURE"] = "*"
     return header
+'''
 
 '''
 This is the original CDBS code for wfc3 biasfile which generates SQL for matching
@@ -267,5 +266,3 @@ History:
     # return the first filename found
     return result[0][0]
 '''
-    
-

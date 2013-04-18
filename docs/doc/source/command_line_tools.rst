@@ -29,24 +29,26 @@ the file it replaces looking for new or missing table rows.
 
 crds.certify --help yields::
 
-    Usage: certify.py [options] <inpaths...>
+    usage: certify.py [-d] [-e] [-m] [-p] [-t TRAP_EXCEPTIONS] [-x CONTEXT] [-J] [-H]
+                      files [files ...]
     
-    Options:
-      -h, --help            show this help message and exit
-      -d, --deep            Certify reference files referred to by mappings have
-                            valid contents.
+    Checks a CRDS reference or mapping file.
+        
+    positional arguments:
+      files
+    
+    optional arguments:
+      -d, --deep            Certify reference files referred to by mappings have valid contents.
       -e, --exist           Certify reference files referred to by mappings exist.
-      -m, --mapping         Ignore extensions, the files being certified are
-                            mappings.
+      -m, --mapping         Ignore extensions, the files being certified are mappings.
       -p, --dump-provenance
-                            Print provenance keyword values.
-      -t TRAP_EXCEPTIONS, --trap-exceptions=TRAP_EXCEPTIONS
-                            Capture exceptions at level: pmap, imap, rmap,
-                            selector, debug, none
-      -x CONTEXT, --context=CONTEXT
-                            Pipeline context defining replacement reference.
-      -V VERBOSITY, --verbose=VERBOSITY
-                            Set verbosity level.
+                            Dump provenance keywords.
+      -t TRAP_EXCEPTIONS, --trap-exceptions TRAP_EXCEPTIONS
+                            Capture exceptions at level: pmap, imap, rmap, selector, debug, none
+      -x CONTEXT, --context CONTEXT
+                            Pipeline context defining comparison files.
+      -J, --jwst            Force observatory to JWST for determining header conventions.
+      -H, --hst             Force observatory to HST for determining heder conventions.
                             
 crds.certify is invoked as, e.g.::
 
@@ -65,17 +67,20 @@ references crds.diff is currently a thin wrapper around fitsdiff but may expand.
 For CRDS mappings crds.diff performs a recursive logical difference which shows 
 the full match path to each bottom level change.   crds.diff --help yields::
 
-    Usage: diff.py [options] <file1> <file2>
-            
-            Appropriately difference CRDS mapping or reference files.
-            
+    usage: diff.py [-P] [-K] [-J] [-H]  old_file new_file
     
-    Options:
-      -h, --help            show this help message and exit
-      -J, --jwst            Locate files using JWST naming conventions.
-      -H, --hst             Locate files using HST naming conventions.
-      -V VERBOSITY, --verbose=VERBOSITY
-                            Set verbosity level.
+    Difference CRDS mapping or reference files.
+    
+    positional arguments:
+      old_file              Prior file of difference.
+      new_file              New file of difference.
+    
+    optional arguments:
+      -P, --primitive-diffs
+                            Include primitive differences on replaced files.
+      -K, --check-diffs     Issue warnings about new rules, deletions, or reversions.
+      -J, --jwst            Force observatory to JWST for determining header conventions.
+      -H, --hst             Force observatory to HST for determining heder conventions.
 
 For standard CRDS filenames,  crds.diff can guess the observatory.   For 
 non-standard names,  the observatory needs to be specified.  crds.diff can be
@@ -128,6 +133,69 @@ reference files::
     ('hst', 'acs', 'dgeofile', 'HRC', 'CLEAR1S', 'F220W', '2002-03-01', '00:00:00')
 
 
+crds.sync 
+---------
+    
+crds.sync downloads references and mappings from the CRDS server based on a
+variety of specification mechanisms::
+
+    usage: sync.py [-h] [--contexts [CONTEXT [CONTEXT ...]]] [--references]
+                   [--datasets [DATASET [DATASET ...]]] [--all] [--range MIN:MAX]
+                   [--purge] [-i] [-v] [--verbosity VERBOSITY] [-J] [-H]
+                   [--profile PROFILE] [--pdb]
+                   [files [files ...]]
+
+Synchronize local mapping and reference caches for the given contexts by 
+downloading missing files from the CRDS server and/or archive::
+
+  positional arguments:
+      files                 Explicitly list files to be synced.
+
+  optional arguments:
+      -h, --help            show this help message and exit
+      --contexts [CONTEXT [CONTEXT ...]]   List contexts (.pmap's) to sync.  dependent mappings are loaded recursively.
+      --references          Get all the references for the specified contexts.
+      --datasets [DATASET [DATASET ...]] List dataset files for which to prefetch references.
+      --all                 Operate with respect to all known contexts.
+      --range MIN:MAX       Fetch files for pipeline context ids between <MIN> and <MAX>.
+      --purge               Remove reference files and mappings not referred to by contexts.
+      -i, --ignore-cache    Download sync'ed files even if they're already in the cache.
+      -v, --verbose         Set log verbosity to True,  nominal debug level.
+      --verbosity VERBOSITY Set log verbosity to a specific level: 0..100.
+      -J, --jwst            Force observatory to JWST for determining header conventions.
+      -H, --hst             Force observatory to HST for determining heder conventions.
+      --profile PROFILE     Output profile stats to the specified file.
+      --pdb                 Run under pdb.
+    
+* Primitive syncing can be done by explicitly listing the files you wish to cache::
+    
+     % python -m crds.sync  hst_0001.pmap hst_acs_darkfile_0037.fits
+    
+* Typically syncing is done with respect to particular CRDS contexts::
+    
+    Synced contexts can be explicitly listed:
+    
+      % python -m crds.sync  --contexts hst_0001.pmap hst_0002.pmap
+    
+    Synced contexts can be specified as a numerical range:
+    
+      % python -m crds.sync --range 1:2
+    
+    Synced contexts can be specified as --all contexts:
+    
+      % python -m crds.sync --all
+    
+* Typically reference file retrieval behavior is driven by switches::
+
+      Cache all references for the specified contexts like this:
+
+      % python -m crds.sync  --contexts hst_0001.pmap hst_0002.pmap  --references   
+      
+      Cache the best references for the specified datasets like this:
+    
+      % python -m crds.sync  --contexts hst_0001.pmap hst_0002.pmap  --datasets  <dataset_files...>        
+
+
 crds.file_bestrefs *(preliminary)*
 ----------------------------------
 
@@ -159,21 +227,7 @@ with respect to a particular context or contexts::
     CRDS        : INFO     New Reference for 'j8bt06o6q_raw.fits' 'npolfile' is 'v9718264j_npl.fits' was 'undefined'
     CRDS        : INFO     New Reference for 'j8bt09jcq_raw.fits' 'imphttab' is 'w3m1716tj_imp.fits' was 'undefined'
     CRDS        : INFO     New Reference for 'j8bt09jcq_raw.fits' 'npolfile' is 'v9718260j_npl.fits' was 'undefined'
-    Reference Changes:
-    {'imphttab': ['j8bt05njq_raw.fits',
-                  'j8bt06o6q_raw.fits',
-                  'j8bt09jcq_raw.fits'],
-     'npolfile': ['j8bt05njq_raw.fits',
-                  'j8bt06o6q_raw.fits',
-                  'j8bt09jcq_raw.fits']}
     0 errors
     0 warnings
     6 infos
-
-.. crds.sync *(preliminary)*
-    -------------------------
-    
-    crds.sync downloads references and mappings from the CRDS server based on a
-    variety of specification mechanisms.
-
 

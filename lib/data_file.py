@@ -119,16 +119,17 @@ def setval(filepath, key, value):
         return dm_setval(filepath, key, value)
     else:
         raise NotImplementedError("setval not supported for type " + repr(ftype))
-    
+
+@utils.capture_output 
 def dm_setval(filepath, key, value):
     """Set metadata `key` in file `filepath` to `value` using jwst datamodel.
     """
     from jwstlib import models
     with models.open(filepath) as dm:
-        dm[key] = value
+        dm[key.lower()] = value
         dm.save(filepath)
 
-def get_conditioned_header(filepath, needed_keys=[], original_name=None, observatory=None):
+def get_conditioned_header(filepath, needed_keys=(), original_name=None, observatory=None):
     """Return the complete conditioned header dictionary of a reference file,
     or optionally only the keys listed by `needed_keys`.
     
@@ -139,7 +140,7 @@ def get_conditioned_header(filepath, needed_keys=[], original_name=None, observa
     header = get_header(filepath, needed_keys, original_name, observatory=observatory)
     return utils.condition_header(header, needed_keys)
 
-def get_header(filepath, needed_keys=[], original_name=None, observatory=None):
+def get_header(filepath, needed_keys=(), original_name=None, observatory=None):
     """Return the complete unconditioned header dictionary of a reference file.
     """
     if original_name is None:
@@ -150,16 +151,16 @@ def get_header(filepath, needed_keys=[], original_name=None, observatory=None):
         if observatory is None:
             observatory = get_observatory(filepath, original_name)
         if observatory == "jwst":
-            return get_data_model_header(filepath, needed_keys)
+            return get_data_model_header.suppressed(filepath, needed_keys)
         else:
             return get_fits_header_union(filepath, needed_keys)
 
 # A clearer name
 get_unconditioned_header = get_header
 
-def get_data_model_header(filepath, needed_keys=[]):
-    """Get the header from `filepath` using the jwst data model.
-    """
+@utils.capture_output
+def get_data_model_header(filepath, needed_keys=()):
+    """Get the header from `filepath` using the jwst data model."""
     from jwstlib import models
     with models.open(filepath) as dm:
         d = dm.to_flat_dict(include_arrays=False)
@@ -167,10 +168,10 @@ def get_data_model_header(filepath, needed_keys=[]):
         header = {}
         for key, val in d.items():
             if (not needed_keys) or (key.upper() in needed_keys):
-                header[str(key)] = str(val)    
+                header[str(key).upper()] = str(val)    
     return header
 
-def get_fits_header(fname, needed_keys=[]):
+def get_fits_header(fname, needed_keys=()):
     """Return `needed_keys` or all from FITS file `fname`s primary header."""
     header = {}
     allheader = pyfits.getheader(fname)
@@ -181,7 +182,7 @@ def get_fits_header(fname, needed_keys=[]):
             header[key] = "UNDEFINED"
     return header
 
-def get_fits_header_union(fname, needed_keys=[]):
+def get_fits_header_union(fname, needed_keys=()):
     """Get the union of keywords from all header extensions of FITS
     file `fname`.  In the case of collisions, keep the first value
     found as extensions are loaded in numerical order.
@@ -266,7 +267,7 @@ def is_geis(name):
     name = os.path.basename(name)
     return bool(re.match(r"\w+\.r\dh", name))
 
-def get_geis_header(name, needed_keys=[]):
+def get_geis_header(name, needed_keys=()):
     """Return the `needed_keys` from GEIS file at `name`."""
 
     lines = open(name) if isinstance(name, str) else name
