@@ -4,7 +4,7 @@ for instr in acs cos stis wfc3 nicmos wfpc2
 do 
 	echo ======================== $instr =========================
 	python -m crds.certify -H --verbose hst_${instr}.imap -t rmap $*
-done | tee certify_all.log
+done > certify_all.log
 
 echo "============================================================"
 echo "==================== summary ==============================="

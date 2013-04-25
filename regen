@@ -43,7 +43,7 @@ echo "Generating contexts"
 
 # Run the CRDS certifier on the new rmaps
 echo "Certifying all mappings"
-(cd certify_logs; ./certify_all  >& certify_all.log;   grep -E 'error|warn' certify_all.log)
+(cd certify_logs; ./certify_all)
 
 # Run comparison tests on all HST datasets.
 echo "Testing all datasets"
