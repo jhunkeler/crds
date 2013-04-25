@@ -1,4 +1,21 @@
 #! /bin/csh
 
-python db_test.py testall 
+# specify a context
+
+if ($# == 0) then
+	set context="hst.pmap"
+	set server="http://not-a-crds-server.stsci.edu"
+else if ($# == 1)
+	set server="http://localhost:8000"
+	set context="$1"
+else:
+	set server="$1"
+	set context="$2"
+endif
+
+setenv CRDS_PATH `pwd`/crds_cache
+setenv CRDS_SERVER_URL $server
+
+python -m crds.sync -H --contexts $context --verbose
+python db_test.py testall $context
 

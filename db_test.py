@@ -375,14 +375,14 @@ def reference_info(reference_filename, context="hst.pmap"):
     print(pysh.out_err("python -m crds.matches ${context} ${basename}"))
     log.set_verbose(vstate)
     
-def dataset_info(dataset_filename):
+def dataset_info(dataset_filename, context):
     """Print out the CDBS database information about a dataset file."""
     dataset_filename = os.path.basename(dataset_filename)
     dataset_id = dataset_filename.split("_")[0]
     header = cdbs_db.get_dataset_header(dataset_id)[0]
     instrument = header["INSTRUME"]
     header = { key.lower():value for (key,value) in header.items() }
-    imap = rmap.get_cached_mapping("hst_" + instrument + ".imap")
+    imap = rmap.get_cached_mapping(context).get_imap(instrument)
     header["file_name"] = dataset_filename
     row_columns = ["file_name"]
     row_columns += [ key for key in imap.get_required_parkeys() if key in header.keys()]
@@ -390,13 +390,13 @@ def dataset_info(dataset_filename):
     print("=" * (row_table.width//2) + " dataset " + "=" * (row_table.width//2))
     print(row_table)
         
-def info(file):
+def info(file, context):
     try:
-        reference_info(file)
+        reference_info(file, context)
     except LookupError:
         log.info("Couldn't find " + repr(file) + " as a reference or datsaset.")
     try:
-        dataset_info(file)
+        dataset_info(file, context)
     except LookupError:
         pass
 
@@ -411,6 +411,9 @@ def main():
         profile = False
     else:
         profile = True
+
+    context = "hst.pmap"
+    inject_errors = None        
     for i, arg in enumerate(sys.argv):
         if arg.startswith("--random-errors"):
             parts = arg.split("=")
@@ -419,17 +422,20 @@ def main():
             else:
                 inject_errors = parts[1]
             del sys.argv[i]
-            break
-    else:
-        inject_errors = None
+        elif arg.endswith(".pmap"):
+            context = sys.argv[i]
+            del sys.argv[i]
+    log.info("Context is", repr(context))
+    log.info("Inject errors is", inject_errors)
+
     if sys.argv[1] == "dumpall":
-        dumpall()
+        dumpall(context=context)
     elif sys.argv[1] == "dump":
         dump(sys.argv[2])
     elif sys.argv[1] == "info":
-        info(sys.argv[2])
+        info(sys.argv[2], context=context)
     elif sys.argv[1] == "testall":
-        testall(path=DEFAULT_PKL_PATH, profile=profile)
+        testall(context=context, path=DEFAULT_PKL_PATH, profile=profile)
     elif sys.argv[1] == "test":
         if len(sys.argv) > 2:
             instruments = [instr.lower() for instr in sys.argv[2].split(",")]
@@ -446,15 +452,15 @@ def main():
             profile = False
         else:
             datasets = []
-        testall(instruments=instruments, filekinds=filekinds, datasets=datasets,
+        testall(context=context, instruments=instruments, filekinds=filekinds, datasets=datasets,
                 path=DEFAULT_PKL_PATH, profile=profile, inject_errors=inject_errors)
     else:
         log.info("""usage:
 python db_test.py dumpall
 python db_test.py dump <instrument>
-python db_test.py info <reference_file>
-python db_test.py testall
-python db_test.py test [instrument [filekind [dataset...]]]
+python db_test.py info <reference_file>|<dataset_file>
+python db_test.py testall <context>
+python db_test.py test <context> [instrument [filekind [dataset...]]]
 """)
         sys.exit(-1)
     sys.exit(0)   # Bypass Python garbage collection if possible.
