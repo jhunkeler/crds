@@ -31,12 +31,13 @@ def opus_bestrefs(dataset):
 
 def load_alternate_dataset_headers():
     try:
-        alternate_headers = cPickle.load(open(BESTREF_PKL))
         log.info("Loading improved opus dataset headers", BESTREF_PKL)
+        alternate_headers = cPickle.load(open(BESTREF_PKL))
     except:
         alternate_headers = {}
         log.warning("Loading opus headers failed.")
-    log.info("Loaded", BESTREF_PKL)
+    else:
+        log.info("Loaded", BESTREF_PKL)
     return alternate_headers
 
 def save_alternate_dataset_headers(alternates):
@@ -49,7 +50,12 @@ def save_alternate_dataset_headers(alternates):
 def main():
     alternates = load_alternate_dataset_headers()
 
-    for dataset in open(sys.argv[1]):
+    if sys.argv[1].startswith("@"):
+        datasets = open(sys.argv[1][1:]).read().splitlines()
+    else:
+        datasets = sys.argv[1:]
+
+    for dataset in datasets:
         dataset = dataset.strip()
         try:
             bestrefs = opus_bestrefs(dataset)

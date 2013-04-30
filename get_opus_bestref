@@ -5,5 +5,5 @@
 # must be removed prior to running this.
 
 python get_dataset_ids.py $1 1 >opus_bestrefs.dataset_ids
-python opus_bestref.py opus_bestrefs.dataset_ids
+python opus_bestref.py @opus_bestrefs.dataset_ids
 
