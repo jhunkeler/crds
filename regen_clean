@@ -2,19 +2,22 @@
 
 source env.csh
 
-echo "Clearing reference database caches"
+echo ">>>>>>> Clearing reference database caches" >/dev/stderr
 rm -f ../hst_refcache/*
 
-echo "Clearing dataset database caches"
+echo ">>>>>>> Clearing dataset database caches" >/dev/stderr
 rm -f ../datasets/*.pkl  opus_bestrefs.err
 
-echo "Dumping catalog datasets"
+echo ">>>>>>> Dumping catalog datasets" >/dev/stderr
 (python db_test.py dumpall;)
 
 ./regen |& tee regen.out
 
+# The catalog results aren't definitive.   Get backup results from OPUS for datasets with errors.
+echo ">>>>>>> Getting opus bestrefs for erring datasets" >/dev/stderr
 ./get_opus_bestref testall.err.1 |& tee opus_bestrefs.err
 
+echo ">>>>>>> Re-testing with revised CDBS comparison values from OPUS" >/dev/stderr
 ./testall >& testall.err.2
 grep -E 'errors|warn|datasets' testall.err.2 | grep -v -E 'pickle'
 
