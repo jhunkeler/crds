@@ -164,6 +164,13 @@ def get_file_info(pipeline_context, filename):
     """Return a dictionary of CRDS information about `filename`."""
     return S.get_file_info(pipeline_context, filename)
 
+def get_file_info_map(observatory, files=None, fields=None):
+    """Return the info { filename : { info } } on `files` of `observatory`.
+    `fields` can be used to limit info returned to specified keys.
+    """
+    infos = S.get_info_map(observatory, files, fields)
+    return infos
+
 def get_reference_names(pipeline_context):
     """Get the complete set of reference file basenames required
     for the specified pipeline_context.
@@ -198,6 +205,54 @@ def get_best_references(pipeline_context, header, reftypes=None):
                                       str(refname)[len("NOT FOUND"):])
     return bestrefs
 
+'''
+def get_best_references_by_header_map(pipeline_context, header_map, reftypes=None):
+    """Get best references for each dataset in a map of ids to headers,  `header_map`,  
+    relative to `pipeline_context`.
+    
+    pipeline_context  CRDS context for lookup,   e.g.   'hst_0001.pmap'
+    header_map       { name: { lookup_parameter : value } } dictionary of named headers
+    reftypes         If None,  return all reference types;  otherwise return 
+                     best refs for the specified list of reftypes. 
+
+    Returns          { name : { reftype : reference_basename ... } }
+    
+    Raises           CrdsLookupError,  typically for problems with header values
+    """
+    try:
+        bestrefs = S.get_best_references_by_header_map(pipeline_context, dict(header_map), reftypes)
+    except Exception, exc:
+        raise CrdsLookupError(str(exc))
+    # Due to limitations of jsonrpc,  exception handling is kludged in here.
+    for filetype, refname in bestrefs.items():
+        if "NOT FOUND" in refname:
+            if "NOT FOUND n/a" == refname:
+                log.verbose("Reference type", srepr(filetype), "not applicable.")
+            else:
+                raise CrdsLookupError("Error determining best reference for " + 
+                                      srepr(filetype) + " = " + 
+                                      str(refname)[len("NOT FOUND"):])
+    return bestrefs
+
+def get_best_references_by_ids(pipeline_context, datasets, reftypes=None):
+    """Get best references for list of `datasets` ids relative to `pipeline_context`.
+    
+    pipeline_context  CRDS context for lookup,   e.g.   'hst_0001.pmap'
+    datasets         [ dataset_id, ... ]   e.g. ["I9ZF01010", "I9MF01012"]
+    reftypes         If None,  return all reference types;  otherwise return 
+                     best refs for the specified list of reftypes. 
+
+    Returns          { id: { reftype : reference_basename ... } }
+    
+    Raises           CrdsLookupError,  typically for problems with header values
+    """
+    try:
+        bestrefs = S.get_best_references_by_ids(pipeline_context, datasets, reftypes)
+    except Exception, exc:
+        raise CrdsLookupError(str(exc))
+    return bestrefs
+'''
+
 def get_default_context(observatory=None):
     """Return the name of the latest pipeline mapping in use for processing
     files for `observatory`.  
@@ -224,6 +279,18 @@ def get_server_info():
         return info
     except ServiceError, exc:
         raise CrdsNetworkError("network connection failed: " + srepr(get_crds_server()))
+
+def get_dataset_headers_by_id(context, dataset_ids):
+    """Return { dataset_id : { header } } for `dataset_ids`."""
+    return S.get_dataset_headers_by_id(context, dataset_ids)
+
+def get_dataset_headers_by_instrument(context, instrument):
+    """Return { dataset_id : { header } } for `instrument`."""
+    return S.get_dataset_headers_by_instrument(context, instrument)
+
+def get_dataset_ids(context, instrument):
+    """Return [ dataset_id, ...] for `instrument`."""
+    return S.get_dataset_ids(context, instrument)
 
 # ==============================================================================
 
@@ -266,7 +333,7 @@ def observatory_from_string(string):
 class FileCacher(object):
     """FileCacher gets remote files with simple names into a local cache.
     """
-    def get_local_files(self, pipeline_context, names, ignore_cache=False):
+    def get_local_files(self, pipeline_context, names, ignore_cache=False, raise_exceptions=True):
         """Given a list of basename `mapping_names` which are pertinent to the 
         given `pipeline_context`,   cache the mappings locally where they can 
         be used by CRDS.
@@ -281,7 +348,7 @@ class FileCacher(object):
                 downloads.append(name)
             localpaths[name] = localpath
         if downloads:
-            self.download_files(pipeline_context, downloads, localpaths)
+            self.download_files(pipeline_context, downloads, localpaths, raise_exceptions)
         else:
             log.verbose("Skipping download for cached files", names, verbosity=10)
         return localpaths
@@ -296,10 +363,16 @@ class FileCacher(object):
             observatory = crds.get_cached_mapping(pipeline_context).observatory
         return config.locate_file(name, observatory=observatory)
 
-    def download_files(self, pipeline_context, downloads, localpaths):
+    def download_files(self, pipeline_context, downloads, localpaths, raise_exceptions=True):
         """Serial file-by-file download."""
         for name in downloads:
-            self.download(pipeline_context, name, localpaths[name])
+            try:
+                self.download(pipeline_context, name, localpaths[name])
+            except Exception, exc:
+                if raise_exceptions:
+                    raise
+                else:
+                    log.error("Failure downloading file", repr(name), ":", str(exc))
 
     def download(self, pipeline_context, name, localpath):
         """Download a single file."""
@@ -391,7 +464,7 @@ class BundleCacher(FileCacher):
     """BundleCacher gets remote files into a local cache by requesting a bundle
     of any missing files and then unpacking it.
     """
-    def download_files(self, pipeline_context, downloads, localpaths):
+    def download_files(self, pipeline_context, downloads, localpaths, raise_exceptions=True):
         """Download a list of files as an archive bundle and unpack it."""
         bundlepath = config.get_crds_config_path() 
         bundlepath += "/" + "crds_bundle.tar.gz"
@@ -436,8 +509,10 @@ MAPPING_CACHER = BundleCacher()
 # ==============================================================================
 
 def dump_mappings(pipeline_context, ignore_cache=False, mappings=None):
-    """Given a `pipeline_context`, determine the closure of CRDS mappings and 
+    """Given a `pipeline_context`, determine the closure of CRDS mappings for it and 
     cache them on the local file system.
+    
+    If mappings is not None,  sync exactly that list of mapping names,  not their closures.
     
     Returns:   { mapping_basename :   mapping_local_filepath ... }   
     """
@@ -447,10 +522,12 @@ def dump_mappings(pipeline_context, ignore_cache=False, mappings=None):
     return MAPPING_CACHER.get_local_files(
         pipeline_context, mappings, ignore_cache=ignore_cache)
   
-def dump_references(pipeline_context, baserefs=None, ignore_cache=False):
+def dump_references(pipeline_context, baserefs=None, ignore_cache=False, raise_exceptions=True):
     """Given a pipeline `pipeline_context` and list of `baserefs` reference 
     file basenames,  obtain the set of reference files and cache them on the
-    local file system.   
+    local file system.
+    
+    If `basrefs` is None,  sync the closure of references referred to by `pipeline_context`.
     
     Returns:   { ref_basename :   reference_local_filepath ... }
     """
@@ -462,7 +539,7 @@ def dump_references(pipeline_context, baserefs=None, ignore_cache=False):
             log.verbose("Skipping " + srepr(refname))
             baserefs.remove(refname)
     return FILE_CACHER.get_local_files(
-        pipeline_context, baserefs, ignore_cache=ignore_cache)
+        pipeline_context, baserefs, ignore_cache=ignore_cache, raise_exceptions=raise_exceptions)
     
 def cache_references(pipeline_context, bestrefs, ignore_cache=False):
     """Given a pipeline `pipeline_context` and `bestrefs` mapping,  obtain the

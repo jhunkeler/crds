@@ -99,9 +99,9 @@ class CrdsLogger(object):
     def get_verbose(self):
         return self.verbose_level
     
-    def add_console_handler(self, level=logging.DEBUG):
+    def add_console_handler(self, level=logging.DEBUG, stream=sys.stderr):
         if self.console is None:
-            self.console = self.add_stream_handler(sys.stdout)
+            self.console = self.add_stream_handler(stream)
 
     def remove_console_handler(self):
         if self.console is not None:
@@ -138,6 +138,11 @@ remove_stream_handler = THE_LOGGER.remove_stream_handler
 def errors():
     """Return the global count of errors."""
     return THE_LOGGER.errors
+
+def set_test_mode():
+    """Route log messages to standard output for testing with doctest."""
+    remove_console_handler()
+    add_console_handler(stream=sys.stdout)
 
 # ===========================================================================
 

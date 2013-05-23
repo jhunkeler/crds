@@ -407,6 +407,15 @@ class Mapping(object):
                                         header.get(key.upper(), "UNDEFINED"))
         return minimized
 
+    def get_minimum_header(self, dataset, original_name=None):
+        """Return the names and values of `dataset`s header parameters which
+        are required to compute best references for it.   `original_name` is
+        used to determine file type when `dataset` is a temporary file with a
+        useless name.
+        """
+        header = data_file.get_conditioned_header(dataset, original_name=original_name)
+        return self.minimize_header(header)
+
     def validate_mapping(self,  trap_exceptions=False):
         """Validate `self` only implementing any checks to be performced by
         crds.certify.   ContextMappings are mostly validated at load time.
@@ -545,19 +554,15 @@ class PipelineContext(ContextMapping):
         """Return the filekinds associated with `dataset` by examining
         it's parameters.  Currently returns ALL filekinds for
         `dataset`s instrument.   Not all are necessarily appropriate for
-        the current mode.
+        the current mode.  `dataset` can be a filename or a header dictionary.
         """
-        instrument = data_file.getval(dataset,  self.instrument_key)
+        if isinstance(dataset, basestring):
+            instrument = data_file.getval(dataset,  self.instrument_key)
+        elif isinstance(dataset, dict):
+            instrument = self.get_instrument(dataset)
+        else:
+            raise ValueError("Dataset should be a filename or header dictionary.")
         return self.get_imap(instrument).get_filekinds(dataset)
-
-    def get_minimum_header(self, dataset, original_name=None):
-        """Return the names and values of `dataset`s header parameters which
-        are required to compute best references for it.   `original_name` is
-        used to determine file type when `dataset` is a temporary file with a
-        useless name.
-        """
-        header = data_file.get_conditioned_header(dataset, original_name=original_name)
-        return self.minimize_header(header)
 
     def get_instrument(self, header):
         """Get the instrument name defined by `header`."""
@@ -611,6 +616,9 @@ class InstrumentContext(ContextMapping):
         """Returns the single reference file basename appropriate for `header`
         corresponding to `filekind`.
         """
+#        if self.get_instrument(header).lower() != self.instrument:
+#            raise CrdsError("Dataset instrument value '{}' doesn't match CRDS rules instrument '{}' from file '{}'.".format(
+#                            self.get_instrument(header), self.instrument, self.filename))
         return self.get_rmap(filekind).get_best_ref(header)
 
     def get_best_references(self, header, include=None):
@@ -1001,14 +1009,16 @@ def asmapping(filename_or_mapping, cached=False, **keys):
 
 # =============================================================================
 
+"""glob_pattern may not identify file type,  hence discrete versions."""
+
 def list_references(glob_pattern, observatory, full_path=False):
     """Return the list of cached references for `observatory` which match `glob_pattern`."""
-    pattern = os.path.join(config.get_crds_refpath(), observatory, glob_pattern)
+    pattern = config.locate_reference(glob_pattern, observatory)
     return _glob_list(pattern, full_path)
 
 def list_mappings(glob_pattern, observatory, full_path=False):
     """Return the list of cached mappings for `observatory` which match `glob_pattern`."""
-    pattern = os.path.join(config.get_crds_mappath(), observatory, glob_pattern)
+    pattern = config.locate_mapping(glob_pattern, observatory)
     return _glob_list(pattern, full_path)
 
 def _glob_list(pattern, full_path=False):
@@ -1054,7 +1064,7 @@ def mapping_type(mapping):
         raise ValueError("Unknown mapping type for " + repr(Mapping))
 # ===================================================================
 
-def get_best_references(context_file, header, include=None):
+def get_best_references(context_file, header, include=None, condition=False):
     """Compute the best references for `header` for the given CRDS
     `context_file`.   This is a local computation using local rmaps and
     CPU resources.   If `include` is None,  return results for all
@@ -1063,6 +1073,8 @@ def get_best_references(context_file, header, include=None):
     """
     ctx = asmapping(context_file, cached=True)
     minheader = ctx.minimize_header(header)
+    if condition:
+        minheader = utils.condition_header(minheader)
     return ctx.get_best_references(minheader, include=include)
 
 

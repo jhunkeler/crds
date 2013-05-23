@@ -236,7 +236,7 @@ class Selector(object):
         exc = None
         for selection in self.get_selection(lookup_key):  # iterate over weighted selections, best match first.
             try:
-                log.verbose("Trying", selection)
+                log.verbose("Trying", selection, verbosity=60)
                 return self.get_choice(selection, header) # recursively,  what's final choice?
             except CrdsLookupError, exc:
                 continue
@@ -388,13 +388,13 @@ class Selector(object):
                 return
             else:
                 raise ValidationError(
-                    " parameter " + repr(name) + " value =" + 
+                    " parameter=" + repr(name) + " value =" + 
                     repr(value) + " is not in range [" + 
                     str(min) + " .. " + str(max) + "]")     
         if name in self._substitutions and value in self._substitutions[name]:
             return
         raise ValidationError(
-            " parameter " + repr(name) + " value =" + repr(value) + 
+            " parameter=" + repr(name) + " value=" + repr(value) + 
             " is not in " + repr(valid_list))
             
     def _validate_key(self, key, valid_values_map):
@@ -1030,7 +1030,7 @@ derived from TPN files:
     >>> m.validate_selector({ "foo" : ("1.0",), "bar":("3.0",) })
     Traceback (most recent call last):
     ...
-    ValidationError:  parameter 'bar' value ='2.0' is not in ('3.0',)
+    ValidationError:  parameter='bar' value='2.0' is not in ('3.0',)
     
 Match tuples should have the same length as the parameter list:
     
@@ -1055,7 +1055,7 @@ derived from the rmap itself rather than TPNs:
     >>> m.choose({"foo" : "doh!", "bar":"1.0"})  
     Traceback (most recent call last):
     ...
-    ValidationError:  parameter 'foo' value ='doh!' is not in ['1.0', '4.0']
+    ValidationError:  parameter='foo' value='doh!' is not in ['1.0', '4.0']
  
 The last thing matched in a selector tree is assumed to be a file:
     
@@ -1977,8 +1977,9 @@ class Parameters(object):
         When possible check for duplicate keys in `self.selections` and `rmap_header`.
         """
         check_duplicates(rmap_header, ["header"])
-        rmap_header = dict(rmap_header)
-        parkeys = rmap_header["parkey"]
+        if not isinstance(rmap_header, dict):
+            rmap_header = dict(rmap_header)   # drop header item list form here.
+        parkeys = rmap_header["parkey"]   
         return self._instantiate(parkeys, rmap_header, ["selector"])
 
     def _instantiate(self, parkeys, rmap_header, parents=None):
