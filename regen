@@ -48,7 +48,7 @@ echo ">>>>>>> Installing CRDS" > /dev/stderr
 
 # Run the CRDS certifier on the new rmaps
 echo ">>>>>>> Certifying all mappings" > /dev/stderr
-(cd certify_logs; ./certify_all)
+(cd certify_logs; ./certify_all |& tee certify_all.log)
 
 # Run comparison tests on all HST datasets.
 echo ">>>>>>> Testing all datasets" > /dev/stderr
