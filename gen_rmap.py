@@ -480,10 +480,10 @@ def write_rmap(observatory, instrument, filekind, kind_map):
         ("extra_keys", tuple([key.upper() for key in parkeys.get_extra_keys(instrument, filekind)])),
         ("rmap_relevance", parkeys.get_rmap_relevance(instrument, filekind)),
         ("parkey_relevance", parkeys.get_parkey_relevance(instrument, filekind)),
-        ("reffile_required", parkeys.get_reffile_required(instrument, filekind)),
-        ("reffile_switch", parkeys.get_reffile_switch(instrument, filekind)),
-        ("reffile_format", parkeys.get_reffile_format(instrument, filekind)),
-        ("row_keys", parkeys.get_row_keys(instrument, filekind)),
+        ("reffile_required", parkeys.get_reffile_required(instrument, filekind).upper()),
+        ("reffile_switch", parkeys.get_reffile_switch(instrument, filekind).upper()),
+        ("reffile_format", parkeys.get_reffile_format(instrument, filekind).upper()),
+        ("row_keys", tuple([key.upper() for key in parkeys.get_row_keys(instrument, filekind)])),
     ] if y])
 
     # Execute filekind specific customizations on header    
