@@ -12,7 +12,7 @@ import cdbs_db
 
 # import pyodbc  deferred...
 
-from crds import rmap, log, pysh
+from crds import rmap, log, pysh, utils
 import crds.hst
 
 import opus_bestref
@@ -298,6 +298,7 @@ def dump(instr, suffix="_headers.pkl", path=DEFAULT_PKL_PATH):
     samples = { h["DATA_SET"] : h for h in headers }
     pickle = path + instr + suffix
     log.info("Saving pickle", repr(pickle))
+    utils.ensure_dir_exists(pickle)
     cPickle.dump(samples, open(pickle, "w+"))
 
 def dumpall(context="hst.pmap", suffix="_headers.pkl", path=DEFAULT_PKL_PATH):
