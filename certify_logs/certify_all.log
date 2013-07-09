@@ -4,12 +4,12 @@ CRDS  : INFO     ######################################======================== 
 ======================== nicmos =========================
 ======================== wfpc2 =========================
 alidating 'hst_acs.imap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs.imap' derived_from = 'generated 2013-06-25 14:01:17.951575'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs.imap' derived_from = 'generated 2013-07-09 14:32:15.988503'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_atodtab.rmap' (2/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_atodtab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_atodtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_atodtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:56:50.588793'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_atodtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:30:32.617478'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_biasfile.rmap' (3/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_biasfile.rmap'
@@ -158,32 +158,32 @@ CRDS  : WARNING  Match tuple ('WFC', 'B|C', '8.0', '*', '4144.0', '2068.0', '24.
 CRDS  : WARNING  Match tuple ('WFC', 'B|C', '8.0', '*', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'B|BC|C', '8.0', '*', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'C', '2.0', 'WFC2-2K|WFC2-POL0UV|WFC2-POL0V|WFC2-POL120UV|WFC2-POL120V|WFC2-POL60UV|WFC2-POL60V|WFC2-SMFL', '2070.0', '2046.0', '22.0', '-1.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'C', '2.0', '*', '2070.0', '2046.0', '22.0', '-1.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'D', '2.0', 'WFC2-ORAMPQ', '2070.0', '2046.0', '-2048.0', '-1.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'D', '2.0', '*', '2070.0', '2046.0', '-2048.0', '-1.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_biasfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:57:04.855085'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_biasfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:30:37.602453'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_bpixtab.rmap' (4/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_bpixtab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_bpixtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_bpixtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:57:05.063386'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_bpixtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:30:37.729150'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_ccdtab.rmap' (5/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_ccdtab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_ccdtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_ccdtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:57:05.356578'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_ccdtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:30:37.817472'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_cfltfile.rmap' (6/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_cfltfile.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_cfltfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_cfltfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:57:05.372238'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_cfltfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:30:37.821205'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_crrejtab.rmap' (7/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_crrejtab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_crrejtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_crrejtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:57:05.415504'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_crrejtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:30:37.826174'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_d2imfile.rmap' (8/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_d2imfile.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_d2imfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_d2imfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:57:05.427255'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_d2imfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:30:37.829112'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_darkfile.rmap' (9/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_darkfile.rmap'
@@ -198,19 +198,19 @@ CRDS  : WARNING  Match tuple ('WFC', 'ABCD', '1.0') is an equal weight special c
 CRDS  : WARNING  Match tuple ('WFC', 'ABCD', '1.0') is an equal weight special case of ('WFC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_darkfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:58:33.096249'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_darkfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:17.294971'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_dgeofile.rmap' (10/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_dgeofile.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_dgeofile.rmap'
 CRDS  : WARNING  Match tuple ('SBC', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A') is an equal weight special case of ('SBC', '*', 'N/A')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_dgeofile.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:58:33.496181'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_dgeofile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:17.426026'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_drkcfile.rmap' (11/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_drkcfile.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_drkcfile.rmap'
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.4') is an equal weight special case of ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.0|1.4|2.0')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_drkcfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:21.320995'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_drkcfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:37.921130'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_flshfile.rmap' (12/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_flshfile.rmap'
@@ -233,42 +233,42 @@ CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'HIGH', 'B') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'HIGH|LOW|MED', 'A|B')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'LOW', 'B') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'HIGH|LOW|MED', 'A|B')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'MED', 'B') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'HIGH|LOW|MED', 'A|B')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_flshfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:22.148583'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_flshfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:38.419242'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_idctab.rmap' (13/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_idctab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_idctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_idctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:25.777004'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_idctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:40.612064'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_imphttab.rmap' (14/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_imphttab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_imphttab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_imphttab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:25.791868'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_imphttab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:40.615964'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_mdriztab.rmap' (15/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_mdriztab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_mdriztab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_mdriztab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:25.835397'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_mdriztab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:40.618863'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_mlintab.rmap' (16/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_mlintab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_mlintab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_mlintab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:25.847145'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_mlintab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:40.620791'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_npolfile.rmap' (17/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_npolfile.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_npolfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_npolfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:25.878992'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_npolfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:40.626089'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_oscntab.rmap' (18/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_oscntab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_oscntab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_oscntab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:25.918019'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_oscntab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:40.634015'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_pctetab.rmap' (19/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_pctetab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_pctetab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_pctetab.rmap' derived_from = 'generated from cdbs database 2013-06-25 13:59:25.958211'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_pctetab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:40.635848'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_pfltfile.rmap' (20/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_pfltfile.rmap'
@@ -590,17 +590,17 @@ CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', 'POL60UV', 'F435W', '
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', 'POL60UV', 'F660N', 'IMAGING', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'POL60UV', 'F660N', 'IMAGING', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', 'POL60UV', 'F814W', 'IMAGING', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR1L|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|POL0UV|POL120UV|POL60UV', 'CLEAR2L|CLEAR2S|F330W|F410W|F435W|F814W|FR1016N|FR388N|FR423N|FR459M|FR462N|FR505N|FR555N|FR601N|FR647M|FR656N|FR716N|FR782N|FR853N|FR914M|FR931N|POL0V|POL120V|POL60V', 'IMAGING', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', 'POL60UV', 'F814W', 'IMAGING', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'POL60UV', 'F814W', 'IMAGING', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_pfltfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:14.252051'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_pfltfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:54.971676'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_shadfile.rmap' (21/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_shadfile.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_shadfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_shadfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:14.440723'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_shadfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:55.113394'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_acs_spottab.rmap' (22/22) relative to context None
 CRDS  : DEBUG    Parsing 'hst_acs_spottab.rmap'
 CRDS  : DEBUG    Validating 'hst_acs_spottab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_spottab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:14.452155'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_acs_spottab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:55.115584'
 CRDS  : INFO     0 errors
 CRDS  : INFO     491 warnings
 CRDS  : INFO     44 infos
@@ -608,100 +608,100 @@ CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_cos.imap' (1/19) relative to context None
 CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_cos.imap'
 CRDS  : DEBUG    Validating 'hst_cos.imap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos.imap' derived_from = 'generated 2013-06-25 14:01:17.952600'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos.imap' derived_from = 'generated 2013-07-09 14:32:15.989579'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_badttab.rmap' (2/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_badttab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_badttab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_badttab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:18.486481'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_badttab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.175243'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_bpixtab.rmap' (3/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_bpixtab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_bpixtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_bpixtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:18.508371'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_bpixtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.179686'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_brftab.rmap' (4/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_brftab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_brftab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_brftab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:18.519551'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_brftab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.181491'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_brsttab.rmap' (5/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_brsttab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_brsttab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_brsttab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:18.531112'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_brsttab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.183325'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_deadtab.rmap' (6/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_deadtab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_deadtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_deadtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:18.543523'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_deadtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.185240'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_disptab.rmap' (7/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_disptab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_disptab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_disptab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:19.828852'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_disptab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.740849'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_flatfile.rmap' (8/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_flatfile.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_flatfile.rmap'
 CRDS  : WARNING  Match tuple ('FUV', 'G130M') is an equal weight special case of ('FUV', 'G130M|G140L|G160M')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('FUV', 'G160M') is an equal weight special case of ('FUV', 'G130M|G140L|G160M')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_flatfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:19.861837'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_flatfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.746044'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_fluxtab.rmap' (9/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_fluxtab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_fluxtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_fluxtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:20.311787'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_fluxtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.897184'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_geofile.rmap' (10/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_geofile.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_geofile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_geofile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:20.324893'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_geofile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.900664'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_gsagtab.rmap' (11/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_gsagtab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_gsagtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_gsagtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:20.335868'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_gsagtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.902298'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_hvtab.rmap' (12/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_hvtab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_hvtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_hvtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:20.348298'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_hvtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.904245'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_lamptab.rmap' (13/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_lamptab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_lamptab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_lamptab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:20.568980'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_lamptab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.955185'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_phatab.rmap' (14/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_phatab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_phatab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_phatab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:20.583951'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_phatab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:56.958990'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_spwcstab.rmap' (15/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_spwcstab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_spwcstab.rmap'
 CRDS  : WARNING  Match Parameter  'EXPTYPE'  is unchecked.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_spwcstab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:21.381353'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_spwcstab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:57.233216'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_tdstab.rmap' (16/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_tdstab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_tdstab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_tdstab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:21.538976'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_tdstab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:57.242244'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_walktab.rmap' (17/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_walktab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_walktab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_walktab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:21.551155'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_walktab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:57.244475'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_wcptab.rmap' (18/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_wcptab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_wcptab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_wcptab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:21.569208'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_wcptab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:57.247413'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_cos_xtractab.rmap' (19/19) relative to context None
 CRDS  : DEBUG    Parsing 'hst_cos_xtractab.rmap'
 CRDS  : DEBUG    Validating 'hst_cos_xtractab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_xtractab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:23.924807'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_cos_xtractab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:58.150338'
 CRDS  : INFO     0 errors
 CRDS  : INFO     3 warnings
 CRDS  : INFO     38 infos
@@ -709,17 +709,17 @@ CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_stis.imap' (1/32) relative to context None
 CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_stis.imap'
 CRDS  : DEBUG    Validating 'hst_stis.imap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis.imap' derived_from = 'generated 2013-06-25 14:01:17.953563'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis.imap' derived_from = 'generated 2013-07-09 14:32:15.990618'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_apdestab.rmap' (2/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_apdestab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_apdestab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_apdestab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:26.759982'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_apdestab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.898398'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_apertab.rmap' (3/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_apertab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_apertab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_apertab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:26.819943'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_apertab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.910938'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_biasfile.rmap' (4/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_biasfile.rmap'
@@ -727,94 +727,94 @@ CRDS  : DEBUG    Validating 'hst_stis_biasfile.rmap'
 CRDS  : WARNING  Match Parameter  'CCDOFFST'  is unchecked.
 CRDS  : WARNING  Match Parameter  'BINAXIS1'  is unchecked.
 CRDS  : WARNING  Match Parameter  'BINAXIS2'  is unchecked.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_biasfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:27.964954'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_biasfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:00.173089'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_bpixtab.rmap' (5/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_bpixtab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_bpixtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_bpixtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:28.006475'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_bpixtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:00.193487'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_ccdtab.rmap' (6/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_ccdtab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_ccdtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_ccdtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:28.172598'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_ccdtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:00.225463'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_cdstab.rmap' (7/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_cdstab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_cdstab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_cdstab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:28.198645'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_cdstab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:00.228487'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_crrejtab.rmap' (8/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_crrejtab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_crrejtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_crrejtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:28.213222'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_crrejtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:00.230336'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_darkfile.rmap' (9/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_darkfile.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_darkfile.rmap'
 CRDS  : WARNING  Match tuple ('CCD', 'D', '1.0|2.0|4.0|8.0') is an equal weight special case of ('CCD', 'A|B|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_darkfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:34.990028'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_darkfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.104828'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_disptab.rmap' (10/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_disptab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_disptab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_disptab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:35.171633'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_disptab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.130582'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_echsctab.rmap' (11/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_echsctab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_echsctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_echsctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:35.186120'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_echsctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.134575'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_exstab.rmap' (12/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_exstab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_exstab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_exstab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:35.199387'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_exstab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.136865'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_gactab.rmap' (13/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_gactab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_gactab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_gactab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:35.225714'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_gactab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.141371'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_halotab.rmap' (14/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_halotab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_halotab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_halotab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:35.240659'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_halotab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.144936'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_idctab.rmap' (15/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_idctab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_idctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_idctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:35.255246'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_idctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.147993'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_inangtab.rmap' (16/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_inangtab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_inangtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_inangtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:35.298296'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_inangtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.174372'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_lamptab.rmap' (17/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_lamptab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_lamptab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_lamptab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:35.311105'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_lamptab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.177206'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_lfltfile.rmap' (18/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_lfltfile.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_lfltfile.rmap'
 CRDS  : ERROR    invalid mapping: stis lfltfile :  parameter='CENWAVE' value='2112.0' is not in ('1173.0', '1200.0', '1218.0', '1222.0', '1234.0', '1271.0', '1272.0', '1307.0', '1321.0', '1343.0', '1371.0', '1380.0', '1387.0', '1400.0', '1416.0', '1420.0', '1425.0', '1453.0', '1470.0', '1489.0', '1518.0', '1526.0', '1540.0', '1550.0', '1562.0', '1567.0', '1575.0', '1598.0', '1616.0', '1640.0', '1665.0', '1687.0', '1713.0', '1714.0', '1763.0', '1769.0', '1813.0', '1851.0', '1854.0', '1863.0', '1884.0', '1913.0', '1933.0', '1963.0', '1978.0', '1995.0', '2013.0', '2014.0', '2063.0', '2095.0', '2113.0', '2124.0', '2125.0', '2135.0', '2163.0', '2176.0', '2213.0', '2257.0', '2263.0', '2269.0', '2276.0', '2313.0', '2338.0', '2363.0', '2375.0', '2376.0', '2413.0', '2415.0', '2416.0', '2419.0', '2463.0', '2499.0', '2513.0', '2557.0', '2561.0', '2563.0', '2579.0', '2600.0', '2613.0', '2659.0', '2663.0', '2697.0', '2707.0', '2713.0', '2739.0', '2762.0', '2794.0', '2800.0', '2812.0', '2818.0', '2828.0', '2836.0', '2862.0', '2898.0', '2912.0', '2962.0', '2976.0', '2977.0', '3012.0', '3055.0', '3115.0', '3165.0', '3305.0', '3423.0', '3680.0', '3843.0', '3936.0', '4194.0', '4300.0', '4451.0', '4706.0', '4781.0', '4961.0', '5093.0', '5216.0', '5471.0', '5734.0', '6094.0', '6252.0', '6581.0', '6768.0', '7283.0', '7751.0', '7795.0', '8311.0', '8561.0', '8825.0', '8975.0', '9286.0', '9336.0', '9806.0', '9851.0', '10363.0', '1232.0', '1269.0', '1305.0', '1341.0', '1378.0', '1414.0', '1451.0', '1487.0', '1523.0', '1560.0', '1587.0', '1760.0', '2010.0', '2261.0', '2511.0', '2760.0', '3010.0', '1975.0', '2703.0', '1597.0', '1810.0', '1860.0', '1910.0', '1960.0', '2060.0', '2110.0', '2160.0', '2210.0', '2310.0', '2360.0', '2410.0', '2460.0', '2560.0', '2610.0', '2660.0', '2710.0', '2810.0', '2860.0', '2910.0', '2960.0', '2122.0', '2268.0', '2414.0', '2560.0', '-999.0')
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_lfltfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:36.054987'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_lfltfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.430119'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_mlintab.rmap' (19/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_mlintab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_mlintab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_mlintab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:36.139207'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_mlintab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.483673'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_mofftab.rmap' (20/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_mofftab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_mofftab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_mofftab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:36.157219'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_mofftab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.486367'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_pctab.rmap' (21/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_pctab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_pctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_pctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:36.450548'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_pctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:02.524710'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_pfltfile.rmap' (22/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_pfltfile.rmap'
@@ -867,57 +867,57 @@ CRDS  : WARNING  Match tuple ('FUV-MAMA', 'MIRFUV', 'IMAGING', 'N/A', 'F25LYA') 
 CRDS  : WARNING  Match tuple ('FUV-MAMA', 'MIRFUV|MIRNUV', 'IMAGING', 'N/A', 'F25QTZ|F25SRF2') is an equal weight special case of ('FUV-MAMA', 'MIRFUV|MIRNUV|MIRVIS', 'IMAGING', 'N/A', 'F25ND3|F25ND5|F25NDQ|F25QTZ|F25SRF2')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('FUV-MAMA', 'MIRNUV', 'IMAGING', 'N/A', 'F25CIII|F25CN182|F25CN270|F25MGII') is an equal weight special case of ('FUV-MAMA', 'MIRNUV|MIRVIS', 'IMAGING', 'N/A', 'F25CIII|F25CN182|F25CN270|F25MGII')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('NUV-MAMA', 'MIRFUV|MIRNUV|MIRVIS', 'IMAGING', 'N/A', 'F25NDQ1|F25NDQ2|F25NDQ3|F25NDQ4') is an equal weight special case of ('NUV-MAMA', 'MIRCUV|MIRFUV|MIRNUV|MIRVIS', 'IMAGING', 'N/A', 'F25NDQ1|F25NDQ2|F25NDQ3|F25NDQ4')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_pfltfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.081877'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_pfltfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.088212'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_phottab.rmap' (23/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_phottab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_phottab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_phottab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.355234'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_phottab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.176201'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_riptab.rmap' (24/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_riptab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_riptab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_riptab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.416622'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_riptab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.186640'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_sdctab.rmap' (25/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_sdctab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_sdctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_sdctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.533168'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_sdctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.204257'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_sptrctab.rmap' (26/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_sptrctab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_sptrctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_sptrctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.687623'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_sptrctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.226431'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_srwtab.rmap' (27/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_srwtab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_srwtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_srwtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.723767'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_srwtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.232649'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_tdctab.rmap' (28/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_tdctab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_tdctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_tdctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.735716'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_tdctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.235007'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_tdstab.rmap' (29/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_tdstab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_tdstab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_tdstab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.763808'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_tdstab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.238569'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_teltab.rmap' (30/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_teltab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_teltab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_teltab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.776452'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_teltab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.241502'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_wcptab.rmap' (31/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_wcptab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_wcptab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_wcptab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:38.795052'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_wcptab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.244358'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_stis_xtractab.rmap' (32/32) relative to context None
 CRDS  : DEBUG    Parsing 'hst_stis_xtractab.rmap'
 CRDS  : DEBUG    Validating 'hst_stis_xtractab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_xtractab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:39.121762'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_stis_xtractab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:03.323115'
 CRDS  : INFO     1 errors
 CRDS  : INFO     52 warnings
 CRDS  : INFO     64 infos
@@ -925,12 +925,12 @@ CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_wfc3.imap' (1/14) relative to context None
 CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_wfc3.imap'
 CRDS  : DEBUG    Validating 'hst_wfc3.imap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3.imap' derived_from = 'generated 2013-06-25 14:01:17.954408'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3.imap' derived_from = 'generated 2013-07-09 14:32:15.991858'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_atodtab.rmap' (2/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_atodtab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_atodtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_atodtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:40.273219'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_atodtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:04.099988'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_biasfile.rmap' (3/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_biasfile.rmap'
@@ -939,22 +939,22 @@ CRDS  : WARNING  Match Parameter  'SUBARRAY'  is unchecked.
 CRDS  : WARNING  Match tuple ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-IR-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|1.5|2.0|4.0', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'CONT|LINE10|LINE17|LINE25|NONE', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'A|B|C|D', '1.5', '1.0', '1.0', 'UVIS-QUAD-SUB|UVIS1-C512A-SUB|UVIS1-C512B-SUB|UVIS2-C512C-SUB|UVIS2-C512D-SUB', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'A|B|C|D', '1.5', '1.0', '1.0', 'UVIS-QUAD-SUB|UVIS1-2K2A-SUB|UVIS1-2K2B-SUB|UVIS1-C512A-SUB|UVIS1-C512B-SUB|UVIS2-2K2C-SUB|UVIS2-2K2D-SUB|UVIS2-C1K1C-SUB|UVIS2-C512C-SUB|UVIS2-C512D-SUB|UVIS2-M1K1C-SUB|UVIS2-M512C-SUB', 'NONE', 'N/A')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_biasfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:48.654805'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_biasfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:07.720431'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_bpixtab.rmap' (4/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_bpixtab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_bpixtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_bpixtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:48.748555'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_bpixtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:07.793393'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_ccdtab.rmap' (5/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_ccdtab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_ccdtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_ccdtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:51.121055'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_ccdtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:09.202795'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_crrejtab.rmap' (6/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_crrejtab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_crrejtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_crrejtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:51.174600'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_crrejtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:09.226292'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_darkfile.rmap' (7/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_darkfile.rmap'
@@ -985,37 +985,37 @@ CRDS  : WARNING  Match tuple ('UVIS', 'A|AC|AD|B|BC|BD|C|D', '1.0', '1.0', 'N/A'
 CRDS  : WARNING  Match tuple ('UVIS', 'A|AC|AD|B|BC|BD|C|D', '1.0', '1.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('UVIS', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', '1.0', '1.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'A|AC|AD|B|BC|BD|C|D', '2.0', '2.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', '2.0', '2.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'A|AC|AD|B|BC|BD|C|D', '3.0', '3.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', '3.0', '3.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_darkfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:56.227447'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_darkfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:10.354885'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_flshfile.rmap' (8/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_flshfile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_flshfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_flshfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:56.490249'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_flshfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:10.457472'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_idctab.rmap' (9/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_idctab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_idctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_idctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:56.587575'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_idctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:10.478806'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_imphttab.rmap' (10/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_imphttab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_imphttab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_imphttab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:56.616988'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_imphttab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:10.481532'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_mdriztab.rmap' (11/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_mdriztab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_mdriztab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_mdriztab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:56.639946'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_mdriztab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:10.484315'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_nlinfile.rmap' (12/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_nlinfile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_nlinfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_nlinfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:56.668266'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_nlinfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:10.487016'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_oscntab.rmap' (13/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_oscntab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfc3_oscntab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_oscntab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:56.696342'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_oscntab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:10.491488'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfc3_pfltfile.rmap' (14/14) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfc3_pfltfile.rmap'
@@ -1268,7 +1268,7 @@ CRDS  : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ889N', '1.0
 CRDS  : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ906N', '1.0', '1.0') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR|F200LP|F218W|F225W|F275W|F280N|F300X|F336W|F343N|F350LP|F373N|F390M|F390W|F395N|F410M|F438W|F467M|F469N|F475W|F475X|F487N|F502N|F547M|F555W|F588N|F600LP|F606W|F621M|F625W|F631N|F645N|F656N|F657N|F658N|F665N|F673N|F680N|F689M|F763M|F775W|F814W|F845M|F850LP|F953N|FQ232N|FQ243N|FQ378N|FQ387N|FQ422M|FQ436N|FQ437N|FQ492N|FQ508N|FQ575N|FQ619N|FQ634N|FQ672N|FQ674N|FQ727N|FQ750N|FQ889N|FQ906N|FQ924N|FQ937N', '1.0', '1.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ924N', '1.0', '1.0') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR|F200LP|F218W|F225W|F275W|F280N|F300X|F336W|F343N|F350LP|F373N|F390M|F390W|F395N|F410M|F438W|F467M|F469N|F475W|F475X|F487N|F502N|F547M|F555W|F588N|F600LP|F606W|F621M|F625W|F631N|F645N|F656N|F657N|F658N|F665N|F673N|F680N|F689M|F763M|F775W|F814W|F845M|F850LP|F953N|FQ232N|FQ243N|FQ378N|FQ387N|FQ422M|FQ436N|FQ437N|FQ492N|FQ508N|FQ575N|FQ619N|FQ634N|FQ672N|FQ674N|FQ727N|FQ750N|FQ889N|FQ906N|FQ924N|FQ937N', '1.0', '1.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'FQ937N', '1.0', '1.0') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR|F200LP|F218W|F225W|F275W|F280N|F300X|F336W|F343N|F350LP|F373N|F390M|F390W|F395N|F410M|F438W|F467M|F469N|F475W|F475X|F487N|F502N|F547M|F555W|F588N|F600LP|F606W|F621M|F625W|F631N|F645N|F656N|F657N|F658N|F665N|F673N|F680N|F689M|F763M|F775W|F814W|F845M|F850LP|F953N|FQ232N|FQ243N|FQ378N|FQ387N|FQ422M|FQ436N|FQ437N|FQ492N|FQ508N|FQ575N|FQ619N|FQ634N|FQ672N|FQ674N|FQ727N|FQ750N|FQ889N|FQ906N|FQ924N|FQ937N', '1.0', '1.0')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_pfltfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:00.350221'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfc3_pfltfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:11.636193'
 CRDS  : INFO     0 errors
 CRDS  : INFO     278 warnings
 CRDS  : INFO     28 infos
@@ -1276,37 +1276,37 @@ CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_nicmos.imap' (1/18) relative to context None
 CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_nicmos.imap'
 CRDS  : DEBUG    Validating 'hst_nicmos.imap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos.imap' derived_from = 'generated 2013-06-25 14:01:17.953059'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos.imap' derived_from = 'generated 2013-07-09 14:32:15.990086'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_darkfile.rmap' (2/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_darkfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_darkfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_darkfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.253132'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_darkfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:58.987976'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_flatfile.rmap' (3/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_flatfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_flatfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_flatfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.364241'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_flatfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.021178'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_idctab.rmap' (4/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_idctab.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_idctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_idctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.390974'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_idctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.030165'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_illmfile.rmap' (5/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_illmfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_illmfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_illmfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.432038'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_illmfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.037292'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_maskfile.rmap' (6/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_maskfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_maskfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_maskfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.455669'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_maskfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.045951'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_nlinfile.rmap' (7/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_nlinfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_nlinfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_nlinfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.478281'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_nlinfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.049404'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_noisfile.rmap' (8/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_noisfile.rmap'
@@ -1314,57 +1314,57 @@ CRDS  : DEBUG    Validating 'hst_nicmos_noisfile.rmap'
 CRDS  : WARNING  Match tuple ('1.0', 'FAST', '1.0') is an equal weight special case of ('1.0', 'FAST', '1.0|2.0|3.0|4.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('2.0', 'FAST', '1.0') is an equal weight special case of ('2.0', 'FAST', '1.0|2.0|3.0|4.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('3.0', 'FAST', '1.0') is an equal weight special case of ('3.0', 'FAST', '1.0|2.0|3.0|4.0')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_noisfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.597991'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_noisfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.092976'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_pedsbtab.rmap' (9/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_pedsbtab.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_pedsbtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_pedsbtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.642080'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_pedsbtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.098971'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_phottab.rmap' (10/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_phottab.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_phottab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_phottab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.658355'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_phottab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.100781'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_pmodfile.rmap' (11/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_pmodfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_pmodfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_pmodfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.668203'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_pmodfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.102412'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_pmskfile.rmap' (12/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_pmskfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_pmskfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_pmskfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.678678'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_pmskfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.104286'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_rnlcortb.rmap' (13/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_rnlcortb.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_rnlcortb.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_rnlcortb.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.689853'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_rnlcortb.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.106247'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_saacntab.rmap' (14/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_saacntab.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_saacntab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_saacntab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.700946'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_saacntab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.108472'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_saadfile.rmap' (15/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_saadfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_saadfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_saadfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.712098'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_saadfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.110413'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_tdffile.rmap' (16/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_tdffile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_tdffile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_tdffile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.777154'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_tdffile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.123627'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_tempfile.rmap' (17/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_tempfile.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_tempfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_tempfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.801479'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_tempfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.132819'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_nicmos_zprattab.rmap' (18/18) relative to context None
 CRDS  : DEBUG    Parsing 'hst_nicmos_zprattab.rmap'
 CRDS  : DEBUG    Validating 'hst_nicmos_zprattab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_zprattab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:00:25.812686'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_nicmos_zprattab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:31:59.134904'
 CRDS  : INFO     0 errors
 CRDS  : INFO     3 warnings
 CRDS  : INFO     36 infos
@@ -1372,27 +1372,27 @@ CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_wfpc2.imap' (1/11) relative to context None
 CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/mappings/hst/hst_wfpc2.imap'
 CRDS  : DEBUG    Validating 'hst_wfpc2.imap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2.imap' derived_from = 'generated 2013-06-25 14:01:17.955186'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2.imap' derived_from = 'generated 2013-07-09 14:32:15.993112'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_atodfile.rmap' (2/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_atodfile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_atodfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_atodfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:01.298666'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_atodfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:12.443828'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_biasfile.rmap' (3/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_biasfile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_biasfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_biasfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:01.349525'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_biasfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:12.453249'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_darkfile.rmap' (4/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_darkfile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_darkfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_darkfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:03.764871'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_darkfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:13.449749'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_dgeofile.rmap' (5/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_dgeofile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_dgeofile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_dgeofile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:03.834814'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_dgeofile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:13.488775'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_flatfile.rmap' (6/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_flatfile.rmap'
@@ -1419,32 +1419,32 @@ CRDS  : WARNING  Match tuple ('FULL', '34.0', '53.0', 'N/A', 'N/A', 'N/A', 'N/A'
 CRDS  : WARNING  Match tuple ('FULL', '34.0', '55.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '34.0', '53.0|55.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('FULL', '4.0', '5.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '4.0', '5.0|7.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('FULL', '4.0', '7.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '4.0', '5.0|7.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_flatfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:04.106091'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_flatfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:13.544816'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_idctab.rmap' (7/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_idctab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_idctab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_idctab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:04.166992'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_idctab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:13.600410'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_maskfile.rmap' (8/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_maskfile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_maskfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_maskfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:04.178016'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_maskfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:13.602414'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_offtab.rmap' (9/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_offtab.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_offtab.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_offtab.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:04.189095'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_offtab.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:13.604675'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_shadfile.rmap' (10/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_shadfile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_shadfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_shadfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:04.201927'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_shadfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:13.606999'
 CRDS  : INFO     ########################################
 CRDS  : INFO     Certifying 'hst_wfpc2_wf4tfile.rmap' (11/11) relative to context None
 CRDS  : DEBUG    Parsing 'hst_wfpc2_wf4tfile.rmap'
 CRDS  : DEBUG    Validating 'hst_wfpc2_wf4tfile.rmap'
-CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_wf4tfile.rmap' derived_from = 'generated from cdbs database 2013-06-25 14:01:04.213741'
+CRDS  : DEBUG    Skipping derivation checks for root mapping 'hst_wfpc2_wf4tfile.rmap' derived_from = 'generated from cdbs database 2013-07-09 14:32:13.609572'
 CRDS  : INFO     0 errors
 CRDS  : INFO     22 warnings
 CRDS  : INFO     22 infos
