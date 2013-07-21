@@ -373,7 +373,7 @@ def reference_info(reference_filename, context="hst.pmap"):
     print("=" * row_table.width)
     print(("Matches for " + repr(reference_filename) + " in '%s': ") % context)
     basename = os.path.basename(reference_filename)
-    print(pysh.out_err("python -m crds.matches ${context} ${basename}"))
+    print(pysh.out_err("python -m crds.matches --contexts ${context} --files ${basename}"))
     log.set_verbose(vstate)
     
 def dataset_info(dataset_filename, context):
