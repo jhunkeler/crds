@@ -24,7 +24,6 @@ import crds.hst.wfc3
 import crds.hst.wfpc2
 
 import crds.hst.parkeys as parkeys
-import crds.hst.tpn as tpn
 
 # =======================================================================
 
@@ -45,8 +44,6 @@ def generate_rmap(instrument, filekind):
         log.warning("No rows for",instrument,filekind)
         return
     kind_map = dicts_to_kind_map(instrument, filekind, row_dicts) 
-    
-    # kind_map = replace_full_sets_with_star(instrument, filekind, kind_map)
     
     write_rmap("hst", instrument, filekind, kind_map)
 
@@ -345,28 +342,6 @@ def factor_out_overlaps(kmap):
                 
     # XXXXX TODO actually handle overlaps
                 
-    return kmap
-
-def replace_full_sets_with_star(instrument, filekind, kmap):
-    """Check each parameter of each match tuple to see if it contains the 
-    or-ed set of all possible values.   If so,  replace it with '*'.
-    """
-    fitskeys = parkeys.get_fits_parkeys(instrument, filekind)
-    tpnmap = { t.name.lower() : t for t in tpn.get_tpninfos(instrument, filekind) }
-    for i, key in enumerate(fitskeys):
-        try:
-            keyset = set([utils.condition_value(x) for x in tpnmap[key].values])
-        except KeyError:
-            continue
-        for match in kmap.keys():
-            valset = set(match[i].split("|"))
-            if keyset <= valset and len(keyset) > 1:
-                log.info("Replacing", repr(match[i]), "with '*' in", repr(match))
-                files = kmap.pop(match)
-                match = list(match)
-                match[i] = '*'
-                match = tuple(match)
-                kmap[match] = files
     return kmap
 
 # =======================================================================
