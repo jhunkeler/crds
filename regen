@@ -50,10 +50,3 @@ echo ">>>>>>> Installing CRDS" > /dev/stderr
 echo ">>>>>>> Certifying all mappings" > /dev/stderr
 (cd certify_logs; ./certify_all |& tee certify_all.log)
 
-# Run comparison tests on all HST datasets.
-echo ">>>>>>> Testing all datasets" > /dev/stderr
-(./testall >& testall.err.1;  grep -E 'error|warn|datasets' testall.err.1 | grep -v -E 'MAST|pickle')
-
-echo ">>>>>>> Moving stats files to ../stats" > /dev/stderr
-mv *.stats ../stats
-
