@@ -27,25 +27,24 @@ import crds.hst.parkeys as parkeys
 
 # =======================================================================
 
-def generate_all_rmaps(instrument):
+def generate_all_rmaps(instrument, serial=-1):
     """Given an `instrument`, this function will generate a .rmap file
     for each filekind known for the instrument.
     """
     for kind in parkeys.get_filekinds(instrument):
-        generate_rmap(instrument, kind)
+        generate_rmap(instrument, kind, serial)
     log.standard_status()
 
 # =======================================================================
 
-def generate_rmap(instrument, filekind):
+def generate_rmap(instrument, filekind, serial=-1):
     log.info("Processing", instrument, filekind)
     row_dicts = get_row_dicts(instrument, filekind, condition=False)
-    if not row_dicts:
+    if not row_dicts and filekind not in sys.argv: 
         log.warning("No rows for",instrument,filekind)
-        return
+        return # suppress empty filekinds unless explicitly requested
     kind_map = dicts_to_kind_map(instrument, filekind, row_dicts) 
-    
-    write_rmap("hst", instrument, filekind, kind_map)
+    write_rmap("hst", instrument, filekind, kind_map, serial)
 
 def get_row_dicts(instrument, filekind, condition=True):
     rowcache = "../hst_refcache/" + instrument + "_" + filekind + ".rows"
@@ -425,11 +424,15 @@ def get_mapping(row):
 
 # =======================================================================
 
-def write_rmap(observatory, instrument, filekind, kind_map):
+def write_rmap(observatory, instrument, filekind, kind_map, serial=-1):
     """Constructs rmap's header and data out of the kind_map and
     outputs an rmap file
     """
-    outname  = "./" + observatory + "_" + instrument + "_" + filekind + ".rmap"
+    if serial >= 0:
+        serial = "_%04d" % serial
+    else:
+        serial = ""
+    outname  = "./" + observatory + "_" + instrument + "_" + filekind + serial + ".rmap"
     # CRDS matches against keys which come from both the CDBS database
     # and the dataset.  In both cases, FITS names are used in the rmap
     # while the database name was/is required to obtain the match
@@ -494,10 +497,14 @@ if __name__ == "__main__":
     if "--verbose" in sys.argv:
         log.set_verbose()
         sys.argv.remove("--verbose")
+
     if len(sys.argv) == 2:
         generate_all_rmaps(instrument=sys.argv[1])
     elif len(sys.argv) == 3:
-        generate_rmap(instrument=sys.argv[1], filekind=sys.argv[2])
+        generate_all_rmaps(instrument=sys.argv[1], serial=int(sys.argv[2]))
+    elif len(sys.argv) == 4:
+        generate_rmap(instrument=sys.argv[1], filekind=sys.argv[2], serial=int(sys.argv[3]))
     else:
         sys.stderr.write("usage: %s <instrument> <filekind>\n" % sys.argv[0])
         sys.exit(-1)
+
