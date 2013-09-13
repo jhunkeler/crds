@@ -1,9 +1,16 @@
 #! /usr/bin/env pysh
 #-*-python-*-
 
+usage("[<serial -1 or counter> [<instrument>...]]", 0, 20)
+
 if len(sys.argv) == 1:
+    serial = ''
+    from crds.hst import INSTRUMENTS    
+elif len(sys.argv) == 2:
+    serial = sys.argv[1]
     from crds.hst import INSTRUMENTS
 else:
+    serial = sys.argv[1]
     INSTRUMENTS = sys.argv[1:]
 
 def install():
@@ -13,7 +20,7 @@ def install():
 install()
 
 for instr in INSTRUMENTS:
-    % python gen_rmap.py ${instr}
+    % python gen_rmap.py ${instr} ${serial}
     % mv hst_${instr}_*.rmap ../CRDS/hst/mappings/hst
 
 install()
