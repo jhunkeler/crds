@@ -30,25 +30,25 @@ def main(context):
     log.info("Rmaps with tab-keyword or reffile_format == 'table':", rmaps)
     pairs = rmaps_and_examples(rmaps)
     for rmap_name, example_reference in pairs:
-        dump_survey(rmap_name, example_reference)
+        with log.error_on_exception("Failed surveying", repr(example_reference)):
+            dump_survey(rmap_name, example_reference)
     log.standard_status()
 
 def dump_survey(rmap_name, example_reference):
-    log.info("="*80)
-    log.info("Surveying", repr(rmap_name), "with example reference", repr(example_reference))
-    log.info("="*80)
     rmap = crds.get_cached_mapping(rmap_name)
     reference_path = rmap.locate.locate_server_reference(example_reference)
+    log.info("="*80)
+    log.info("Surveying", repr(rmap_name), "with example reference", repr(reference_path))
     if "row_keys" in rmap.header:
         log.info("rmap:", repr(rmap_name), "rmap.row_keys:", rmap.row_keys)
     else:
-        log.warning("Table rmap without row_keys:", repr(rmap_name))
-    hdus = pyfits.open(reference_path)[1:]
-    for i, hdu in enumerate(hdus):
-        log.info("HDU:", i+1, "rmap:", repr(rmap_name), "example_reference:", repr(example_reference))
-        log.info(repr(hdu.data))
-        if i != len(hdus)-1:
-            log.info("-"*80)
+        log.warning("rmap:", repr(rmap_name), "rmap.row_keys not found.")
+        hdus = pyfits.open(reference_path)[1:]
+        for i, hdu in enumerate(hdus):
+            log.info("HDU[%d]" % (i+1), "rmap:", repr(rmap_name), "example_reference:", repr(reference_path))
+            log.info(repr(hdu.data[:10]))
+            if i != len(hdus)-1:
+                log.info("-"*80)
 
 if __name__ == "__main__":
     main(sys.argv[1])
