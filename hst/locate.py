@@ -61,17 +61,24 @@ def setup_path_map(cdbs=CDBS_REFPATH, rebuild_cache=False):
         if not line:
             continue
         dirname, filename = os.path.split(line)
-#        if filename in REFNAME_TO_PATH:
-#            log.warning("Reference file " + repr(filename) + " found more than once. Using first.")
-        REFNAME_TO_PATH[filename] = line        
+        if filename in REFNAME_TO_PATH:
+            if "linux" in dirname:
+                log.verbose_warning("Reference file " + repr(filename) + " found more than once.  Overriding with Linux version.")
+                REFNAME_TO_PATH[filename] = line
+            else:
+                log.verbose_warning("Reference file " + repr(filename) + " found more than once.  Keeping original version since 'linux' not in new path.")
+        else:
+            REFNAME_TO_PATH[filename] = line
 
 def main():
     """Regenerate the CDBS path cache."""
+    # log.set_verbose()
     setup_path_map(rebuild_cache=True)
 
 def test():
     """Run the module doctests."""
-    import doctest, locate
+    import doctest
+    from crds.hst import locate
     return doctest.testmod(locate)
 
 # =======================================================================
@@ -90,7 +97,7 @@ def reference_exists(reference):
 # These two functions decouple the generic reference file certifier program 
 # from observatory-unique ways of specifying and caching Validator parameters.
 
-from crds.hst.tpn import reference_name_to_validator_key, get_tpninfos
+from crds.hst.tpn import reference_name_to_validator_key, mapping_validator_key, get_tpninfos
 from crds.hst import INSTRUMENTS, FILEKINDS, EXTENSIONS
 from crds.hst.substitutions import expand_wildcards
 from crds.hst.parkeys import reference_keys_to_dataset_keys
@@ -113,6 +120,9 @@ def get_file_properties(filename):
 
     >> get_file_properties("test_data/s7g1700gl_dead.fits")
     """
+    if data_file.is_geis_data(filename):
+        # determine GEIS data file properties from corresponding header file.
+        filename = filename[:-1] + "h"
     if config.is_mapping(filename):
         try:
             return decompose_newstyle_name(filename)[2:4]
@@ -296,5 +306,3 @@ def fits_to_parkeys(header):
 
 if __name__ == "__main__":
     main()
-
-    

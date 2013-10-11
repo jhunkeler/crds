@@ -1,5 +1,5 @@
 header = {
-    'derived_from' : 'generated from CDBS database 2013-05-01 10:54:15.437349',
+    'derived_from' : 'generated from CDBS database 2013-07-20 13:50:42.457291',
     'extra_keys' : ('SUBARRAY',),
     'filekind' : 'BIASFILE',
     'instrument' : 'WFC3',
@@ -7,8 +7,11 @@ header = {
     'name' : 'hst_wfc3_biasfile.rmap',
     'observatory' : 'HST',
     'parkey' : (('DETECTOR', 'CCDAMP', 'CCDGAIN', 'BINAXIS1', 'BINAXIS2', 'APERTURE', 'CHINJECT', 'SUBARRAY'), ('DATE-OBS', 'TIME-OBS')),
-    'rmap_relevance' : '(DETECTOR == "UVIS")',
-    'sha1sum' : 'cd8f3c34f36b15abf80812bc1d1c5e4f99e96815',
+    'reffile_format' : 'IMAGE',
+    'reffile_required' : 'YES',
+    'reffile_switch' : 'BIASCORR',
+    'rmap_relevance' : '((DETECTOR == "UVIS") and (BIASCORR != "OMIT"))',
+    'sha1sum' : 'f321f5e8a276bb74071c91e305078b331c5752f6',
 }
 
 selector = Match({

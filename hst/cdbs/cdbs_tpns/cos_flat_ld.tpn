@@ -7,6 +7,7 @@
 #
 # History:
 # 10/21/09 63765 MSwam    add OPT_ELEM
+# 05/24/13 74168 MSwam    make OPT_ELEM optional (does not apply for FUV)
 #
 # NAME          KEYTYPE  DATATYPE  PRESENCE VALUES
 #--------------------------------------------------------------------------
@@ -17,7 +18,7 @@ COMMENT             H        C         R
 INSTRUMENT	    H	     C	       R    COS
 REFERENCE_FILE_TYPE H        C         R    FLAT
 DETECTOR            C        C         R    FUV,NUV
-OPT_ELEM            C        C         R    G130M,G160M,G140L,\
+OPT_ELEM            C        C         O    G130M,G160M,G140L,\
                                             G185M,G225M,G285M,G230L,\
                                             MIRRORA,MIRRORB
 PEDIGREE	    C        C	       R    INFLIGHT,GROUND,MODEL,DUMMY

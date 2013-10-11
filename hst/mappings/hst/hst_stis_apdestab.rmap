@@ -1,13 +1,17 @@
 header = {
-    'derived_from' : 'generated from CDBS database 2013-05-01 10:53:56.105108',
+    'derived_from' : 'generated from CDBS database 2013-07-20 13:50:34.443815',
     'filekind' : 'APDESTAB',
     'instrument' : 'STIS',
     'mapping' : 'REFERENCE',
     'name' : 'hst_stis_apdestab.rmap',
     'observatory' : 'HST',
     'parkey' : ((), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
     'rmap_relevance' : 'ALWAYS',
-    'sha1sum' : '2616bb5d8a78cf9460731ce5e95da336d156e14d',
+    'row_keys' : ('APERTURE',),
+    'sha1sum' : '04e82b975a4f134165b03e33c044b256a830d40e',
 }
 
 selector = Match({

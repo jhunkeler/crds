@@ -1,6 +1,7 @@
 """This module extracts information about instruments, filekinds, filekind
-relevance, parkeys, and parkey relevance out of the CDBS configuration file
-reference_file_defs.xml.
+relevance, parkeys, and parkey relevance out of the CDBS configuration file:
+
+              reference_file_defs.xml
 """
 import pprint
 import os.path
@@ -74,6 +75,8 @@ def get_adjustment(instrument, filekind):
 
 def ccontents(n): 
     """Return the lowercase stripped contents of a single values XML node"""
+    if n is None:
+        return None
     return str(n.contents[0].strip().lower())
 
 def process_reference_file_defs():
@@ -100,20 +103,40 @@ def process_reference_file_defs():
                 relevant = "ALWAYS"
                 reftype = ccontents(inode.reffile_type)
                 filekind = ccontents(inode.reffile_keyword)
+                required = "none"
+                switch = "none"
+                format = "none"
+                rowkeys = []
                 for rnode in inode:
                     if not hasattr(rnode, "name"):
                         continue
-                    if rnode.name == "file_selection":
+                    if rnode.name == "file_selection":  # expression which defines when parkey is irrelevant to bestref
                         parkey = ccontents(rnode.file_selection_field)
                         parkeys.append(parkey)
                         if rnode.file_selection_test is not None:
                             parkey_restrictions[parkey] = simplify_restriction(
                                 ccontents(rnode.file_selection_test),
                                 condition=True)
-                    elif rnode.name == "restriction":
+                    elif rnode.name == "restriction":   # expression which defines when filekind is irrelevant to dataset
                         relevant = simplify_restriction(
                             ccontents(rnode.restriction_test),
                             condition=True)
+                    elif rnode.name == "row_selection":   # table row parkeys defining modes
+                        rowkeys.append(ccontents(rnode.row_selection_field))
+                    elif rnode.name == "reffile_format":  # image or table
+                        format = ccontents(rnode)
+                    elif rnode.name == "reffile_required": # yes or no,  when no, "free-pass" if no best ref match
+                        required = ccontents(rnode)
+                    elif rnode.name == "reffile_switch":  # value is dataset keyword,  when == OMIT,  irrelevant
+                        switch = ccontents(rnode)
+                
+                if switch != "none":
+                    switch_expr = "(" + switch.upper() + ' != "OMIT"' +")"
+                    if relevant == "ALWAYS":
+                        relevant = switch_expr
+                    else:
+                        relevant = "(" + relevant + " and " + switch_expr + ")"
+
                 adjustment = get_adjustment(instr, filekind)
                 fits_parkeys, db_parkeys = adjustment.adjust(parkeys)
                 rdefs[instr][filekind] = dict(
@@ -123,13 +146,17 @@ def process_reference_file_defs():
                         not_in_db = tuple(adjustment.ignore),
                         rmap_relevance = relevant,
                         parkey_relevance = parkey_restrictions,
+                        reffile_required = required,
+                        reffile_switch = switch,
+                        reffile_format = format,
+                        row_keys = tuple(rowkeys),
                     )
     return rdefs
 
 HERE = os.path.dirname(__file__) or "."
 try:
     PARKEYS = eval(open(HERE + "/parkeys.dat").read())
-except:
+except Exception:
     PARKEYS = {}
 
 FLOAT_RE = r"[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?"
@@ -151,6 +178,8 @@ def _simplify_restriction(restriction_text):
     rval = rval.upper()
     rval = rval.replace(" AND ", " and ")
     rval = rval.replace(" OR ", " or ")
+    rval = rval.replace(" NOT IN ", " not in ")  # order important with next line
+    rval = rval.replace(" IN ", " in ")
     return rval
 
 def _condition_numbers(restriction_text):
@@ -228,6 +257,18 @@ def get_filekinds(instrument):
 
 def get_extra_keys(instrument, filekind):
     return PARKEYS[instrument][filekind]["not_in_db"]
+
+def get_reffile_switch(instrument, filekind):
+    return PARKEYS[instrument][filekind]["reffile_switch"]
+
+def get_reffile_required(instrument, filekind):
+    return PARKEYS[instrument][filekind]["reffile_required"]
+
+def get_reffile_format(instrument, filekind):
+    return PARKEYS[instrument][filekind]["reffile_format"]
+
+def get_row_keys(instrument, filekind):
+    return PARKEYS[instrument][filekind]["row_keys"]
 
 def evaluate_parkey_relevance(instrument, filekind, rowdict):
     header = dict(rowdict)

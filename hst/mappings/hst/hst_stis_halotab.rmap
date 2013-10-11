@@ -1,13 +1,17 @@
 header = {
-    'derived_from' : 'generated from CDBS database 2013-05-01 10:54:03.677983',
+    'derived_from' : 'generated from CDBS database 2013-07-20 13:50:36.702762',
     'filekind' : 'HALOTAB',
     'instrument' : 'STIS',
     'mapping' : 'REFERENCE',
     'name' : 'hst_stis_halotab.rmap',
     'observatory' : 'HST',
     'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
     'rmap_relevance' : '(DETECTOR != "CCD" and OBSTYPE == "SPECTROSCOPIC")',
-    'sha1sum' : 'be5492a998ade3ade118132c89db2a09aaf06194',
+    'row_keys' : ('OPT_ELEM', 'REFWAVE'),
+    'sha1sum' : '0be0b31823746b6996ef3e4f24f8b0daf9f82759',
 }
 
 selector = Match({

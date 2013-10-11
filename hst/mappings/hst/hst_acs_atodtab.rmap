@@ -1,13 +1,17 @@
 header = {
-    'derived_from' : 'generated from CDBS database 2013-05-01 10:50:42.730217',
+    'derived_from' : 'generated from CDBS database 2013-07-20 13:49:04.816636',
     'filekind' : 'ATODTAB',
     'instrument' : 'ACS',
     'mapping' : 'REFERENCE',
     'name' : 'hst_acs_atodtab.rmap',
     'observatory' : 'HST',
     'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
-    'rmap_relevance' : '(DETECTOR != "SBC")',
-    'sha1sum' : 'f5fbfb0dba53875bbe1c50484e0a930bbf7c6da2',
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'YES',
+    'reffile_switch' : 'ATODCORR',
+    'rmap_relevance' : '((DETECTOR != "SBC") and (ATODCORR != "OMIT"))',
+    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN'),
+    'sha1sum' : '7a6aec55d954c9838adbbe735fd489949c5bdf80',
 }
 
 selector = Match({

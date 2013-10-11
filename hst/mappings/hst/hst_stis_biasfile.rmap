@@ -1,13 +1,16 @@
 header = {
-    'derived_from' : 'generated from CDBS database 2013-05-01 10:53:57.161730',
+    'derived_from' : 'generated from CDBS database 2013-07-20 13:50:34.715968',
     'filekind' : 'BIASFILE',
     'instrument' : 'STIS',
     'mapping' : 'REFERENCE',
     'name' : 'hst_stis_biasfile.rmap',
     'observatory' : 'HST',
     'parkey' : (('CCDAMP', 'CCDGAIN', 'CCDOFFST', 'BINAXIS1', 'BINAXIS2'), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'IMAGE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
     'rmap_relevance' : '(DETECTOR == "CCD")',
-    'sha1sum' : '09af719e3df15b8fe7a134a7fdff82d9ec873f22',
+    'sha1sum' : '28aa06b37a4c08f92068393b696c992ddfb0b679',
 }
 
 selector = Match({
@@ -537,6 +540,13 @@ selector = Match({
         '2013-01-25 02:00:05' : 'x4t15456o_bia.fits',
         '2013-02-02 01:05:03' : 'x4t15457o_bia.fits',
         '2013-02-11 05:41:02' : 'x4t15458o_bia.fits',
+        '2013-02-22 14:24:20' : 'x6e1332qo_bia.fits',
+        '2013-03-03 00:39:14' : 'x6e1332ro_bia.fits',
+        '2013-03-11 00:30:01' : 'x6e1332so_bia.fits',
+        '2013-03-18 16:39:35' : 'x6i11537o_bia.fits',
+        '2013-03-26 00:10:48' : 'x6i11538o_bia.fits',
+        '2013-04-03 00:00:14' : 'x6i11539o_bia.fits',
+        '2013-04-10 00:00:06' : 'x6i1153ao_bia.fits',
     }),
     ('D', 1, 3, 1, 2) : UseAfter({
         '1996-10-01 00:00:00' : 'h2l1019qo_bia.fits',
@@ -1340,6 +1350,10 @@ selector = Match({
         '2012-12-27 01:40:44' : 'x4b14102o_bia.fits',
         '2013-01-17 13:55:32' : 'x4t15453o_bia.fits',
         '2013-02-04 08:33:58' : 'x4t15454o_bia.fits',
+        '2013-02-22 14:24:20' : 'x6e1332oo_bia.fits',
+        '2013-03-07 01:09:14' : 'x6e1332po_bia.fits',
+        '2013-03-18 16:39:35' : 'x6i11535o_bia.fits',
+        '2013-04-03 20:33:53' : 'x6i11536o_bia.fits',
     }),
     ('D', 4, 3, 1, 2) : UseAfter({
         '1996-10-01 00:00:00' : 'h2l1020co_bia.fits',

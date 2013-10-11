@@ -6,6 +6,9 @@ import os
 import unittest
 
 from crds import rmap, log
+import crds
+
+log.set_test_mode()
 
 # =============================================================================
 
@@ -30,7 +33,13 @@ class Test_00_Selectors(unittest.TestCase):
         self._selector_testcase('USE_AFTER', '2005-12-20', 'o9f15549j_bia.fits')
 
     def test_use_after_nominal(self):
-        self._selector_testcase('USE_AFTER', '2005-12-20', 'o9f15549j_bia.fits')
+        self._selector_testcase('USE_AFTER', '2005-12-20 12:00:00', 'o9f15549j_bia.fits')
+
+    def test_use_after_tuple(self):
+        self._selector_testcase('USE_AFTER',  '2004-04-25 21:31:01', ('foo_bia.fits', 'bar_bia.fits'))
+
+    def test_use_after_dict(self):
+        self._selector_testcase('USE_AFTER',  '2004-04-25 21:31:02', {'foo':'foo_bia1.fits', 'bar':'bar_bia2.fits'})
 
     def test_use_after_missing_parameter(self):
         header = { "TEST_CASE": "USE_AFTER" }  # no PARAMETER
@@ -97,6 +106,15 @@ class Test_00_Selectors(unittest.TestCase):
     def test_geometrically_nearest8(self):
         self._selector_testcase("GEOMETRICALLY_NEAREST", '5.1', 'cref_flatfield_137.fits')
         
+    def test_reference_names(self):
+        assert self.rmap.reference_names() == ['bar_bia.fits', 'bar_bia2.fits', 'cref_flatfield_120.fits', 
+                                               'cref_flatfield_123.fits', 'cref_flatfield_124.fits', 
+                                               'cref_flatfield_137.fits', 'cref_flatfield_222.fits', 
+                                               'cref_flatfield_65.fits', 'cref_flatfield_73.fits', 
+                                               'foo_bia.fits', 'foo_bia1.fits', 'nal1503ij_bia.fits', 
+                                               'o3913216j_bia.fits', 'o5d10135j_bia.fits', 'o9f15549j_bia.fits', 
+                                               'o9s16388j_bia.fits', 'o9t1525sj_bia.fits']
+
 # =============================================================================
 
 class Test_01_Insert(unittest.TestCase):
@@ -127,8 +145,8 @@ class Test_01_Insert(unittest.TestCase):
         assert len(diffs) == 1, "Fewer/more differences than expected"
         assert diffs[0][0] == ('tobs_tinstr_tfilekind.rmap', 'tobs_tinstr_tfilekind.rmap'), "unexpected file names in diff"
         assert diffs[0][1] == (selector_name,), "unexpected match case in diff"
-        assert str(diffs[0][2]) == str(param), "unexpected parameter value in diff"
-        assert diffs[0][3] == "added " + repr(value), "diff is not an addition"
+        assert diffs[0][2] == (str(param),), "unexpected parameter value in diff"
+        assert diffs[0][3] == "added terminal " + repr(value), "diff is not an addition " + repr(diffs[0])
 
     def terminal_replace(self, selector_name, param, value):
         """Check the bottom level replace functionality."""
@@ -144,8 +162,8 @@ class Test_01_Insert(unittest.TestCase):
         assert len(diffs) == 1, "Fewer/more differences than expected"
         assert diffs[0][0] == ('tobs_tinstr_tfilekind.rmap', 'tobs_tinstr_tfilekind.rmap'), "unexpected file names in diff"
         assert diffs[0][1] == (selector_name,), "unexpected match case in diff"
-        assert str(diffs[0][2]) == str(param), "unexpected parameter value in diff"
-        assert "replaced" in diffs[0][3], "diff is not a replacement"
+        assert diffs[0][2] == (str(param),), "unexpected parameter value in diff"
+        assert "replaced" in diffs[0][3], "diff is not a replacement " + repr(diffs[0])
         assert diffs[0][3].endswith(repr(value))
 
     def test_useafter_insert_before(self):
@@ -277,6 +295,7 @@ class RecursiveModify(object):
         result.write(self.result_filename)
         diffs = r.difference(result)
         log.verbose("diffs:", diffs)
+        diffs = [diff for diff in diffs if "Selector" not in diff[-1]]
         assert len(diffs) == 1, "Fewer/more differences than expected: " + repr(diffs)
         log.verbose("recursive insert result rmap:")
         log.verbose(open(self.result_filename).read())
@@ -482,6 +501,7 @@ selector = Bracket({
           "MATCH_PAR2" : "99.9",
           "BRACKET_PAR" : "0.5",
         }
+    
 class Test_11_RecursiveBracketExact(Test_10_RecursiveBracket):
     expected_lookup_result = ("foo.fits", "foo.fits")
     insert_header = lookup_header = { 
@@ -527,7 +547,77 @@ selector = Bracket({
 })
 '''
     
+class Test_13_DeleteTest(unittest.TestCase):
+    result_filename = "./delete.rmap"
+    lookup_header = { 
+          "MATCH_PAR1" : "MP1",
+          "MATCH_PAR2" : "99.9",
+          "BRACKET_PAR" : "0.5",
+        }
+    rmap_str = '''
+header = {
+    'derived_from' : 'Hand written 01-15-2013',
+    'filekind' : 'TFILEKIND',
+    'instrument' : 'TINSTR',
+    'mapping' : 'REFERENCE',
+    'name' : 'test.rmap',
+    'observatory' : 'TOBS',
+    'parkey' : (('BRACKET_PAR',), ('MATCH_PAR1','MATCH_PAR2'),),
+    'sha1sum' : 'd412b94d1af1a0871fe39d7096e65aea1187c3b7',
+    'classes' : ('Bracket','Match',)
+}
 
+selector = Bracket({
+    0.1: Match({
+        ('MP1', '99.9') : 'bar.fits',
+    }),
+    2.8 : Match({
+        ('MP1', '99.9') : 'bar.fits',
+    }),
+    99.0 : Match({    
+    }),
+})
+'''
+    def test_0_recursive_modify_rmap(self): # , header, value, classes):
+        # Load the test rmap from a string.   The top level selector must exist.
+        # This is not a "realistic" test case.   It's a test of the recursive
+        # insertion capabilities of all the Selector classes in one go.
+        log.verbose("-"*60)
+        r = rmap.ReferenceMapping.from_string(self.rmap_str, "./test.rmap", ignore_checksum=True)
+        result = r.delete("bar.fits")
+        result.write(self.result_filename)
+        diffs = r.difference(result)
+        log.verbose("diffs:", diffs)
+        diffs = [diff for diff in diffs if "Selector" not in diff[-1]]
+        assert len(diffs) == 2, "Fewer/more differences than expected: " + repr(diffs)
+        for diff in diffs:
+            assert "deleted terminal" in diff[-1], "Bad difference " + repr(diff)
+        log.verbose("recursive delete result rmap:")
+        log.verbose(open(self.result_filename).read())
+    
+    def test_1_recursive_use_rmap(self):
+        r = rmap.load_mapping(self.result_filename)
+        try:
+            r.get_best_ref(self.lookup_header)
+        except crds.CrdsLookupError:
+            pass
+        else:
+            assert False, "Expected lookup to fail."
+            
+    def test_2_delete_fails(self):
+        log.verbose("-"*60)
+        r = rmap.ReferenceMapping.from_string(self.rmap_str, "./test.rmap", ignore_checksum=True)
+        try:
+            result = r.delete("shazaam.fits")
+        except ValueError:
+            pass
+        else:
+            assert False, "Expected delete to fail."    
+        
+    
+    def test_9_recursive_tear_down(self):
+        os.remove(self.result_filename)
+    
         
 if __name__ == '__main__':
     unittest.main()

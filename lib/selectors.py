@@ -125,14 +125,11 @@ class ModificationError(crds.CrdsError):
     """Failed attempt to modify rmap, e.g. replacement vs. addition.
     """
 
-class CrdsLookupError(crds.CrdsError, LookupError):
-    """A lookup which failed on otherwise valid parameters."""
-    
-class MatchingError(CrdsLookupError):
+class MatchingError(crds.CrdsLookupError):
     """Represents a MatchSelector lookup which failed.
     """
 
-class UseAfterError(CrdsLookupError):
+class UseAfterError(crds.CrdsLookupError):
     """None of the dates in the selector precedes the processing date.
     """
     
@@ -198,7 +195,44 @@ class Selector(object):
             self._selections = merge_selections
         self._rmap_header = rmap_header or {}
         self._parkey_map = self.get_parkey_map()
+    
+    def todict(self):
+        """Return a 'pure data' dictionary representation of this selector and it's children
+        suitable for conversion to json.
+        """
+        return {
+                "parameters" : self.todict_parameters(),
+                "selections" : [ (key, val.todict()) if isinstance(val, Selector) else (key, val) for key,val in self._raw_selections ]
+                }
+
+    def todict_flat(self):
+        """Return a flat representation of this Selector hierarchy where the path to each terminal node (file)
+        is enumerated as one long tuple of key values.   Return a dictionary with one tuple of parameter names
+        and a list of tuples of parameter values / files.
+        """
+        flat = []
+        for key, val in self._raw_selections:
+            if isinstance(val, Selector):
+                nested = val.todict_flat()
+                subpars = nested["parameters"]
+                # XXX hack!  convert or-globs to comma separated strings for web rendering
+                key = tuple([", ".join(str(parval).split("|")) for parval in key])
+                flat.extend([key + row for row in nested["selections"]])
+            else:
+                subpars = ["REFERENCE"]
+                if isinstance(key, basestring):  # Fix non-tuple keys
+                    key = (key,)
+                flat.extend([key + (val,)])
+        pars = list(self.todict_parameters()) + subpars
+        return {
+            "parameters" : pars,
+            "selections" : flat,
+            }
         
+    def todict_parameters(self):
+        """Overridable,  generally self._parameters."""
+        return self._parameters
+
     def condition_selections(self, selections):
         """Replace the keys of selections with "conditioned" keys,  keys in
         which all the values have passed through self.condition_key().
@@ -238,10 +272,10 @@ class Selector(object):
             try:
                 log.verbose("Trying", selection, verbosity=60)
                 return self.get_choice(selection, header) # recursively,  what's final choice?
-            except CrdsLookupError, exc:
+            except crds.CrdsLookupError, exc:
                 continue
         more_info = " last exception: " + str(exc) if exc else ""
-        raise CrdsLookupError("All lookup attempts failed." + more_info)
+        raise crds.CrdsLookupError("All lookup attempts failed." + more_info)
                 
     def get_selection(self, lookup_key):
         """Most selectors are based on a sorted items list which represents a
@@ -290,15 +324,18 @@ class Selector(object):
         Assume any choice that is a string is a reference file.  Recursively
         search for reference files in nested selectors.
         """ 
-        files = set()
+        files = []
         for choice in self.choices():
             if isinstance(choice, Selector):
                 new_files = choice.reference_names()
-            else:
+            elif isinstance(choice, basestring):
                 new_files = [choice]
-            for reffile in new_files:
-                files.add(reffile)
-        return sorted(list(files))
+            elif isinstance(choice, tuple):
+                new_files = list(choice)
+            elif isinstance(choice, dict):
+                new_files = choice.values()
+            files.extend(new_files)
+        return sorted(set(files))
     
     def format(self, indent=0):
         """Recursively pretty-format the Selector tree rooted in `self` 
@@ -345,6 +382,21 @@ class Selector(object):
         for choice in self.choices():
             if isinstance(choice, Selector):
                 choice.validate_selector(valid_values_map, trap_exceptions)
+            elif isinstance(choice, basestring):
+                pass
+            elif isinstance(choice, tuple):
+                for val in choice:
+                    if not isinstance(val, basestring): 
+                        raise ValidationError("Non-string tuple value for choice at " + repr(key))
+            elif isinstance(choice, dict):
+                for val in choice:
+                    if not isinstance(val, basestring):
+                        raise ValidationError("Non-string dictionary key for choice at " + repr(key))
+                for val in choice.values():
+                    if not isinstance(val, basestring):
+                        raise ValidationError("Non-string dictionary value for choice at " + repr(key))
+            else:
+                raise ValidationError
 
     def _validate_header(self, header):
         """Check self._parameters in `header` against the values found in the
@@ -438,53 +490,37 @@ class Selector(object):
         return sorted(matches)
     
     def match_item(self, key):
+        """Return ((parkey, key_field), ...) for match key `key`.   Fix string `key`s to unary tuples."""
+        if not isinstance(key, tuple):
+            key = (key,)
         return tuple(zip(self._parameters, key))
-    
-    def difference(self, other, path):
-        """Return the list of differences between `self` and `other` where 
-        `path` names the
-        """
-        def msg(key, *args):
-            p2 = path
-            if key:
-                p2 = p2 + (key,)
-            return p2 + (" ".join(args),)
-        def short_name(obj):
-            return obj.short_name if isinstance(obj, Selector) else obj.__class__.__name__
-        if self.__class__ != other.__class__:
-            return [msg(None, "different classes", short_name(self), ":", short_name(other))]
-        if self._parameters != other._parameters:
-            return [msg(None, "different parameter lists ", 
-                    repr(self._parameters), ":", repr(other._parameters))]
-        differences = []
-        other_keys = other.keys()
-        self_keys = self.keys()
-        other_map = dict_wo_dups(other._selections)
-        # Warning:  the message formats here are important to client code.
-        # don't change without doing a survey. e.g. replaced blank1 with blank2.
-        for key, choice in self._selections:
-            if key not in other_keys:
-                differences.append(msg(key, "deleted " + repr(choice)))
-            else:
-                other_choice = other_map[key]
-                if isinstance(choice, Selector):
-                    differences.extend(choice.difference(other_choice, path + (key,)))
-                elif choice != other_choice:
-                    differences.append(
-                        msg(key, "replaced", repr(choice), "with", repr(other_choice)))
-        for key in other_keys:
-            if key not in self_keys:
-                other_choice = other_map[key]
-                differences.append(msg(key, "added " + repr(other_choice)))
-        return differences
     
     def merge(self, other):
         raise AmbiguousMatchError("More than one match was found at the same weight and " +
             self.short_name + " does not support merging.")
         
     # ------------------------------------------------------------------------
-
-    def modify(self, header, value, valid_values_map):
+    
+    def delete(self, terminal):
+        """Remove all instances of `terminal` from `self`."""
+        deleted = 0
+        for i, choice in enumerate(self.choices()):
+            if choice == terminal:
+                log.verbose("Deleting selection[%d] with key='%s' and terminal='%s'" % (i, self._raw_selections[i][1], terminal))
+                self._del_item(i, terminal)
+                deleted += 1
+            elif isinstance(choice, Selector):
+                deleted += choice.delete(terminal)
+        return deleted
+    
+    def _del_item(self, i, terminal):
+        """Actually remove the `i`th selection of `self` which should have `terminal` as it's choice."""
+        assert self._selections[i][1]== terminal
+        assert self._raw_selections[i][1] == terminal
+        del self._selections[i]
+        del self._raw_selections[i]
+        
+    def insert(self, header, value, valid_values_map):
         """Based on `header` recursively insert `value` into the Selector hierarchy,
         either adding it as a new choice or replacing the existing choice with 
         the same parameter set.   Add nested Selectors as required.
@@ -495,9 +531,9 @@ class Selector(object):
         at all levels of the hierarchy.
         
         This call defines the starting point for parkeys and classes,  whereas
-        _modify has diminishing lists passed down to nested Selectors.
+        _insert has diminishing lists passed down to nested Selectors.
         """
-        self._modify(header, value, self._rmap_header["parkey"], self.class_list, valid_values_map)
+        self._insert(header, value, self._rmap_header["parkey"], self.class_list, valid_values_map)
 
     @property
     def class_list(self):
@@ -513,12 +549,12 @@ class Selector(object):
     def parkey(self):
         return self._rmap_header["parkey"]
     
-    def _modify(self, header, value, parkey, classes, valid_values_map):
+    def _insert(self, header, value, parkey, classes, valid_values_map):
         """Execute the insertion,  popping off parkeys and classes on the way down."""
         key = self._make_key(header, parkey[0])
         self._validate_key(key, valid_values_map)
         i = self._find_key(key)
-        if len(classes) > 1:   # add or modify nested selector
+        if len(classes) > 1:   # add or insert nested selector
             if i is None:
                 log.verbose("Modify couldn't find", repr(key), "adding new selector.")
                 new_value = self._create_path(header, value, parkey[1:], classes[1:])
@@ -526,7 +562,7 @@ class Selector(object):
             else:
                 old_key, old_value = self._raw_selections[i]
                 log.verbose("Modify found", repr(old_key), "augmenting", repr(old_value), "with", repr(value))
-                old_value._modify(header, value, parkey[1:], classes[1:], valid_values_map)
+                old_value._insert(header, value, parkey[1:], classes[1:], valid_values_map)
         else:  # add or replace primitive result
             if i is None:
                 log.verbose("Modify couldn't find", repr(key), "adding new value", repr(value))
@@ -630,6 +666,125 @@ class Selector(object):
         parameters for the purpose of populating get_best_refs menus.
         """
         return {} # Not really relevant for UseAfter
+    
+
+    # XXXX changes to the format of difference messages need to be coordinated with
+    # crds.diff,  crds.rmap and the website interative application (crds.server.interactive.web_certify).
+    # IOW,  the messages are part of the software API,  don't change without review.
+    def difference(self, new_selector, path=(), pars=()):
+        """Return the list of differences between `self` and `new_selector` where 
+        `path` names the
+        """
+        msg = self._get_msg(path, pars)
+        
+        def short_name(obj):
+            return obj.short_name if isinstance(obj, Selector) else obj.__class__.__name__
+        
+        if self.__class__ != new_selector.__class__:
+            return [msg(None, "different classes", short_name(self), ":", short_name(new_selector))]
+        if self._parameters != new_selector._parameters:
+            return [msg(None, "different parameter lists ", 
+                    repr(self._parameters), ":", repr(new_selector._parameters))]
+
+        differences = []
+        new_selector_keys = new_selector.keys()
+        self_keys = self.keys()
+        new_selector_map = dict_wo_dups(new_selector._selections)
+        # Warning:  the message formats here are important to client code.
+        # don't change without doing a survey. e.g. replaced blank1 with blank2.
+        for key, choice in self._selections:
+            pkey = self._diff_key(key)
+            if key not in new_selector_keys:
+                if isinstance(choice, Selector):
+                    differences.extend(choice._flat_diff("deleted {} rule for".format(self.short_name), 
+                                                         path + (pkey,), pars + (self._parameters,)))
+                else:
+                    differences.append(msg(key, "deleted terminal", repr(choice)))
+            else:
+                new_selector_choice = new_selector_map[key]
+                if isinstance(choice, Selector):
+                    differences.extend(
+                        choice.difference(new_selector_choice, path + (pkey,), pars + (self._parameters,)))
+                elif choice != new_selector_choice:
+                    differences.append(msg(key, "replaced", repr(choice), "with", repr(new_selector_choice)))
+        for key in new_selector_keys:
+            pkey = self._diff_key(key)
+            if key not in self_keys:
+                new_selector_choice = new_selector_map[key]
+                if isinstance(new_selector_choice, Selector):
+                    differences.extend(
+                        new_selector_choice._flat_diff("added {} rule for".format(self.short_name), 
+                                                       path + (pkey,), pars + (self._parameters,)))
+                else:
+                    differences.append(msg(key, "added terminal", repr(new_selector_choice)))
+        return differences
+    
+    def _flat_diff(self, change, path, pars):
+        """Return `change` messages relative to `path` for all of `self`s selections
+        as a simple flat list of one change tuple per nested choice.
+        """
+        msg = self._get_msg(path, pars)
+        diffs = []        
+        for key, choice in self._selections:
+            pkey = self._diff_key(key)
+            if isinstance(choice, Selector):
+                diffs.extend(choice._flat_diff(change, path + (pkey,), pars + (self._parameters,)))
+            else:
+                diffs.append(msg(key, change, repr(choice)))
+        return diffs
+    
+    def _get_msg(self, path, pars):
+        """Return a message tuple generation function bound to `path` and `pars`."""
+        def msg(key, *args):
+            path2 = path
+            pars2 = pars
+            if key:
+                path2 = path2 + (self._diff_key(key),)
+                pars2 = pars2 + (self._parameters,)
+            pars2 = pars2 + ("DIFFERENCE",)
+            path2 = path2 + (" ".join(args),)
+            return DiffTuple(*path2, parameter_names=pars2)
+        return msg
+ 
+    def _diff_key(self, key):
+        """Use the ((parname, parvalue), ...) format of match_item to produce (parvalues, ...) for diff.
+        Handles UseAfter / odd cases where `key` and match_item values aren't quite the same.
+        """
+        item = self.match_item(key)
+        if item:
+            pars, vals = zip(*item)
+            return tuple([str(x) for x in vals])
+        else:
+            return ()
+
+class DiffTuple(tuple):
+    """Class similar to named tuple for reporting mapping differences and the affected parkeys."""
+    def __new__(cls, *args, **keys):
+        return super(DiffTuple, cls).__new__(cls, tuple(args))
+        
+    def __init__(self, *args, **keys):
+        pars = keys.pop("parameter_names", None)
+        super(DiffTuple, self).__init__()
+        self.parameter_names = pars
+        
+    @property
+    def flat(self):
+        """Removes the Selector nesting structure and return an equivalent tuple."""
+        pars2 = []
+        vals2 = []
+        for i, par in enumerate(self.parameter_names):
+            if isinstance(par, basestring):
+                pars2.append(par)
+                vals2.append(self[i])
+            else:
+                pars2.extend(list(par))
+                vals2.extend(list(self[i]))
+        return DiffTuple(*vals2, parameter_names=pars2)
+    
+    def items(self):
+        """Return [ (param_name, val), ... ]"""
+        return [ (str(x), str(y)) for (x, y) in zip(self.parameter_names, self) ]
+ 
 
 # ==============================================================================
 
@@ -1450,7 +1605,10 @@ Alternate date/time formats are accepted as header parameters.
 
     def match_item(self, key):
         """Account for the slightly weird UseAfter syntax."""
-        return tuple(zip(self._parameters, key.split()))
+        if len(self._parameters) == 1:
+            return ((self._parameters[0], key),)
+        else:
+            return tuple(zip(self._parameters, key.split()))
     
     def merge(self, other):
         """Merge two UseAfterSelectors into a single selector.  Resolve
@@ -1493,6 +1651,9 @@ Alternate date/time formats are accepted as header parameters.
     def _make_key(self, header, parkeys):
         """Join reference file datetime parameters with spaces."""
         return " ".join([header[par] for par in parkeys])
+    
+    def todict_parameters(self):
+        return ("USEAFTER",)
 
 # ==============================================================================
 

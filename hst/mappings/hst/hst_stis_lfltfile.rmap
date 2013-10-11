@@ -1,5 +1,5 @@
 header = {
-    'derived_from' : 'generated from CDBS database 2013-05-01 10:54:04.518671',
+    'derived_from' : 'generated from CDBS database 2013-07-20 13:50:36.988984',
     'filekind' : 'LFLTFILE',
     'instrument' : 'STIS',
     'mapping' : 'REFERENCE',
@@ -10,8 +10,11 @@ header = {
         'aperture' : '(OBSTYPE == "IMAGING")',
         'cenwave' : '(OBSTYPE == "SPECTROSCOPIC")',
     },
+    'reffile_format' : 'IMAGE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
     'rmap_relevance' : 'ALWAYS',
-    'sha1sum' : '63b3363fca2037d2a5ab7ba96b2fff32d900ec71',
+    'sha1sum' : '6ac2271809be071eb1da801b029aba18ac7747dc',
 }
 
 selector = Match({

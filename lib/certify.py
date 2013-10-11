@@ -9,7 +9,8 @@ import re
 import pyfits
 
 from crds import rmap, log, timestamp, utils, data_file, diff, cmdline
-from crds import mapping_parser, refmatch
+from crds import client
+from crds import mapping_parser
 from crds.compat import namedtuple
 from crds.rmap import ValidationError
 
@@ -52,6 +53,14 @@ class KeywordValidator(object):
         if not hasattr(self.__class__, "_values"):
             self._values = self.condition_values(info)
 
+    def verbose(self, filename, value, *args, **keys):
+        """Prefix log.verbose() with standard info about this Validator.  Unique message is in *args, **keys"""
+        return log.verbose("File=" + repr(filename), 
+                           "Class=" + repr(self.__class__.__name__[:-len("Validator")]), 
+                           "keyword=" + repr(self.name), 
+                           "value =" + repr(value), 
+                           *args, **keys)
+
     def condition(self, value):
         """Condition `value` to standard format for this Validator."""
         return value
@@ -80,26 +89,31 @@ class KeywordValidator(object):
         """Check a single header or column value against the legal values
         for this Validator.
         """
-        log.verbose("Checking ", repr(filename), "keyword", repr(self.name), "=", repr(value))
         if value is None: # missing optional or excluded keyword
+            self.verbose(filename, value, "is optional or excluded.")
             return True
         if self.condition is not None:
             value = self.condition(value)
         if not self._values:
+            self.verbose(filename, value, "no .tpn values defined.")
             return True
-        self._check_value(value)
+        self._check_value(filename, value)
         # If no exception was raised, consider it validated successfully
         return True
 
-    def _check_value(self, value):
-        if value not in self._values and self._values != ('*',):
+    def _check_value(self, filename, value):
+        """Raises ValueError if `value` is not valid."""
+        if value not in self._values:  # and tuple(self._values) != ('*',):
             if isinstance(value, str):
                 for pat in self._values:
                     if re.match(pat, value):
+                        self.verbose(filename, value, "matches", repr(pat))
                         return
             raise ValueError("Value(s) for " + repr(self.name) + " of " +
                             str(log.PP(value)) + " is not one of " +
                             str(log.PP(self._values)))
+        else:
+            self.verbose(filename, value, "is in", repr(self._values))
 
     def check_header(self, filename, header=None):
         """Extract the value for this Validator's keyname,  either from `header`
@@ -111,33 +125,40 @@ class KeywordValidator(object):
         return self.check_value(filename, value)
 
     def check_column(self, filename, context=None):
-        """Extract a column of values from `filename` and check them all against
+        """Extract a column of new_values from `filename` and check them all against
         the legal values for this Validator.
         """
-        values = None
         try:
-            values = self._get_column_values(filename)
+            new_values = self._get_column_values(filename)
+            if new_values is None: # Ignore missing optional columns
+                return True 
         except Exception, exc:
-            log.error("Can't read column values : " + str(exc))
-            return
-        check_val = True
+            log.error("Can't read column values:", str(exc))
+            return False
 
-        if values is not None: # Only check for non-optional columns
-            for i, value in enumerate(values): # compare to TPN default values
-                valid = self.check_value(filename + "[" + str(i) +"]", value)
-                if not valid:
-                    check_val = False
+        # new_values must not be None,  check all, waiting to fail later
+        bad_vals = False
+        for i, value in enumerate(new_values): # compare to TPN values
+            try:
+                self.check_value(filename + "[" + str(i) +"]", value)
+            except ValueError, exc:
+                bad_vals = True
 
-        if context: # If context has been specified, compare against previous reffile
-            current = refmatch.find_current_reffile(filename, context)
-            if current: # Only do comparison if current ref file can be found
-                log.verbose("Checking values for column", repr(self.name),
-                            " against values found in ",current)
-                current_values = self._get_column_values(current)
-                return self._check_column_values(values, current_values)
+        if bad_vals:   # Fail prior to context comparison if values simply bad.
+            return False
+        
+        if not context:  # If no comparison context,  nothing to fail against.
+            return True
 
-        # If no context, report results of check_value anyway if not an Exception
-        return check_val
+        # If context has been specified, compare against previous reffile
+        old = find_old_reffile(filename, context)
+        if old: # Only do comparison if old ref file can be found
+            log.verbose("Checking", repr(filename), "values for column", repr(self.name),
+                        "against values found in", old)
+            old_values = self._get_column_values(old)
+            return self._check_column_values(new_values, old_values)
+        else:
+            return True
 
     def check_group(self, _filename):
         """Probably related to pre-FITS HST GEIS files,  not implemented."""
@@ -158,48 +179,45 @@ class KeywordValidator(object):
         `filename` and return it.   Handle missing and excluded cases.
         """
         hdu = pyfits.open(filename)
+        
         # make sure table(s) are in extension(s) not the PRIMARY extension
         assert len(hdu) >1, "table file with only primary extension: " + repr(filename)
 
         # start by finding the extension which contains the requested column
-        col_extn = None
         for extn in hdu:
             if (hasattr(extn,'_extension') and 'table' in extn._extension.lower() and self.name in extn.data.names):
                 col_extn = extn
                 break
-        # If no extension could be found with that column, report as missing
-        if col_extn is None:
-            # close FITS handle
+        else:  # If no extension could be found with that column, report as missing
             hdu.close()
             return self.__handle_missing()
 
         # If it was found, return the values
         tbdata = col_extn.data
         values = tbdata.field(self.name)
-
-        # close FITS handle
         hdu.close()
         return self.__handle_excluded(values)
 
-    def _check_column_values(self, new_values, current_values):
-        """ Check column values from new table against values from current table"""
+    def _check_column_values(self, new_values, old_values):
+        """ Check column values from new table against values from old table"""
+        
         # Use sets to perform comparisons more efficiently
-        current_set = set(current_values)
-        new_set = set(new_values)
+        old_set = set(list(old_values))
+        new_set = set(list(new_values))
 
         # find values which are uniq to each set/file
-        uniq_new = new_set.difference(current_set)
-        uniq_current = current_set.difference(new_set)
+        uniq_new = new_set.difference(old_set)
+        uniq_old = old_set.difference(new_set)
 
-        # report how input values compare to current values, if different
+        # report how input values compare to old values, if different
         if len(uniq_new) > 0:
-            log.warning("Value(s) for", repr(self.name), "of", log.PP(list(uniq_new)),
-                "is/are not one of", log.PP(current_values), sep='\n')
-            return True
+            log.warning("Column value(s) for", repr(self.name), "of", log.PP(list(uniq_new)),
+                "are not in:", log.PP(old_values))
 
-        if len(uniq_current) > 0:
-            log.warning("These values for "+repr(self.name)+ " were not present in new input:\n"+
-                        str(log.PP(list(uniq_current))))
+        if len(uniq_old) > 0:
+            log.warning("Column value(s) for", repr(self.name), "omitted",
+                        str(log.PP(list(uniq_old))))
+
         # if no differences, return True
         return True
 
@@ -235,55 +253,46 @@ class CharacterValidator(KeywordValidator):
 
 class ModeValidator(CharacterValidator):
     """ Validates values from multiple columns as a single mode value"""
+    
     def add_column(self, column):
         """ Add column validator to be used as basis for mode."""
-        log.verbose('Adding column '+column.name+' to ModeValidator')
+        log.verbose('Adding column', repr(column.name), 'to ModeValidator')
         self.names.append(column.name)
 
-    def check_column(self, filename, context=None):
-        """Extract a column of values from `filename` and check them all against
+    def check_column(self, new_file, context=None):
+        """Extract a column of values from `new_file` and check them all against
         the legal values for this Validator.
         """
-        #
-        # TODO: Expand to concatenate all columns values
-        #
-        new_values = []
+        if context is None: # If context has been specified, compare against previous reffile
+            log.verbose("No comparison context,  no mode comparison possible for", repr(new_file))
+            return
+
+        new_modes = self.get_modes(new_file)
+        
+        old_file = find_old_reffile(new_file, context)
+        if not old_file: # Only do comparison if old ref file can be found
+            log.warning("No comparison reference for", repr(new_file),
+                        "in context", repr(context))
+        else:
+            log.verbose("Checking", repr(new_file), "values for mode", repr(self.names),
+                        " against values found in ", repr(old_file))
+            old_modes = self.get_modes(old_file)
+            # find values which are uniq to each set/file
+            self.name = self.names
+            self._check_column_values(new_modes, old_modes)
+                
+    def get_modes(self, filename):
+        """Extract the "mode" columns from `filename` and zip them together into a list of mode tuples."""
+        columns = []
         for name in self.names:
             self.name = name
-            values = None
             try:
-                values = self._get_column_values(filename)
+                col_values = self._get_column_values(filename)
             except Exception, exc:
-                raise RuntimeError("Can't read column values from " + filename + ": " + str(exc))
-            new_values.append(values)
-
-        # convert these values into 'modes' by transposing the separate columns
-        # of values into sets of values with one set per row.
-        modes = map(tuple, transposed(new_values))
-
-        if context: # If context has been specified, compare against previous reffile
-            current = refmatch.find_current_reffile(filename, context)
-            if not current: # Only do comparison if current ref file can be found
-                log.warning("No comparison reference for", repr(filename),
-                            "in context", repr(context))
-            else:
-                log.verbose("Checking values for mode", repr(self.names),
-                            " against values found in ",current)
-
-                current_values = []
-                for name in self.names:
-                    self.name = name
-                    current_values.append(self._get_column_values(current))
-                current_modes = map(tuple, transposed(current_values))
-                # find values which are uniq to each set/file
-                self.name = self.names
-                self._check_column_values(modes, current_modes)
-
-def transposed(lists):
-    if not lists: 
-        return []
-    return map(lambda *row: list(row), *lists)
-
+                raise RuntimeError("Can't read column values from " + repr(filename) + ": " + str(exc))
+            columns.append(col_values)        
+        return zip(*columns)   # zip columns together into "mode" tuples.
+    
 # ----------------------------------------------------------------------------
 
 class LogicalValidator(KeywordValidator):
@@ -299,19 +308,22 @@ class NumericalValidator(KeywordValidator):
         if self.is_range:
             smin, smax = info.values[0].split(":")
             self.min, self.max = self.condition(smin), self.condition(smax)
+            assert self.min != '*' and self.max != '*', "TPN error, range min/max conditioned to '*'"
             values = None
         else:
             values = KeywordValidator.condition_values(self, info)
         return values
 
-    def _check_value(self, value):
+    def _check_value(self, filename, value):
         if self.is_range:
             if value < self.min or value > self.max:
                 raise ValueError("Value for " + repr(self.name) + " of " +
                     repr(value) + " is outside acceptable range " +
                     self.info.values[0])
+            else:
+                self.verbose(filename, value, "is in range", self.info.values[0])
         else:   # First try a simple exact string match check
-            KeywordValidator._check_value(self, value)
+            KeywordValidator._check_value(self, filename, value)
 
 # ----------------------------------------------------------------------------
 
@@ -323,12 +335,13 @@ class IntValidator(NumericalValidator):
 
 class FloatValidator(NumericalValidator):
     """Validates floats of any precision."""
-    condition = float
     epsilon = 1e-7
+    
+    condition = float
 
-    def _check_value(self, value):
+    def _check_value(self, filename, value):
         try:
-            NumericalValidator._check_value(self, value)
+            NumericalValidator._check_value(self, filename, value)
         except ValueError:   # not a range or exact match,  handle fp fuzz
             if self.is_range: # XXX bug: boundary values don't handle fuzz
                 raise
@@ -341,6 +354,7 @@ class FloatValidator(NumericalValidator):
                     continue
                 # print "considering", possible, value, err
                 if abs(err) < self.epsilon:
+                    self.verbose(filename, value, "is within +-", repr(self.epsilon), "of", repr(possible))
                     return
             raise
 
@@ -387,6 +401,7 @@ class PedigreeValidator(KeywordValidator):
 class SybdateValidator(KeywordValidator):
     """Check &SYBDATE Sybase date fields."""
     def check_value(self, filename, value):
+        self.verbose(filename, value)
         timestamp.Sybdate.get_datetime(value)
 
 # ----------------------------------------------------------------------------
@@ -394,6 +409,7 @@ class SybdateValidator(KeywordValidator):
 class SlashdateValidator(KeywordValidator):
     """Validates &SLASHDATE fields."""
     def check_value(self, filename, value):
+        self.verbose(filename, value)
         timestamp.Slashdate.get_datetime(value)
 
 # ----------------------------------------------------------------------------
@@ -401,6 +417,7 @@ class SlashdateValidator(KeywordValidator):
 class AnydateValidator(KeywordValidator):
     """Validates &ANYDATE fields."""
     def check_value(self, filename, value):
+        self.verbose(filename, value)
         timestamp.Anydate.get_datetime(value)
 
 # ----------------------------------------------------------------------------
@@ -408,7 +425,9 @@ class AnydateValidator(KeywordValidator):
 class FilenameValidator(KeywordValidator):
     """Validates &FILENAME fields."""
     def check_value(self, filename, value):
-        return (value == "(initial)") or not os.path.dirname(value)
+        self.verbose(filename, value)
+        result = (value == "(initial)") or not os.path.dirname(value)
+        return result
 
 # ----------------------------------------------------------------------------
 
@@ -435,25 +454,26 @@ def validator(info):
 
 # ============================================================================
 
-def get_validators(filename):
+def get_validators(filename, observatory):
     """Given a reference file `filename`,  return the observatory specific
     list of Validators used to check that reference file type.
     """
-    # Find the observatory's locator module based on the reference file.
-    locator = utils.reference_to_locator(filename)
+    locator = utils.get_locator_module(observatory)
     # Get the cache key for this filetype.
     key = locator.reference_name_to_validator_key(filename)
-    return validators_by_typekey(locator, key)
+    return validators_by_typekey(key, observatory)
 
 @utils.cached
-def validators_by_typekey(locator, key):
+def validators_by_typekey(key, observatory):
     """Load and return the list of validators associated with reference type 
-    validator `key`.
+    validator `key`.   Factored out because it is cached on parameters.
     """
-    tpninfos = tuple(locator.get_tpninfos(*key))
+    locator = utils.get_locator_module(observatory)
     # Make and cache Validators for `filename`s reference file type.
-    return [validator(x) for x in tpninfos]
-        
+    validators = [validator(x) for x in locator.get_tpninfos(*key)]
+    log.verbose("Validators for", repr(key), "=", log.PP(validators))
+    return validators
+
 # ============================================================================
 
 class Certifier(object):
@@ -461,7 +481,8 @@ class Certifier(object):
     def __init__(self, filename, context=None, trap_exceptions=False, check_references=False, 
                  compare_old_reference=False, dump_provenance=False,
                  provenance_keys=("DESCRIP", "COMMENT", "PEDIGREE", "USEAFTER","HISTORY",),
-                 dont_parse=False):
+                 dont_parse=False, script=None, observatory=None):
+        
         self.filename = filename
         self.context = context
         self.trap_exceptions = trap_exceptions
@@ -470,7 +491,9 @@ class Certifier(object):
         self.dump_provenance = dump_provenance
         self.provenance_keys = list(provenance_keys)
         self.dont_parse = dont_parse     # mapping only
-        
+        self.script = script
+        self.observatory = observatory
+    
         assert self.check_references in [False, None, "exist", "contents"], \
             "invalid check_references parameter " + repr(self.check_references)
     
@@ -486,14 +509,25 @@ class Certifier(object):
         try:
             return function(*args, **keys)
         except Exception, exc:
-            msg = "In " + repr(self.filename) + " : " + message + " : " + str(exc)
+            msg = message + " : " + str(exc)
             if self.trap_exceptions:
-                log.error(msg)
+                self.log_error(msg)
                 return None
             else:
-                log.error(msg)
+                self.log_error(msg)
                 raise
                 # raise ValidationError(msg)
+
+    def log_error(self, msg):
+        """Output a log error on behalf of `msg`,  tracking it for uniqueness if run inside a script."""
+        if self.script:
+            try:
+                instrument, filekind = utils.get_file_properties(self.script.observatory, self.filename)
+            except Exception:
+                instrument = filekind = "unknown"
+            self.script.log_and_track_error(self.filename, instrument, filekind, msg)
+        else:
+            log.error("In", repr(self.filename), ":", msg)
             
     def certify(self):
         """Certify `self.filename`,  either reporting using log.error() or raising
@@ -538,7 +572,7 @@ class ReferenceCertifier(Certifier):
         if self.context is None:
             return []
         try:
-            pmap = rmap.get_cached_mapping(self.context, ignore_checksum="warn")
+            pmap = rmap.fetch_mapping(self.context, ignore_checksum="warn")
             instrument, filekind = pmap.locate.get_file_properties(self.filename)
             return pmap.get_imap(instrument).get_rmap(filekind).get_required_parkeys()
         except Exception, exc:
@@ -547,7 +581,7 @@ class ReferenceCertifier(Certifier):
 
     def certify_simple_parameters(self, header):
         """Check non-column parameters."""
-        for checker in get_validators(self.filename):
+        for checker in get_validators(self.filename, self.observatory):
             if checker.info.keytype != 'C':
                 self.trap("checking " + repr(checker.info.name),
                           checker.check, self.filename, header=header)
@@ -555,7 +589,7 @@ class ReferenceCertifier(Certifier):
     def certify_reference_modes(self, header):
         """Check column parameters row-by-row."""
         mode_checker = None # Initialize mode validation
-        for checker in get_validators(self.filename):
+        for checker in get_validators(self.filename, self.observatory):
             # Treat column validations together as a 'mode'
             if checker.info.keytype == 'C':
                 checker.check(self.filename, header=header) # validate values against TPN valid values
@@ -605,9 +639,16 @@ class MappingCertifier(Certifier):
         mapping = rmap.fetch_mapping(self.filename, ignore_checksum="warn")
         mapping.validate_mapping(trap_exceptions=self.trap_exceptions)
     
-        derived_from = mapping.get_derived_from()
+        # derived_from = mapping.get_derived_from()
+        derived_from = find_old_mapping(self.context, self.filename)
         if derived_from is not None:
-            diff.mapping_check_diffs(mapping, derived_from)
+            if derived_from.name ==self.filename:
+                log.verbose("Mapping", repr(self.filename), "did not change relative to context", repr(self.context))
+            else:
+                diff.mapping_check_diffs(mapping, derived_from)
+        else:
+            if self.context is not None:
+                log.info("No parent for", repr(mapping.name), "relative to context", repr(self.context))
             
         # Optionally check nested references,  only for rmaps.
         if not isinstance(mapping, rmap.ReferenceMapping) or not self.check_references: # Accept None or False
@@ -619,7 +660,8 @@ class MappingCertifier(Certifier):
             certify_files(references, context=self.context, 
                           check_references=self.check_references,
                           trap_exceptions=self.trap_exceptions, 
-                          compare_old_reference=self.compare_old_reference)
+                          compare_old_reference=self.compare_old_reference,
+                          observatory=self.observatory)
     
     def get_existing_reference_paths(self, mapping):
         """Return the paths of the references referred to by mapping.  Omit
@@ -640,6 +682,67 @@ def get_existing_path(reference, observatory):
     if not os.path.exists(path):
         raise ValidationError("Path " + repr(path) + " does not exist.")
     return path
+
+# ============================================================================
+
+def find_old_mapping(comparison_context, new_mapping):
+    """Find the mapping in pmap `comparison_context` corresponding to `new_mapping`,  if there is one.
+    This call will cache `comparison_context` so it should only be called on "official" mappings,  not
+    trial mappings.
+    """
+    if comparison_context:
+        comparison_mapping = rmap.get_cached_mapping(comparison_context)
+        return comparison_mapping.get_equivalent_mapping(new_mapping)
+    else:
+        return None
+
+# ============================================================================
+
+def find_old_reffile(reffile, pmap):
+    """Returns the name of the old reference file(s) that the new reffile would replace,  or None.
+    """
+    with log.info_on_exception("Failed resolving prior reference for '{}' in '{}'".format(reffile, pmap)):
+        return _find_old_reffile(reffile, pmap)
+    return None
+
+def _find_old_reffile(reffile, pmap):
+    """Returns the name of the old reference file(s) that the new reffile would replace."""
+    
+    ctx = rmap.fetch_mapping(pmap)
+    instrument, filekind = utils.get_file_properties(ctx.observatory, reffile)
+    reference_mapping = ctx.get_imap(instrument).get_rmap(filekind)
+
+    # Determine the corresponding reference by attempting to add reffile to the old context.
+    new_r = reference_mapping.insert_reference(reffile)
+    
+    # Examine the differences and treat the replaced file as the prior reference.
+    diffs = reference_mapping.difference(new_r)
+    match_refname = None
+    for diff_tup in diffs:
+        if diff.diff_action(diff_tup) == "replace":
+            match_refname, dummy = diff.diff_replace_old_new(diff_tup)
+            assert dummy == os.path.basename(reffile), "Bad replacement inserting '{}' into '{}'".format(reffile, pmap)
+            break   # XXX it may be possible to have more than one corresponding prior reference
+    else:
+        log.info("No file corresponding to", repr(reffile), "in context", repr(pmap))
+        return None
+    
+    # grab match_file from server and copy it to a local disk, if network
+    # connection is available and configured properly
+    # Note: this call works in both networked and non-networked modes of operation.
+    # Non-networked mode requires access to /grp/crds/[hst|jwst] or a copy of it.
+    try:
+        match_files = client.dump_references(pmap, baserefs=[match_refname], ignore_cache=False)
+        match_file = match_files[match_refname]
+        if not os.path.exists(match_file):   # For server-less mode in debug environments w/o Central Store
+            raise IOError("Comparison reference " + repr(match_refname) + " is defined but does not exist.")
+        log.info("Comparing reference", repr(reffile), "against", repr(match_file))
+    except Exception, exc:
+        log.warning("Failed to obtain reference comparison file", repr(match_refname), ":", str(exc))
+        match_file = None
+
+    return match_file
+
 # ============================================================================
 
 class MissingReferenceError(RuntimeError):
@@ -647,7 +750,7 @@ class MissingReferenceError(RuntimeError):
 
 def certify_files(files, context=None, dump_provenance=False, check_references=False, 
                   is_mapping=False, trap_exceptions=True, compare_old_reference=False,
-                  dont_parse=False, skip_banner=False):
+                  dont_parse=False, skip_banner=False, script=None, observatory=None):
     """Certify the list of `files` relative to .pmap `context`.   Files can be
     references or mappings.
     
@@ -659,16 +762,20 @@ def certify_files(files, context=None, dump_provenance=False, check_references=F
     trap_exceptions:        bool   if True, issue log.error() messages, else raise.
     compare_old_reference:  bool,  if True,  attempt table mode checking.
     dont_parse:       bool,  if True,  don't run parser to scan mappings for duplicate keys.
+    script:   command line Script instance
     """
 
     if not isinstance(files, list):
         files = [files]
-
+        
+    assert observatory is not None, "Undefined observatory in certify_files."
+        
     for fnum, filename in enumerate(files):
         if not skip_banner:
             log.info('#' * 40)  # Serves as demarkation for each file's report
             log.info("Certifying", repr(filename) + ' (' + str(fnum+1) + '/' + str(len(files)) + ')', 
                      "relative to context", repr(context))
+            # log.info("certify_files locals():", log.PP(locals()))
         try:
             if is_mapping or rmap.is_mapping(filename):
                 klass = MappingCertifier
@@ -678,7 +785,7 @@ def certify_files(files, context=None, dump_provenance=False, check_references=F
                               trap_exceptions=trap_exceptions, 
                               compare_old_reference=compare_old_reference,
                               dump_provenance=dump_provenance,
-                              dont_parse=dont_parse)
+                              dont_parse=dont_parse, script=script, observatory=observatory)
             certifier.certify()
         except Exception, exc:
             if trap_exceptions:
@@ -694,14 +801,18 @@ def test():
 
 # ============================================================================
 
-class CertifyScript(cmdline.Script):
-    """Command line script for for checking CRDS mapping and reference files.
+class CertifyScript(cmdline.Script, cmdline.UniqueErrorsMixin):
+    """Command line script for checking CRDS mapping and reference files.
     
     Perform checks on each of `files`.   Print status.   If file is a context /
     mapping file,  it is used to define associated reference files which are
     located on the CRDS server.  If file is a .fits file,  it should include a
     relative or absolute filepath.
     """
+    
+    def __init__(self, *args, **keys):
+        cmdline.Script.__init__(self, *args, **keys)
+        cmdline.UniqueErrorsMixin.__init__(self, *args, **keys)
 
     description = """
 Checks a CRDS reference or mapping file.
@@ -728,6 +839,7 @@ Checks a CRDS reference or mapping file.
             help="Capture exceptions at level: pmap, imap, rmap, selector, debug, none")
         self.add_argument("-x", "--comparison-context", dest="context", type=str, default=None,
             help="Pipeline context defining comparison files.")
+        cmdline.UniqueErrorsMixin.add_args(self)
 
     def main(self):
         if self.args.deep:
@@ -754,8 +866,10 @@ Checks a CRDS reference or mapping file.
                       check_references=check_references, 
                       is_mapping=self.args.mapping, 
                       trap_exceptions=self.args.trap_exceptions,
-                      dont_parse=self.args.dont_parse)
+                      dont_parse=self.args.dont_parse,
+                      script=self, observatory=self.observatory)
     
+        self.dump_unique_errors()
         log.standard_status()
         
         return log.errors()

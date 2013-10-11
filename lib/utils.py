@@ -6,6 +6,8 @@ import re
 import sha
 import cStringIO
 import functools
+from collections import Counter, defaultdict
+import datetime
 
 # from crds import data_file,  import deferred until required
 
@@ -235,6 +237,78 @@ def capture_output(func):
 
     return CapturedFunction()
 
+
+# ===================================================================
+
+class TimingStats(object):
+    """Track and compute counts and counts per second."""
+    def __init__(self, output=None):
+        self.counts = Counter()
+        self.started = None
+        self.stopped = None
+        self.elapsed = None
+        self.output = log.info if output is None else output
+        self.start()
+
+    def increment(self, name, amount=1):
+        """Add `amount` to stat count for `name`."""
+        self.counts[name] += amount
+        
+    def start(self):
+        """Start the timing interval."""
+        self.started = datetime.datetime.now()
+        return self
+     
+    def stop(self):
+        """Stop the timing interval."""
+        self.stopped = datetime.datetime.now()
+        self.elapsed = self.stopped - self.started
+
+    def report(self):
+        """Output all stats."""
+        if not self.stopped:
+            self.stop()
+        self.msg("STARTED", str(self.started)[:-4])
+        self.msg("STOPPED", str(self.stopped)[:-4])
+        self.msg("ELAPSED", str(self.elapsed)[:-4])
+        for kind in self.counts:
+            self.report_stat(kind)
+
+    def report_stat(self, name):
+        """Output stats on `name`."""
+        count, rate = self.status(name)
+        self.msg(count, "at", rate)
+        
+    def status(self, name):
+        """Return human readable (count, rate) for `name`."""
+        self.stop()
+        count = self._human_format(self.counts[name]) + " " + name
+        rate = self._human_format(self.counts[name] / self.elapsed.total_seconds()) + " " + name+"-per-second"
+        return count, rate
+        
+    def _human_format(self, number):
+        """Format `number` roughly in engineering units."""
+        convert = [
+            (1e12, "T"),
+            (1e9 , "G"),
+            (1e6 , "M"),
+            (1e3 , "K"),
+            ]
+        for limit, sym in convert:
+            if isinstance(number, float) and number > limit:
+                number /= limit
+                break
+        else:
+            sym = ""
+        if isinstance(number, (int, long)):
+            return "%d" % number
+        else:
+            return "%0.2f %s" % (number, sym)
+    
+    def msg(self, *args):
+        """Format (*args, **keys) using log.format() and call output()."""
+        self.output(*args, eol="")
+
 # ===================================================================
 
 def invert_dict(dictionary):
@@ -342,7 +416,7 @@ DONT_CARE_RE = re.compile(r"^" + r"|".join([
     # "-999","-999\.0",
     # "4294966297.0",
     r"-2147483648.0",
-    r"\(\)","N/A","NOT APPLICABLE"]) + "$|^$")
+    r"\(\)","N/A","NOT APPLICABLE", "NOT_APPLICABLE"]) + "$|^$")
 
 NUMBER_RE = re.compile(r"^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$|^[+-]?[0-9]+\.$")
 
@@ -364,6 +438,8 @@ def condition_value(value):
     >>> condition_value('N/A')
     'N/A'
     >>> condition_value('NOT APPLICABLE')
+    'N/A'
+    >>> condition_value('NOT_APPLICABLE')
     'N/A'
     >>> condition_value('')
     'N/A'
@@ -475,12 +551,21 @@ def reference_to_observatory(filename):
     """Return the name of the observatory corresponding to reference `filename`."""
     return instrument_to_observatory(reference_to_instrument(filename))
 
+def file_to_observatory(filename):
+    """Return the observatory corresponding to reference or mapping `filename`."""
+    if "hst" in filename:
+        return "hst"
+    elif "jwst" in filename:
+        return "jwst"
+    elif "tobs" in filename:
+        return tobs
+    else:
+        return reference_to_observatory(filename)
 
 # These functions should actually be general,  working on both references and
 # dataset files.
 file_to_instrument = reference_to_instrument
 file_to_locator = reference_to_locator
-file_to_observatory = reference_to_observatory
 
 def test():
     """Run doctests."""

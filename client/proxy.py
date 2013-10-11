@@ -2,7 +2,7 @@
 w/getattr. Converts service errors into ServiceError exceptions,  otherwise 
 call returns the jsonrpc "result" field.
 """
-import urllib
+import urllib2 as urllib
 import uuid
 
 from json import loads, dumps
@@ -55,7 +55,11 @@ class CheckingProxy(object):
         except Exception, exc:
             log.verbose("FAILED", str(exc), verbosity=55)
             raise ServiceError("CRDS jsonrpc failure " + repr(self.__service_name) + " " + str(exc))
-        rval = loads(response)
+        try:
+            rval = loads(response)
+        except Exception, exc:
+            log.warning("Invalid CRDS jsonrpc response:\n", response)
+            raise
         rval = fix_strings(rval)
         return rval
     
