@@ -11,7 +11,7 @@ elif len(sys.argv) == 2:
     from crds.hst import INSTRUMENTS
 else:
     serial = sys.argv[1]
-    INSTRUMENTS = sys.argv[1:]
+    INSTRUMENTS = sys.argv[2:]
 
 def install():
     print "Installing"  
