@@ -410,9 +410,24 @@ def get_reference_info_rows(reference):
 def get_reference_info_files(reference):
     return _get_reference_info(reference, get_file_table, "file")
 
+def _get_replaced_reference(reference):
+    r = get_reffile_ops()
+    db_filename = os.path.basename(reference).upper()
+    for instrument in crds.hst.INSTRUMENTS:
+        table = get_file_table(instrument)
+        dicts = list(r.make_dicts(table, where="where reject_by_file_name='%s'" % db_filename))
+        if dicts:
+            return (instrument, dicts)
+    else:
+        raise LookupError("Reference file " + repr(reference) + "not found in table for any instrument.")
+
+def get_replaced_reference(reference):
+    info = _get_replaced_reference(reference)
+    if len(info[1]) > 1:
+        log.warning("More than one replaced reference for", repr(reference))
+    return info[1][0]["file_name"]
 
 # =================================================================================
 
 if __name__ == "__main__":
     gen_header_tables()
-        
