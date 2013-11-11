@@ -19,7 +19,7 @@ def print_new_references(context="hst.pmap", date="1990-01-01", time="00:00",
     ref_file_ops = cdbs_db.get_reffile_ops()
 
     if check_existing:
-        client.set_crds_server("http://hst-crds.stsci.edu")
+        client.set_crds_server("http://hst-crds-test.stsci.edu")
         existing_references = client.get_reference_names(context)
 
     start_date = timestamp.reformat_date(date + " " + time)

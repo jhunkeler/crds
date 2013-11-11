@@ -1,0 +1,29 @@
+#! /usr/bin/env python
+#-*-python-*-
+import sys
+
+from crds import pysh, log, rmap
+
+import cdbs_db
+import survey_tables
+
+def print_replacements(context):
+    for name in survey_tables.table_rmaps(context):
+        mapping = rmap.get_cached_mapping(name)
+        instrument, filekind = mapping.instrument, mapping.filekind
+        for current_reference in mapping.reference_names():
+            log.verbose("Trying", instrument, filekind, name, current_reference, verbosity=30)
+            try:
+                replaced = cdbs_db.get_replaced_reference(current_reference)
+                print("{} {} {} {} {}".format(instrument, filekind, name,  replaced, current_reference))
+                break
+            except LookupError:
+                pass
+        else:
+            log.warning("No replaced reference for", repr(current_reference), "of", 
+                        instrument, filekind)
+
+if __name__ == "__main__":
+    # log.set_verbose(30)
+    print_replacements(sys.argv[1])
+    log.standard_status()
