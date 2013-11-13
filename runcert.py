@@ -8,18 +8,39 @@ from crds.hst import locate
 from crds import pysh, log, certify
 
 
-def main(comparison_files, other_params):
+def main(context, comparison_files, other_params):
     for line in open(comparison_files):
         if not line.strip():
             continue
-        file1, file2 = line.split()
-        with log.error_on_exception("Failed certifying", repr(file1), "and", repr(file2)):
-            path1 = locate.locate_server_reference(file1)
-            path2 = locate.locate_server_reference(file2)
-            cert = certify.CertifyScript("certify.py {} --comparison-context=hst.pmap "
-                                         "--comparison-reference={} {}".format(" ".join(other_params), path1, path2))
-            cert()
+        words = line.split()
+        if len(words) == 5:  # comparison reference exists
+            file1, file2 = words[-2:]
+            try:
+                path1 = locate.locate_server_reference(file1)
+                path2 = locate.locate_server_reference(file2)
+            except:
+                log.error("Failed locating files", repr(file1), "and/or", repr(file2))
+                continue            
+            cert = certify.CertifyScript(
+                "certify.py {} --comparison-context={} "
+                "--comparison-reference={} {}".format(" ".join(other_params), context, path1, path2))
+        else:  # no comparison reference
+            file1, file2 = None, words[-1]
+            try:
+                path2 = locate.locate_server_reference(file2)
+            except:
+                log.error("Failed locating", repr(file2))
+                continue
+            cert = certify.CertifyScript(
+                "certify.py {} --comparison-context={} {}".format(" ".join(other_params), context, path2))
+        cert()
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2:])
+    if len(sys.argv) < 3:
+        print("usage: runcert <context> <comparison_file_list_file> [<other-certify-options...]")
+        sys.exit(-1)
+    main(sys.argv[1], sys.argv[2], sys.argv[3:])
 
+"""
+
+"""

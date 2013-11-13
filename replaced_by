@@ -11,7 +11,7 @@ def print_replacements(context):
     for name in survey_tables.table_rmaps(context):
         mapping = rmap.get_cached_mapping(name)
         instrument, filekind = mapping.instrument, mapping.filekind
-        for current_reference in mapping.reference_names():
+        for current_reference in sorted(mapping.reference_names())[-1:]:
             log.verbose("Trying", instrument, filekind, name, current_reference, verbosity=30)
             try:
                 replaced = cdbs_db.get_replaced_reference(current_reference)
@@ -22,6 +22,7 @@ def print_replacements(context):
         else:
             log.warning("No replaced reference for", repr(current_reference), "of", 
                         instrument, filekind)
+            print("{} {} {} {}".format(instrument, filekind, name,  current_reference))
 
 if __name__ == "__main__":
     # log.set_verbose(30)
