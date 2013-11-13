@@ -1,45 +1,70 @@
-j2o15065j_a2d.fits j4d1435hj_a2d.fits
-j2o15067j_bpx.fits j4d1435jj_bpx.fits
-j341403cj_ccd.fits j4d1435kj_ccd.fits
-j2o15069j_crr.fits j4d1435lj_crr.fits
-vbb18105j_imp.fits w3m1716tj_imp.fits
-s940253nj_mdz.fits ub215378j_mdz.fits
-j4d14360j_lin.fits k9c13374j_lin.fits
-j2o1506cj_osc.fits j4d1435pj_osc.fits
-w3j1327lj_cte.fits w591643nj_cte.fits
-qap1346cj_csp.fits r3301467j_csp.fits
-n9n2017rl_badt.fits s7o1739kl_badt.fits
-s5n1734sl_bpix.fits s7g1700dl_bpix.fits
-s7g1700el_brf.fits x1u1459il_brf.fits
-r7p1113il_burst.fits s7g1700fl_burst.fits
-s5n1734pl_dead.fits s7g1700gl_dead.fits
-s7g1700rl_disp.fits s7g17013l_disp.fits
-s5n17353l_phot.fits s7g1700kl_phot.fits
-x5o1607gl_gsag.fits x6l1439el_gsag.fits
-wa41551al_hv.fits x6l16507l_hv.fits
-s5n17351l_lamp.fits s7g1700il_lamp.fits
-s5n17352l_pha.fits s7g1700jl_pha.fits
-s7g1700ll_wcp.fits t2314311l_wcp.fits
-s5n1734ql_1dx.fits s7g17006l_1dx.fits
-t6115557n_pht.fits t621822qn_pht.fits
-s2d1302nn_scn.fits t231621gn_scn.fits
-o2o1431ko_apd.fits obm1723qo_apd.fits
-laf13369o_apt.fits n7p1032ao_apt.fits
-q312019to_ccd.fits q4a1311bo_ccd.fits
-j1c1746jo_dsp.fits l2j0137to_dsp.fits
-l8g1208eo_idc.fits o8g1508do_idc.fits
-l3m14380o_lmp.fits l421050oo_lmp.fits
-h1v15598o_lin.fits j9r16559o_lin.fits
-h7o0858mo_pht.fits l7a15023o_pht.fits
-n7p1031ro_sdc.fits obm1723lo_sdc.fits
-l3m14384o_1dt.fits q8l14501o_1dt.fits
-tcl1742co_tdc.fits v2a1955fo_tdc.fits
-p9r19205o_tds.fits q9s1550ko_tds.fits
-k291025go_wcp.fits lag1815lo_wcp.fits
-i1c16161o_1dx.fits l3m1437to_1dx.fits
-n9i15361i_bpx.fits q911321ki_bpx.fits
-n9i15362i_ccd.fits q911321li_ccd.fits
-v5r1512fi_idc.fits w3m18525i_idc.fits
-s630406ti_mdz.fits sau19319i_mdz.fits
-n9i1435ki_osc.fits q911321mi_osc.fits
-s871935au_off.fits s9518396u_off.fits
+acs atodtab hst_acs_atodtab.rmap t3n1116mj_a2d.fits
+acs bpixtab hst_acs_bpixtab.rmap r1520066j_bpx.fits u451251ej_bpx.fits
+acs ccdtab hst_acs_ccdtab.rmap u220104kj_ccd.fits uc82140bj_ccd.fits
+acs crrejtab hst_acs_crrejtab.rmap mah14555j_crr.fits n4e12511j_crr.fits
+acs idctab hst_acs_idctab.rmap u7n18502j_idc.fits v8q14451j_idc.fits
+acs imphttab hst_acs_imphttab.rmap vbb18107j_imp.fits w3m17171j_imp.fits
+acs mdriztab hst_acs_mdriztab.rmap s940253pj_mdz.fits ub21537aj_mdz.fits
+acs mlintab hst_acs_mlintab.rmap j4d14360j_lin.fits k9c13374j_lin.fits
+acs oscntab hst_acs_oscntab.rmap m2j1057pj_osc.fits
+acs pctetab hst_acs_pctetab.rmap w3j1327lj_cte.fits w591643nj_cte.fits
+acs spottab hst_acs_spottab.rmap qap1346cj_csp.fits r3301467j_csp.fits
+cos badttab hst_cos_badttab.rmap n9n2017rl_badt.fits s7o1739kl_badt.fits
+cos bpixtab hst_cos_bpixtab.rmap w4i1707ol_bpix.fits x1u1459hl_bpix.fits
+cos brftab hst_cos_brftab.rmap s7g1700el_brf.fits x1u1459il_brf.fits
+cos brsttab hst_cos_brsttab.rmap r7p1113il_burst.fits s7g1700fl_burst.fits
+cos deadtab hst_cos_deadtab.rmap s5n17358l_dead.fits s7g1700ql_dead.fits
+cos disptab hst_cos_disptab.rmap xaa18189l_disp.fits x6q17584l_disp.fits
+cos fluxtab hst_cos_fluxtab.rmap x6q17587l_phot.fits
+cos gsagtab hst_cos_gsagtab.rmap x5o1607gl_gsag.fits x6l1439el_gsag.fits
+cos hvtab hst_cos_hvtab.rmap wa41551al_hv.fits x6l16507l_hv.fits
+cos lamptab hst_cos_lamptab.rmap x6q17585l_lamp.fits
+cos phatab hst_cos_phatab.rmap ucl1623gl_pha.fits wc318317l_pha.fits
+cos spwcstab hst_cos_spwcstab.rmap x6q17583l_spwcs.fits
+cos tdstab hst_cos_tdstab.rmap v3i16155l_tds.fits w7h1935dl_tds.fits
+cos walktab hst_cos_walktab.rmap w161831hl_walk.fits
+cos wcptab hst_cos_wcptab.rmap t2314313l_wcp.fits x2i1559gl_wcp.fits
+cos xtractab hst_cos_xtractab.rmap x6q17586l_1dx.fits
+nicmos idctab hst_nicmos_idctab.rmap s8d19551n_idc.fits
+nicmos pedsbtab hst_nicmos_pedsbtab.rmap s2d1302mn_psb.fits
+nicmos phottab hst_nicmos_phottab.rmap t1n2021hn_pht.fits t6423134n_pht.fits
+nicmos rnlcortb hst_nicmos_rnlcortb.rmap r5o0317dn_nlc.fits
+nicmos saacntab hst_nicmos_saacntab.rmap s2d1302nn_scn.fits t231621gn_scn.fits
+nicmos zprattab hst_nicmos_zprattab.rmap r5o0317fn_zpr.fits
+stis apdestab hst_stis_apdestab.rmap o2o1431lo_apd.fits obm1723ro_apd.fits
+stis apertab hst_stis_apertab.rmap laf13369o_apt.fits n7p1032ao_apt.fits
+stis bpixtab hst_stis_bpixtab.rmap v2s21472o_bpx.fits
+stis ccdtab hst_stis_ccdtab.rmap t9a10044o_ccd.fits v6n13233o_ccd.fits
+stis cdstab hst_stis_cdstab.rmap k8m0958bo_cds.fits
+stis crrejtab hst_stis_crrejtab.rmap i1e1558go_crr.fits j3m1403io_crr.fits
+stis disptab hst_stis_disptab.rmap l3m14381o_dsp.fits m7p16111o_dsp.fits
+stis echsctab hst_stis_echsctab.rmap k8m0958co_ech.fits
+stis exstab hst_stis_exstab.rmap k8m0958do_exs.fits
+stis gactab hst_stis_gactab.rmap p9r19203o_gac.fits
+stis halotab hst_stis_halotab.rmap k8m0958eo_hal.fits
+stis idctab hst_stis_idctab.rmap o421844bo_idc.fits o8g1508fo_idc.fits
+stis inangtab hst_stis_inangtab.rmap h1v1541fo_iac.fits l3m1437ro_iac.fits
+stis lamptab hst_stis_lamptab.rmap l3m14380o_lmp.fits l421050oo_lmp.fits
+stis mlintab hst_stis_mlintab.rmap h1v15598o_lin.fits j9r16559o_lin.fits
+stis mofftab hst_stis_mofftab.rmap h4s1350ko_moc.fits
+stis pctab hst_stis_pctab.rmap n2o1817do_pct.fits q5417413o_pct.fits
+stis phottab hst_stis_phottab.rmap vb816448o_pht.fits
+stis riptab hst_stis_riptab.rmap vb816447o_rip.fits
+stis sdctab hst_stis_sdctab.rmap l3m14383o_sdc.fits obm1723po_sdc.fits
+stis sptrctab hst_stis_sptrctab.rmap q8l14500o_1dt.fits qa31608go_1dt.fits
+stis srwtab hst_stis_srwtab.rmap k8m0958go_srw.fits
+stis tdctab hst_stis_tdctab.rmap tcl1742co_tdc.fits v2a1955fo_tdc.fits
+stis tdstab hst_stis_tdstab.rmap u7c1846io_tds.fits ub920085o_tds.fits
+stis teltab hst_stis_teltab.rmap k8m0958ho_tel.fits
+stis wcptab hst_stis_wcptab.rmap k291025go_wcp.fits lag1815lo_wcp.fits
+stis xtractab hst_stis_xtractab.rmap j9h0900jo_1dx.fits n7p10323o_1dx.fits
+wfc3 atodtab hst_wfc3_atodtab.rmap n9n16196i_a2d.fits
+wfc3 bpixtab hst_wfc3_bpixtab.rmap w681807ii_bpx.fits
+wfc3 ccdtab hst_wfc3_ccdtab.rmap t2c16200i_ccd.fits
+wfc3 crrejtab hst_wfc3_crrejtab.rmap u6a1748ri_crr.fits
+wfc3 idctab hst_wfc3_idctab.rmap w2r1956ri_idc.fits x5h1320ei_idc.fits
+wfc3 imphttab hst_wfc3_imphttab.rmap wbj1825si_imp.fits x5h1320fi_imp.fits
+wfc3 mdriztab hst_wfc3_mdriztab.rmap ubi1853qi_mdz.fits
+wfc3 oscntab hst_wfc3_oscntab.rmap r5b17012i_osc.fits
+wfpc2 idctab hst_wfpc2_idctab.rmap sad1946fu_idc.fits ta81040lu_idc.fits
+wfpc2 offtab hst_wfpc2_offtab.rmap s9m1329lu_off.fits
