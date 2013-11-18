@@ -7,7 +7,7 @@ ACS
     IMPHTTAB      was: none                                       suggested: ('OBSMODE')
     MDRIZTAB      was: none                                       suggested: ('FILTER', 'NUMIMAGES')
     MLINTAB       was: none                                       suggested: ('DETECTOR')
-    PCETAB        was: none                                       suggested: ('DTDE', 'LEVEL', 'COLUMN', 'NODE')
+    PCETAB        was: none                                       suggested: ('DTDE', 'LEVEL', 'COLUMN', 'NODE')  any-of/all-of define actual "mode"
     SPOTTAB       was: none                                       suggested: ('DATE')
 
 COS
@@ -33,7 +33,7 @@ STIS
     TELTAB        was: ('REFWAVE')                                suggested: ('PSFWAVE')
 
 WFC3 
-    ASTODTAB      was: ('CCDCHIP', 'CCDAMP', 'CCDGAIN')           suggested: ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'REF_KEY', 'REF_KEY_VALUE')
+    ATODTAB       was: ('CCDCHIP', 'CCDAMP', 'CCDGAIN')           suggested: ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'REF_KEY', 'REF_KEY_VALUE')
     BPIXTAB       was: ('CCDCHIP', 'CCDAMP', 'CCDGAIN')           suggested: ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'PIX1', 'PIX2')
     IDCTAB        was: nothing                                    suggested: ('CCDCHIP','FILTER', 'V2REF', 'V3REF')
     IMPHTTAB      was: nothing                                    suggested: ('OBSMODE', 'DATACOL')
