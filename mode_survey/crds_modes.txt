@@ -1,4 +1,3 @@
-?       hst/jmaps
 M       hst/mappings/hst/hst_acs_atodtab.rmap
 M       hst/mappings/hst/hst_acs_bpixtab.rmap
 M       hst/mappings/hst/hst_acs_ccdtab.rmap
@@ -9,6 +8,7 @@ M       hst/mappings/hst/hst_acs_mdriztab.rmap
 M       hst/mappings/hst/hst_acs_mlintab.rmap
 M       hst/mappings/hst/hst_acs_pctetab.rmap
 M       hst/mappings/hst/hst_acs_spottab.rmap
+
 M       hst/mappings/hst/hst_cos_badttab.rmap
 M       hst/mappings/hst/hst_cos_bpixtab.rmap
 M       hst/mappings/hst/hst_cos_deadtab.rmap
@@ -16,23 +16,28 @@ M       hst/mappings/hst/hst_cos_gsagtab.rmap
 M       hst/mappings/hst/hst_cos_hvtab.rmap
 M       hst/mappings/hst/hst_cos_lamptab.rmap
 M       hst/mappings/hst/hst_cos_phatab.rmap
+
 M       hst/mappings/hst/hst_nicmos_idctab.rmap
 M       hst/mappings/hst/hst_nicmos_rnlcortb.rmap
 M       hst/mappings/hst/hst_nicmos_zprattab.rmap
+
 M       hst/mappings/hst/hst_stis_bpixtab.rmap
 M       hst/mappings/hst/hst_stis_sdctab.rmap
 M       hst/mappings/hst/hst_stis_sptrctab.rmap
 M       hst/mappings/hst/hst_stis_tdctab.rmap
 M       hst/mappings/hst/hst_stis_tdstab.rmap
 M       hst/mappings/hst/hst_stis_teltab.rmap
+
 M       hst/mappings/hst/hst_wfc3_atodtab.rmap
 M       hst/mappings/hst/hst_wfc3_bpixtab.rmap
 M       hst/mappings/hst/hst_wfc3_idctab.rmap
 M       hst/mappings/hst/hst_wfc3_imphttab.rmap
 M       hst/mappings/hst/hst_wfc3_mdriztab.rmap
 M       hst/mappings/hst/hst_wfc3_oscntab.rmap
+
 M       hst/mappings/hst/hst_wfpc2_idctab.rmap
 M       hst/mappings/hst/hst_wfpc2_offtab.rmap
+
 Index: hst/mappings/hst/hst_cos_phatab.rmap
 ===================================================================
 --- hst/mappings/hst/hst_cos_phatab.rmap	(revision 1235)
