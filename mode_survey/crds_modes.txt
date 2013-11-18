@@ -1,0 +1,532 @@
+?       hst/jmaps
+M       hst/mappings/hst/hst_acs_atodtab.rmap
+M       hst/mappings/hst/hst_acs_bpixtab.rmap
+M       hst/mappings/hst/hst_acs_ccdtab.rmap
+M       hst/mappings/hst/hst_acs_crrejtab.rmap
+M       hst/mappings/hst/hst_acs_idctab.rmap
+M       hst/mappings/hst/hst_acs_imphttab.rmap
+M       hst/mappings/hst/hst_acs_mdriztab.rmap
+M       hst/mappings/hst/hst_acs_mlintab.rmap
+M       hst/mappings/hst/hst_acs_pctetab.rmap
+M       hst/mappings/hst/hst_acs_spottab.rmap
+M       hst/mappings/hst/hst_cos_badttab.rmap
+M       hst/mappings/hst/hst_cos_bpixtab.rmap
+M       hst/mappings/hst/hst_cos_deadtab.rmap
+M       hst/mappings/hst/hst_cos_gsagtab.rmap
+M       hst/mappings/hst/hst_cos_hvtab.rmap
+M       hst/mappings/hst/hst_cos_lamptab.rmap
+M       hst/mappings/hst/hst_cos_phatab.rmap
+M       hst/mappings/hst/hst_nicmos_idctab.rmap
+M       hst/mappings/hst/hst_nicmos_rnlcortb.rmap
+M       hst/mappings/hst/hst_nicmos_zprattab.rmap
+M       hst/mappings/hst/hst_stis_bpixtab.rmap
+M       hst/mappings/hst/hst_stis_sdctab.rmap
+M       hst/mappings/hst/hst_stis_sptrctab.rmap
+M       hst/mappings/hst/hst_stis_tdctab.rmap
+M       hst/mappings/hst/hst_stis_tdstab.rmap
+M       hst/mappings/hst/hst_stis_teltab.rmap
+M       hst/mappings/hst/hst_wfc3_atodtab.rmap
+M       hst/mappings/hst/hst_wfc3_bpixtab.rmap
+M       hst/mappings/hst/hst_wfc3_idctab.rmap
+M       hst/mappings/hst/hst_wfc3_imphttab.rmap
+M       hst/mappings/hst/hst_wfc3_mdriztab.rmap
+M       hst/mappings/hst/hst_wfc3_oscntab.rmap
+M       hst/mappings/hst/hst_wfpc2_idctab.rmap
+M       hst/mappings/hst/hst_wfpc2_offtab.rmap
+Index: hst/mappings/hst/hst_cos_phatab.rmap
+===================================================================
+--- hst/mappings/hst/hst_cos_phatab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_cos_phatab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(DETECTOR == "FUV")',
+-    'row_keys' : ('SEGMENT',),
+-    'sha1sum' : '7ec34bbd50359e926042ac68bec7506d57c47622',
++    'row_keys' : ('SEGMENT','OPT_ELEM'),
++    'sha1sum' : '65a6b9e86e210a62d45b9622ed128c7035bd9b78',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_ccdtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_ccdtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_ccdtab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'YES',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(DETECTOR != "SBC")',
+-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN'),
+-    'sha1sum' : '79591d60f39d1c05e11e89384b6b5a058891c88e',
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'BINAXIS1', 'BINAXIS2', 'CCDOFSTA', 'CCDOFSTB', 'CCDOFSTC', 'CCDOFSTD'),
++    'sha1sum' : '8292329b1fca91c993c378e48da5d8ebff82640c',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_wfc3_idctab.rmap
+===================================================================
+--- hst/mappings/hst/hst_wfc3_idctab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_wfc3_idctab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'row_keys' : ('CCDCHIP',),
+-    'sha1sum' : '01d0aa4775f5b59bff5904f26642d6d23ab3b842',
++    'row_keys' : ('CCDCHIP', 'FILTER', 'V2REF', 'V3REF'),
++    'sha1sum' : 'bb5ad240a4186e610a255efb7903085857fdef2f',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_wfc3_oscntab.rmap
+===================================================================
+--- hst/mappings/hst/hst_wfc3_oscntab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_wfc3_oscntab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'BINX', 'BINY'),
+-    'sha1sum' : '169bd4b7d04cd428c0327ce19d0402bcd4a6995a',
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'BINX', 'BINY', 'NX', 'NY'),
++    'sha1sum' : 'c690e5a2cefb20cc8dfa4fe080b9e0a8ee513d0b',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_stis_teltab.rmap
+===================================================================
+--- hst/mappings/hst/hst_stis_teltab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_stis_teltab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(DETECTOR != "CCD" and OBSTYPE == "SPECTROSCOPIC")',
+-    'row_keys' : ('REFWAVE',),
+-    'sha1sum' : '46aa46a041894f5a247cd5c42a255363520f8dc8',
++    'row_keys' : ('PSFWAVE',),
++    'sha1sum' : 'd1e991a3e3e465397a1df834c690c35b389fb6ab',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_cos_lamptab.rmap
+===================================================================
+--- hst/mappings/hst/hst_cos_lamptab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_cos_lamptab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(OBSTYPE == "SPECTROSCOPIC")',
+-    'row_keys' : ('OPT_ELEM', 'CENWAVE', 'SEGMENT'),
+-    'sha1sum' : 'bc3b09b649aa9b85b4c8f1ad112468db09abfcda',
++    'row_keys' : ('OPT_ELEM', 'CENWAVE', 'SEGMENT', 'FPOFFSET'),
++    'sha1sum' : 'e908f8425059bae65942cbc4ffa1f1836cb2b68e',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_stis_sptrctab.rmap
+===================================================================
+--- hst/mappings/hst/hst_stis_sptrctab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_stis_sptrctab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(OBSTYPE == "SPECTROSCOPIC")',
+-    'row_keys' : ('OPT_ELEM', 'CENWAVE', 'SPORDER'),
+-    'sha1sum' : '25f834a378467091d7f031cea3c8e62f3d7f08bc',
++    'row_keys' : ('OPT_ELEM', 'CENWAVE', 'SPORDER', 'A1CENTER', 'A2CENTER'),
++    'sha1sum' : 'e5c8dcfd2c6c31ebd152f87b4f1434f1f06e5e79',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_wfc3_imphttab.rmap
+===================================================================
+--- hst/mappings/hst/hst_wfc3_imphttab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_wfc3_imphttab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NO',
+     'reffile_switch' : 'PHOTCORR',
+     'rmap_relevance' : '(PHOTCORR != "OMIT")',
+-    'sha1sum' : 'c7e46b3219309ed7990c5a7a32b513777e91196b',
++    'row_keys' : ('OBSMODE', 'DATACOL',),
++    'sha1sum' : '84a3c0ea580b875b7646061d606840cee7683dfa',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_cos_bpixtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_cos_bpixtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_cos_bpixtab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'row_keys' : ('SEGMENT',),
+-    'sha1sum' : '2110ed2867679bdf8d6aaabdf649fd5d40889196',
++    'row_keys' : ('SEGMENT', 'LX', 'LY', 'DX', 'DY'),
++    'sha1sum' : 'ca913845f15b3d94127e591125e1b41b412025c0',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_nicmos_idctab.rmap
+===================================================================
+--- hst/mappings/hst/hst_nicmos_idctab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_nicmos_idctab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NO',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'sha1sum' : 'b204a7792881bf1422a0aaa44bef738d420b7687',
++    'row_keys' : ('DETCHIP', 'FILTER',),
++    'sha1sum' : '89ed55154789c1254ef24a00e686ec805a377838',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_wfpc2_offtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_wfpc2_offtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_wfpc2_offtab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'sha1sum' : '2a1a8010c41abb9128203eefb2d254cdcbd2b0ad',
++    'row_keys' : ('DETECTOR', 'OBSDATE', 'THETA'),
++    'sha1sum' : '0eaed2b80df7ad2135c68fb1028a633a5069e368',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_stis_sdctab.rmap
+===================================================================
+--- hst/mappings/hst/hst_stis_sdctab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_stis_sdctab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(OBSTYPE == "SPECTROSCOPIC")',
+-    'row_keys' : ('OPT_ELEM', 'CENWAVE', 'SPORDER'),
+-    'sha1sum' : 'a042623a60d2dea15b3a8706a86f3a666e2a5074',
++    'row_keys' : ('APERTURE', 'OPT_ELEM', 'CENWAVE', 'SPORDER'),
++    'sha1sum' : 'a335f405327a8856c07f095da26dc5774a0f5cb3',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_atodtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_atodtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_atodtab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'YES',
+     'reffile_switch' : 'ATODCORR',
+     'rmap_relevance' : '((DETECTOR != "SBC") and (ATODCORR != "OMIT"))',
+-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN'),
+-    'sha1sum' : '7a6aec55d954c9838adbbe735fd489949c5bdf80',
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN','REF_KEY','REF_KEY_VALUE'),
++    'sha1sum' : 'b964c6d5d8888c29d581f481d2858602e394183e',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_cos_badttab.rmap
+===================================================================
+--- hst/mappings/hst/hst_cos_badttab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_cos_badttab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'BADTCORR',
+     'rmap_relevance' : '((DETECTOR == "FUV" and OBSMODE == "TIME-TAG") and (BADTCORR != "OMIT"))',
+-    'row_keys' : ('SEGMENT',),
+-    'sha1sum' : '3ed6dd909ac2892764df6fd4e327c140e1490be4',
++    'row_keys' : ('SEGMENT', 'START', 'STOP'),
++    'sha1sum' : '84a322bfb1bda798ffbda09e60d80f7a66c97d42',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_pctetab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_pctetab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_pctetab.rmap	(working copy)
+@@ -9,8 +9,9 @@
+     'reffile_format' : 'TABLE',
+     'reffile_required' : 'NO',
+     'reffile_switch' : 'PCTECORR',
++    'row_keys' : ('DTDE', 'LEVEL', 'COLUMN', 'NODE'),
+     'rmap_relevance' : '((DETECTOR == "WFC") and (PCTECORR != "OMIT"))',
+-    'sha1sum' : '93f1187f50430b2799788bb49e0b0470753f75f5',
++    'sha1sum' : 'a12abaca96c181695b4b28dc31696746b4e1627a',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_wfc3_bpixtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_wfc3_bpixtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_wfc3_bpixtab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'DQICORR',
+     'rmap_relevance' : '(DQICORR != "OMIT")',
+-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN'),
+-    'sha1sum' : 'b1895053982b2b868335a61a943f3187106530d0',
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'PIX1', 'PIX2'),
++    'sha1sum' : '06f13c75e4f94d95dcfc3e97c81c94a6600b3094',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_idctab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_idctab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_idctab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'YES',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'row_keys' : ('DETCHIP', 'WAVELENGTH', 'DIRECTION'),
+-    'sha1sum' : '323d1aea58d11975eb91dc769fb13f0cf2cec398',
++    'row_keys' : ('DETCHIP', 'WAVELENGTH', 'DIRECTION', 'FILTER1', 'FILTER2', 'V2REF', 'V3REF'),
++    'sha1sum' : 'ec8298d0c860365393f6fe03ae39bfe9e8124589',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_cos_gsagtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_cos_gsagtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_cos_gsagtab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(DETECTOR == "FUV")',
+-    'sha1sum' : '44d85e0ff61a8488be17c468e1e4937371408041',
++    'row_keys' : ('DATE','LX','LY','DX','DY',),
++    'sha1sum' : 'e43349c6837832e8f97a2061266d12d28e143075',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_crrejtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_crrejtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_crrejtab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'YES',
+     'reffile_switch' : 'CRCORR',
+     'rmap_relevance' : '((DETECTOR != "SBC") and (CRCORR != "OMIT"))',
+-    'row_keys' : ('CCDCHIP',),
+-    'sha1sum' : '3d832beb7876d66542d80c1529ad28e8a4fbea70',
++    'row_keys' : ('CCDCHIP','CRSPLIT','MEANEXP'),
++    'sha1sum' : 'f2f719101faca61bc824266e23e80f85104af2a3',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_stis_bpixtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_stis_bpixtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_stis_bpixtab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'sha1sum' : '51dbd4c5654bc82959d93e05a1401b8cd8163760',
++    'row_keys' : ('PIX1', 'PIX2', 'LENGTH', 'AXIS', 'OPT_ELEM'),
++    'sha1sum' : 'eda45d3444a88e33e391255bf367ab9d80522a72',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_imphttab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_imphttab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_imphttab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'YES',
+     'reffile_switch' : 'PHOTCORR',
+     'rmap_relevance' : '(PHOTCORR != "OMIT")',
+-    'sha1sum' : '72b6c664bda3dc50c217ebfa038e3efd3aa9de32',
++    'row_keys' : ('OBSMODE',),
++    'sha1sum' : 'da84ec08325cb257c96b8f3662f2d316048af9cb',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_bpixtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_bpixtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_bpixtab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'YES',
+     'reffile_switch' : 'DQICORR',
+     'rmap_relevance' : '(DQICORR != "OMIT")',
+-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN'),
+-    'sha1sum' : '2ec9b7154a8d0b8dbf24dc940aefa8d18b7b7212',
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN','PIX1','PIX2','LENGTH','AXIS'),
++    'sha1sum' : '3089d6aa3cfc6e5ae084dab2216c2195d109b1ad',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_wfpc2_idctab.rmap
+===================================================================
+--- hst/mappings/hst/hst_wfpc2_idctab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_wfpc2_idctab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'sha1sum' : '2c4655ba36bfb3e3bd48ae51b3ac6a79d3ab9688',
++    'row_keys' : ('DETCHIP', 'DIRECTION', 'FILTER', 'FILTER1', 'FILTER2'),
++    'sha1sum' : '0cc5a25c360b501e2ed72242a04f293e5894b869',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_wfc3_mdriztab.rmap
+===================================================================
+--- hst/mappings/hst/hst_wfc3_mdriztab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_wfc3_mdriztab.rmap	(working copy)
+@@ -9,8 +9,9 @@
+     'reffile_format' : 'TABLE',
+     'reffile_required' : 'NO',
+     'reffile_switch' : 'DRIZCORR',
++    'row_keys' : ('FILTER', 'NUMIMAGES'),
+     'rmap_relevance' : '(DRIZCORR != "OMIT")',
+-    'sha1sum' : 'a0fc49948df316b89270548bfd0e405c78aa0782',
++    'sha1sum' : 'd373802f3953fd25db50aabcc37e9fe4b4c68be9',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_stis_tdctab.rmap
+===================================================================
+--- hst/mappings/hst/hst_stis_tdctab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_stis_tdctab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(DETECTOR == "NUV-MAMA")',
+-    'sha1sum' : '9757dcc6cb295f26fb0871199d1864b83fad7581',
++    'row_keys' : ('MJD',),
++    'sha1sum' : '93d07b4505c25d396123362f00f8ee1f8a7c7978',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_cos_hvtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_cos_hvtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_cos_hvtab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(DETECTOR == "FUV")',
+-    'sha1sum' : '2238f3edd636a36aafbdd02529d259c45464de7c',
++    'row_keys' : ('DATE',),
++    'sha1sum' : 'b78a5c8c9c65abc39be4b5df2cdf458251242f42',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_mlintab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_mlintab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_mlintab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'YES',
+     'reffile_switch' : 'GLINCORR',
+     'rmap_relevance' : '((DETECTOR == "SBC") and (GLINCORR != "OMIT"))',
+-    'sha1sum' : '394664f1fdee5bda80cd589c1a0089ebe467d57a',
++    'row_keys' : ('DETECTOR',),
++    'sha1sum' : 'c3c4b327c4e498356ec7fd367c11a28452934038',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_stis_tdstab.rmap
+===================================================================
+--- hst/mappings/hst/hst_stis_tdstab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_stis_tdstab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'row_keys' : ('GRATING',),
+-    'sha1sum' : 'b2405477db319089009e76850d0072eb9fb34e91',
++    'row_keys' : ('OPT_ELEM', 'REF_TEMP'),
++    'sha1sum' : 'd95ac2beff1279fcc00f085b3dbd713d54c65666',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_cos_deadtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_cos_deadtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_cos_deadtab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'DEADCORR',
+     'rmap_relevance' : '(DEADCORR != "OMIT")',
+-    'row_keys' : ('SEGMENT',),
+-    'sha1sum' : '38ce256d6d57978405e4f493efd536ce3729b100',
++    'row_keys' : ('SEGMENT', 'OBS_RATE'),
++    'sha1sum' : 'a658edecc7e7cfa5b36f7a0523fdc323509048ec',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_nicmos_rnlcortb.rmap
+===================================================================
+--- hst/mappings/hst/hst_nicmos_rnlcortb.rmap	(revision 1235)
++++ hst/mappings/hst/hst_nicmos_rnlcortb.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NO',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'sha1sum' : '9a7e79e8daae311460ff87eb36b23fc4adc5948d',
++    'row_keys' : ('WAVELENGTH',),
++    'sha1sum' : '187a2204234f3f6758eabe6003bc9f5ba1417f81',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_nicmos_zprattab.rmap
+===================================================================
+--- hst/mappings/hst/hst_nicmos_zprattab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_nicmos_zprattab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NO',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : 'ALWAYS',
+-    'sha1sum' : '451da92e2f61142cd55f4d508daee280d9b11043',
++    'row_keys' : ('PHOTMODE',),
++    'sha1sum' : 'd813b3f9e915e25aefa41269b99df10e895c6184',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_wfc3_atodtab.rmap
+===================================================================
+--- hst/mappings/hst/hst_wfc3_atodtab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_wfc3_atodtab.rmap	(working copy)
+@@ -10,8 +10,8 @@
+     'reffile_required' : 'NONE',
+     'reffile_switch' : 'ATODCORR',
+     'rmap_relevance' : '((DETECTOR == "UVIS") and (ATODCORR != "OMIT"))',
+-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN'),
+-    'sha1sum' : '888682ed9aafab2f7eb49da9b4312b5ae0f06aa9',
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'REF_KEY', 'REF_KEY_VALUE',),
++    'sha1sum' : 'b86f9e88d4acd7e196b94332c76d3e626ee48b61',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_mdriztab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_mdriztab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_mdriztab.rmap	(working copy)
+@@ -9,8 +9,9 @@
+     'reffile_format' : 'TABLE',
+     'reffile_required' : 'YES',
+     'reffile_switch' : 'DRIZCORR',
++    'row_keys': ('FILTER', 'NUMIMAGES'),
+     'rmap_relevance' : '(DRIZCORR != "OMIT")',
+-    'sha1sum' : 'ff50b0005ddea356c5cb7ab9a24f27bf27120fb7',
++    'sha1sum' : '98f3b5701f2eca1deff2c1947865153f88a9d988',
+ }
+ 
+ selector = Match({
+Index: hst/mappings/hst/hst_acs_spottab.rmap
+===================================================================
+--- hst/mappings/hst/hst_acs_spottab.rmap	(revision 1235)
++++ hst/mappings/hst/hst_acs_spottab.rmap	(working copy)
+@@ -10,7 +10,8 @@
+     'reffile_required' : 'NO',
+     'reffile_switch' : 'NONE',
+     'rmap_relevance' : '(DETECTOR == "HRC" and OBSTYPE == "CORONAGRAPHIC")',
+-    'sha1sum' : '542b57f3be5b7c1ada4b08942168f12dc4329fe8',
++    'row_keys' : ('DATE',),
++    'sha1sum' : '3013f66db35058e17d55ff8df789701fc6c49970',
+ }
+ 
+ selector = Match({

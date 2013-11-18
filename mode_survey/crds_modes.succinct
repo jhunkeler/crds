@@ -1,0 +1,45 @@
+ACS
+    ATODTAB       was: ('CCDCHIP', 'CCDAMP', 'CCDGAIN')           suggested: ('CCDCHIP', 'CCDAMP', 'CCDGAIN','REF_KEY','REF_KEY_VALUE')
+    BPIXTAB       was: ('CCDCHIP', 'CCDAMP', 'CCDGAIN')           suggested: none or ('CCDCHIP', 'CCDAMP', 'CCDGAIN','PIX1','PIX2','LENGTH','AXIS')
+    CCDTAB        was: ('CCDCHIP', 'CCDAMP', 'CCDGAIN')           suggested: none or ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'BINAXIS1', 'BINAXIS2', 'CCDOFFSTA', 'CCDOFFSTB', 'CCDOFFSTC', 'CCDOFFSTD')
+    CRREJTAB      was: ('CCDCHIP')                                suggested: ('CCDCHIP','CRSPLIT','MEANEXP')
+    IDCTAB        was: ('DETCHIP', 'WAVELENGTH', 'DIRECTION')     suggested: ('DETCHIP', 'WAVELENGTH', 'DIRECTION', 'FILTER1', 'FILTER2', 'V2REF', 'V3REF')
+    IMPHTTAB      was: none                                       suggested: ('OBSMODE')
+    MDRIZTAB      was: none                                       suggested: ('FILTER', 'NUMIMAGES')
+    MLINTAB       was: none                                       suggested: ('DETECTOR')
+    PCETAB        was: none                                       suggested: ('DTDE', 'LEVEL', 'COLUMN', 'NODE')
+    SPOTTAB       was: none                                       suggested: ('DATE')
+
+COS
+    BPIXTAB       was: ('SEGMENT')                                suggested: none or ('SEGMENT', 'LX', 'LY', 'DX', 'DY')
+    BADTAB        was: ('SEGMENT')                                suggested: ('SEGMENT', 'START', 'STOP')
+    DEADTAB       was: ('SEGMENT')                                suggested: ('SEGMENT', 'OBS_RATE')
+    GSAGTAB       was: none                                       suggested: none or ('DATE','LX','LY','DX','DY')
+    HVTAB         was: none                                       suggested: ('DATE')
+    LAMPTAB       was: ('OPT_ELEM', 'CENWAVE', 'SEGMENT')         suggested: ('OPT_ELEM', 'CENWAVE', 'SEGMENT', 'FPOFFSET')
+    PHATAB        was: ('SEGMENT')                                suggested: ('SEGMENT','OPT_ELEM')
+
+NICMOS
+    IDCTAB        was: none                                       suggested: ('DETCHIP', 'FILTER')
+    RNLCORTAB     was: none                                       suggested: ('WAVELENGTH')
+    ZPRATTAB      was: none                                       suggested: ('PHOTMODE')
+
+STIS 
+    BPIXTAB       was: none                                       suggested: none or ('PIX1', 'PIX2', 'LENGTH', 'AXIS', 'OPT_ELEM')
+    SPTRCTAB      was: ('OPT_ELEM', 'CENWAVE', 'SPORDER')         suggested: ('OPT_ELEM', 'CENWAVE', 'SPORDER', 'A1CENTER', 'A2CENTER')
+    SDCTAB        was: ('OPT_ELEM', 'CENWAVE', 'SPORDER')         suggested: ('APERTURE', 'OPT_ELEM', 'CENWAVE', 'SPORDER')
+    TDCTAB        was: none                                       suggested: ('MJD')
+    TDSTAB        was: ('GRATING')                                suggested: ('OPT_ELEM', 'REF_TEMP')
+    TELTAB        was: ('REFWAVE')                                suggested: ('PSFWAVE')
+
+WFC3 
+    ASTODTAB      was: ('CCDCHIP', 'CCDAMP', 'CCDGAIN')           suggested: ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'REF_KEY', 'REF_KEY_VALUE')
+    BPIXTAB       was: ('CCDCHIP', 'CCDAMP', 'CCDGAIN')           suggested: ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'PIX1', 'PIX2')
+    IDCTAB        was: nothing                                    suggested: ('CCDCHIP','FILTER', 'V2REF', 'V3REF')
+    IMPHTTAB      was: nothing                                    suggested: ('OBSMODE', 'DATACOL')
+    MDRIZTAB      was none                                        suggested: ('FILTER', 'NUMIMAGES')
+    OSCNTAB       was: ('CCDCHIP', 'CCDAMP', 'BINX', 'BINY')      suggested: ('CCDCHIP', 'CCDAMP', 'BINX', 'BINY', 'NX', 'NY')
+
+WFPC2
+    OFFTAB        was: none                                       suggested: ('DETECTOR', 'OBSDATE', 'THETA')
+    IDCTAB        was: none                                       suggested: ('DETCHIP', 'DIRECTION', 'FILTER', 'FILTER1', 'FILTER2')
