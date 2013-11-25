@@ -1,0 +1,70 @@
+--- hst/mappings/hst/hst_cos_phatab.rmap	(revision 1235)
++    'row_keys' : ('SEGMENT','OPT_ELEM'),
+--- hst/mappings/hst/hst_acs_ccdtab.rmap	(revision 1235)
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'BINAXIS1', 'BINAXIS2', 'CCDOFSTA', 'CCDOFSTB', 'CCDOFSTC', 'CCDOFSTD'),
+--- hst/mappings/hst/hst_wfc3_idctab.rmap	(revision 1235)
++    'row_keys' : ('CCDCHIP', 'FILTER', 'V2REF', 'V3REF'),
+--- hst/mappings/hst/hst_wfc3_oscntab.rmap	(revision 1235)
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'BINX', 'BINY', 'NX', 'NY'),
+--- hst/mappings/hst/hst_stis_halotab.rmap	(revision 1235)
++    'row_keys' : ('OPT_ELEM', 'HALOWAVE'),
+--- hst/mappings/hst/hst_stis_teltab.rmap	(revision 1235)
++    'row_keys' : ('PSFWAVE',),
+--- hst/mappings/hst/hst_cos_lamptab.rmap	(revision 1235)
++    'row_keys' : ('OPT_ELEM', 'CENWAVE', 'SEGMENT', 'FPOFFSET'),
+--- hst/mappings/hst/hst_stis_sptrctab.rmap	(revision 1235)
++    'row_keys' : ('OPT_ELEM', 'CENWAVE', 'SPORDER', 'A1CENTER', 'A2CENTER'),
+--- hst/mappings/hst/hst_wfc3_imphttab.rmap	(revision 1235)
++    'row_keys' : ('OBSMODE', 'DATACOL',),
+--- hst/mappings/hst/hst_cos_bpixtab.rmap	(revision 1235)
++    'row_keys' : ('SEGMENT', 'LX', 'LY', 'DX', 'DY'),
+--- hst/mappings/hst/hst_nicmos_idctab.rmap	(revision 1235)
++    'row_keys' : ('DETCHIP', 'FILTER',),
+--- hst/mappings/hst/hst_stis_sdctab.rmap	(revision 1235)
++    'row_keys' : ('APERTURE', 'OPT_ELEM', 'CENWAVE', 'SPORDER'),
+--- hst/mappings/hst/hst_wfpc2_offtab.rmap	(revision 1235)
++    'row_keys' : ('DETECTOR', 'OBSDATE', 'THETA'),
+--- hst/mappings/hst/hst_acs_atodtab.rmap	(revision 1235)
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN','REF_KEY','REF_KEY_VALUE'),
+--- hst/mappings/hst/hst_cos_badttab.rmap	(revision 1235)
++    'row_keys' : ('SEGMENT', 'START', 'STOP'),
+--- hst/mappings/hst/hst_acs_pctetab.rmap	(revision 1235)
++    'row_keys' : ('LEVEL', 'COLUMN', 'NODE', 'MJD'),
+--- hst/mappings/hst/hst_wfc3_bpixtab.rmap	(revision 1235)
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'PIX1', 'PIX2'),
+--- hst/mappings/hst/hst_cos_gsagtab.rmap	(revision 1235)
++    'row_keys' : ('DATE','LX','LY','DX','DY',),
+--- hst/mappings/hst/hst_acs_idctab.rmap	(revision 1235)
++    'row_keys' : ('DETCHIP', 'WAVELENGTH', 'DIRECTION', 'FILTER1', 'FILTER2'),
+--- hst/mappings/hst/hst_acs_crrejtab.rmap	(revision 1235)
++    'row_keys' : ('CCDCHIP','CRSPLIT','MEANEXP'),
+--- hst/mappings/hst/hst_stis_bpixtab.rmap	(revision 1235)
++    'row_keys' : ('PIX1', 'PIX2', 'LENGTH', 'AXIS', 'OPT_ELEM'),
+--- hst/mappings/hst/hst_acs_imphttab.rmap	(revision 1235)
++    'row_keys' : ('OBSMODE',),
+--- hst/mappings/hst/hst_acs_bpixtab.rmap	(revision 1235)
++    'row_keys' : (),
+--- hst/mappings/hst/hst_wfpc2_idctab.rmap	(revision 1235)
++    'row_keys' : ('DETCHIP', 'DIRECTION', 'FILTER', 'FILTER1', 'FILTER2'),
+--- hst/mappings/hst/hst_wfc3_mdriztab.rmap	(revision 1235)
++    'row_keys' : ('FILTER', 'NUMIMAGES'),
+--- hst/mappings/hst/hst_stis_tdctab.rmap	(revision 1235)
++    'row_keys' : ('MJD',),
+--- hst/mappings/hst/hst_cos_hvtab.rmap	(revision 1235)
++    'row_keys' : ('DATE',),
+--- hst/mappings/hst/hst_acs_mlintab.rmap	(revision 1235)
++    'row_keys' : ('DETECTOR',),
+--- hst/mappings/hst/hst_stis_tdstab.rmap	(revision 1235)
++    'row_keys' : ('OPT_ELEM', 'REF_TEMP'),
+--- hst/mappings/hst/hst_cos_deadtab.rmap	(revision 1235)
++    'row_keys' : ('SEGMENT', 'OBS_RATE'),
+--- hst/mappings/hst/hst_nicmos_rnlcortb.rmap	(revision 1235)
++    'row_keys' : ('WAVELENGTH',),
+--- hst/mappings/hst/hst_nicmos_zprattab.rmap	(revision 1235)
++    'row_keys' : ('PHOTMODE',),
+--- hst/mappings/hst/hst_wfc3_atodtab.rmap	(revision 1235)
++    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'REF_KEY', 'REF_KEY_VALUE',),
+--- hst/mappings/hst/hst_acs_mdriztab.rmap	(revision 1235)
++    'row_keys': ('FILTER', 'NUMIMAGES'),
+--- hst/mappings/hst/hst_acs_spottab.rmap	(revision 1235)
++    'row_keys' : ('DATE',),
