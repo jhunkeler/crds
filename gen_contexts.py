@@ -10,7 +10,7 @@ import crds.hst.parkeys as parkeys
 
 NOW = str(timestamp.now())
 
-OUTDIR = "../CRDS/hst/mappings/hst"  
+OUTDIR = "../CRDS/crds/cache/mappings/hst"  
 
 def generate_pmap(imaps, serial):
     name = "hst" + serial + ".pmap"

@@ -5,7 +5,7 @@
 if ($# == 0) then
 	set context="hst.pmap"
 	set server="http://not-a-crds-server.stsci.edu"
-	setenv CRDS_PATH ${META_PREFIX}/lib/python2.7/site-packages/crds
+	setenv CRDS_PATH ${META_PREFIX}/lib/python2.7/site-packages/crds/cache
 	setenv CRDS_SERVER_URL  http://localhost:8000
 else if ($# == 1)
 	set server="http://localhost:8000"

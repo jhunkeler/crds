@@ -21,6 +21,6 @@ install()
 
 for instr in INSTRUMENTS:
     % python gen_rmap.py ${instr} ${serial}
-    % mv hst_${instr}_*.rmap ../CRDS/hst/mappings/hst
+    % mv hst_${instr}_*.rmap ../CRDS/crds/cache/mappings/hst
 
 install()
