@@ -45,10 +45,10 @@ for line in lines:
         if instr not in instrs:
             instrs[instr] = {}
         instrs[instr][kind] = eval("".join(words[1:])[:-1])
-print "row_keys = {"
-for instr in instrs:
+print "{"
+for instr in sorted(instrs):
     print " "*4 + repr(instr) + ": {"
-    for kind in instrs[instr]:
+    for kind in sorted(instrs[instr]):
         print " "*8 + repr(kind) + ": " + repr(instrs[instr][kind]) + ","
     print " "*4 + "},"
 print "}"
