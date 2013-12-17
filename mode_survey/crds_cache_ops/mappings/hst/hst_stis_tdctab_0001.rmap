@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : '(DETECTOR == "NUV-MAMA")',
-    'sha1sum' : 'ed0c74603e76c1a056608c814bf2a6d5c8957f36',
+    'row_keys' : ('MJD',),
+    'sha1sum' : '7bdb3a52a8a5c8b7d6b62418b179036f8a316321',
 }
 
 selector = Match({

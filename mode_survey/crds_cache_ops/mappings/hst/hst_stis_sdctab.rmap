@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : '(OBSTYPE == "SPECTROSCOPIC")',
-    'row_keys' : ('OPT_ELEM', 'CENWAVE', 'SPORDER'),
-    'sha1sum' : 'a042623a60d2dea15b3a8706a86f3a666e2a5074',
+    'row_keys' : ('APERTURE', 'OPT_ELEM', 'CENWAVE', 'SPORDER'),
+    'sha1sum' : 'a335f405327a8856c07f095da26dc5774a0f5cb3',
 }
 
 selector = Match({

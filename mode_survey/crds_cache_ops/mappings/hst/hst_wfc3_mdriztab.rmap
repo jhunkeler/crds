@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NO',
     'reffile_switch' : 'DRIZCORR',
     'rmap_relevance' : '(DRIZCORR != "OMIT")',
-    'sha1sum' : 'a0fc49948df316b89270548bfd0e405c78aa0782',
+    'row_keys' : ('FILTER', 'NUMIMAGES'),
+    'sha1sum' : '47e4e6ae4443e18e7f7bdbe5cce11eff26f34c82',
 }
 
 selector = Match({

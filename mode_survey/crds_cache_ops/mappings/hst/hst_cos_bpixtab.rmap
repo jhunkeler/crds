@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : 'ALWAYS',
-    'row_keys' : ('SEGMENT',),
-    'sha1sum' : '2110ed2867679bdf8d6aaabdf649fd5d40889196',
+    'row_keys' : ('SEGMENT', 'LX', 'LY', 'DX', 'DY'),
+    'sha1sum' : 'ca913845f15b3d94127e591125e1b41b412025c0',
 }
 
 selector = Match({

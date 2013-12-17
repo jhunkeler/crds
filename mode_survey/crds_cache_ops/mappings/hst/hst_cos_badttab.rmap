@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'BADTCORR',
     'rmap_relevance' : '((DETECTOR == "FUV" and OBSMODE == "TIME-TAG") and (BADTCORR != "OMIT"))',
-    'row_keys' : ('SEGMENT',),
-    'sha1sum' : '3ed6dd909ac2892764df6fd4e327c140e1490be4',
+    'row_keys' : ('SEGMENT', 'START', 'STOP'),
+    'sha1sum' : '84a322bfb1bda798ffbda09e60d80f7a66c97d42',
 }
 
 selector = Match({

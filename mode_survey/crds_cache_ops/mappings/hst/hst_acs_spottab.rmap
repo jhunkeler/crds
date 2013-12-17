@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NO',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : '(DETECTOR == "HRC" and OBSTYPE == "CORONAGRAPHIC")',
-    'sha1sum' : '542b57f3be5b7c1ada4b08942168f12dc4329fe8',
+    'row_keys' : ('DATE',),
+    'sha1sum' : '3013f66db35058e17d55ff8df789701fc6c49970',
 }
 
 selector = Match({

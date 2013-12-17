@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'YES',
     'reffile_switch' : 'CRCORR',
     'rmap_relevance' : '((DETECTOR != "SBC") and (CRCORR != "OMIT"))',
-    'row_keys' : ('CCDCHIP',),
-    'sha1sum' : '3d832beb7876d66542d80c1529ad28e8a4fbea70',
+    'row_keys' : ('CCDCHIP', 'CRSPLIT', 'MEANEXP'),
+    'sha1sum' : '87c609f3e5e5166620ac2f45c52db07b560e8119',
 }
 
 selector = Match({

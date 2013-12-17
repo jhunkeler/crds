@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'YES',
     'reffile_switch' : 'DQICORR',
     'rmap_relevance' : '(DQICORR != "OMIT")',
-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN'),
-    'sha1sum' : '2ec9b7154a8d0b8dbf24dc940aefa8d18b7b7212',
+    'row_keys' : (),
+    'sha1sum' : '3973c972983a5a7f29fc1f9f2712c1e8ee93f7db',
 }
 
 selector = Match({

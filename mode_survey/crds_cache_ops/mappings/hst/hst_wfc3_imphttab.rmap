@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NO',
     'reffile_switch' : 'PHOTCORR',
     'rmap_relevance' : '(PHOTCORR != "OMIT")',
-    'sha1sum' : 'c7e46b3219309ed7990c5a7a32b513777e91196b',
+    'row_keys' : ('OBSMODE', 'DATACOL'),
+    'sha1sum' : '2a478d7d193c6fa03d58b6134544ead5861f8efd',
 }
 
 selector = Match({

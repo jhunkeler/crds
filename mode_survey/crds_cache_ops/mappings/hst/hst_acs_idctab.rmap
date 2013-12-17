@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'YES',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : 'ALWAYS',
-    'row_keys' : ('DETCHIP', 'WAVELENGTH', 'DIRECTION'),
-    'sha1sum' : '323d1aea58d11975eb91dc769fb13f0cf2cec398',
+    'row_keys' : ('DETCHIP', 'WAVELENGTH', 'DIRECTION', 'FILTER1', 'FILTER2'),
+    'sha1sum' : 'ff088c00c80df1c9d85fab306e211b08c5ce91ba',
 }
 
 selector = Match({

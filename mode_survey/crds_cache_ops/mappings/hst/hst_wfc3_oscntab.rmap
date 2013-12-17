@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : 'ALWAYS',
-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'BINX', 'BINY'),
-    'sha1sum' : '169bd4b7d04cd428c0327ce19d0402bcd4a6995a',
+    'row_keys' : ('CCDCHIP', 'CCDAMP', 'BINX', 'BINY', 'NX', 'NY'),
+    'sha1sum' : 'c690e5a2cefb20cc8dfa4fe080b9e0a8ee513d0b',
 }
 
 selector = Match({

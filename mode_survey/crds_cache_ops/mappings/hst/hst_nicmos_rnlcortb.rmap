@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NO',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : 'ALWAYS',
-    'sha1sum' : '9a7e79e8daae311460ff87eb36b23fc4adc5948d',
+    'row_keys' : ('WAVELENGTH',),
+    'sha1sum' : '187a2204234f3f6758eabe6003bc9f5ba1417f81',
 }
 
 selector = Match({

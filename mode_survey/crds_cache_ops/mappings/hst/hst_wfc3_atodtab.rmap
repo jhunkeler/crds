@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'ATODCORR',
     'rmap_relevance' : '((DETECTOR == "UVIS") and (ATODCORR != "OMIT"))',
-    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN'),
-    'sha1sum' : '888682ed9aafab2f7eb49da9b4312b5ae0f06aa9',
+    'row_keys' : ('CCDCHIP', 'CCDAMP', 'CCDGAIN', 'REF_KEY', 'REF_KEY_VALUE'),
+    'sha1sum' : 'c61d0986872e76efc9206eb8033b47db5e3dc8c6',
 }
 
 selector = Match({

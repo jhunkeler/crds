@@ -1,0 +1,55 @@
+#! /usr/bin/env python
+
+"""This script is the tail end of the automated process for producing
+'mode' columns.
+
+The original rmaps of this era had a "row_keys" field derived from HST CDBS
+reference_file_defs.xml.
+
+The program survey_tables.py was used to examine the hst context and define
+example references for each table and print out information on the table like 
+row_keys, all columns, and example rows.
+
+The program replaced_by was used to find comparison references for the survey
+examples.
+
+The program runcert.py was used to run certify on comparison references to
+determine how well the row_keys work rendering rows unique.
+
+The program update_rmaps was used to apply modified row_keys.dat to synced
+rmaps from the test server and run iteratively with runcert.py,  trying out
+new variations of particular mode columns.   Once prospective mode columns
+were known for all tables obtainable,  SSB was consulted to screen the mode
+columns.
+
+This script is used to extract row_keys from all rmaps in the cache, both those
+defined by reference_file_defs.xml and those defined by the survey,  as well 
+as updates to them based on running certify or consulting SSB.  This script
+outputs a single table of row_keys intended to be added to the crds.hst
+package as configuration data.   row_keys will be removed from rmaps.
+
+"""
+
+import pprint
+
+from crds import pysh
+
+lines = pysh.lines('''find crds_cache_ops -name '*.rmap' | xargs grep row_keys | cut -d':' -f1,3 | cut -d'/' -f 4 | sed -e's/hst_//g' | sed -e"s/.rmap//g"''')
+
+instrs = {}
+for line in lines:
+    words = line.strip().split()
+    if words:
+        parts = words[0][:-1].split("_")
+        instr, kind = parts[0], "_".join(parts[1:])
+        if instr not in instrs:
+            instrs[instr] = {}
+        instrs[instr][kind] = eval("".join(words[1:])[:-1])
+print "row_keys = {"
+for instr in instrs:
+    print " "*4 + repr(instr) + ": {"
+    for kind in instrs[instr]:
+        print " "*8 + repr(kind) + ": " + repr(instrs[instr][kind]) + ","
+    print " "*4 + "},"
+print "}"
+

@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NO',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : 'ALWAYS',
-    'sha1sum' : '451da92e2f61142cd55f4d508daee280d9b11043',
+    'row_keys' : ('PHOTMODE',),
+    'sha1sum' : 'd813b3f9e915e25aefa41269b99df10e895c6184',
 }
 
 selector = Match({

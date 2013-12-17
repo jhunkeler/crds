@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'DEADCORR',
     'rmap_relevance' : '(DEADCORR != "OMIT")',
-    'row_keys' : ('SEGMENT',),
-    'sha1sum' : '38ce256d6d57978405e4f493efd536ce3729b100',
+    'row_keys' : ('SEGMENT', 'OBS_RATE'),
+    'sha1sum' : 'a658edecc7e7cfa5b36f7a0523fdc323509048ec',
 }
 
 selector = Match({

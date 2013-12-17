@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : '(DETECTOR != "CCD" and OBSTYPE == "SPECTROSCOPIC")',
-    'row_keys' : ('REFWAVE',),
-    'sha1sum' : '46aa46a041894f5a247cd5c42a255363520f8dc8',
+    'row_keys' : ('PSFWAVE',),
+    'sha1sum' : 'd1e991a3e3e465397a1df834c690c35b389fb6ab',
 }
 
 selector = Match({

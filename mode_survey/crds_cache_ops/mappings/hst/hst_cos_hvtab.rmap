@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : '(DETECTOR == "FUV")',
-    'sha1sum' : '2238f3edd636a36aafbdd02529d259c45464de7c',
+    'row_keys' : ('DATE',),
+    'sha1sum' : 'b78a5c8c9c65abc39be4b5df2cdf458251242f42',
 }
 
 selector = Match({

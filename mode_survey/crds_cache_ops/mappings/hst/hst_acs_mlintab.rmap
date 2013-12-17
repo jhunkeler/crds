@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'YES',
     'reffile_switch' : 'GLINCORR',
     'rmap_relevance' : '((DETECTOR == "SBC") and (GLINCORR != "OMIT"))',
-    'sha1sum' : '394664f1fdee5bda80cd589c1a0089ebe467d57a',
+    'row_keys' : ('DETECTOR',),
+    'sha1sum' : 'c3c4b327c4e498356ec7fd367c11a28452934038',
 }
 
 selector = Match({

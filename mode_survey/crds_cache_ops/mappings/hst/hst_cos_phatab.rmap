@@ -10,8 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : '(DETECTOR == "FUV")',
-    'row_keys' : ('SEGMENT',),
-    'sha1sum' : '7ec34bbd50359e926042ac68bec7506d57c47622',
+    'row_keys' : ('SEGMENT', 'OPT_ELEM'),
+    'sha1sum' : 'b75ed2709e3b7c9d93f0f266217c975f26d80bca',
 }
 
 selector = Match({

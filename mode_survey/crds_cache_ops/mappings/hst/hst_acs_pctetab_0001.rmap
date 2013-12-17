@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NO',
     'reffile_switch' : 'PCTECORR',
     'rmap_relevance' : '((DETECTOR == "WFC") and (PCTECORR != "OMIT"))',
-    'sha1sum' : '9e4c4e99f020249b56f1cc5b70fb36ee6abf2b9e',
+    'row_keys' : ('LEVEL', 'COLUMN', 'NODE', 'MJD'),
+    'sha1sum' : '7ed6553ff64537b59ead367f01f467f1881390b4',
 }
 
 selector = Match({

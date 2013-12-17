@@ -10,7 +10,8 @@ header = {
     'reffile_required' : 'NONE',
     'reffile_switch' : 'NONE',
     'rmap_relevance' : 'ALWAYS',
-    'sha1sum' : '2a1a8010c41abb9128203eefb2d254cdcbd2b0ad',
+    'row_keys' : ('DETECTOR', 'OBSDATE', 'THETA'),
+    'sha1sum' : '0eaed2b80df7ad2135c68fb1028a633a5069e368',
 }
 
 selector = Match({
