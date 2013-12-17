@@ -461,7 +461,7 @@ def write_rmap(observatory, instrument, filekind, kind_map, serial=-1):
         ("reffile_required", parkeys.get_reffile_required(instrument, filekind).upper()),
         ("reffile_switch", parkeys.get_reffile_switch(instrument, filekind).upper()),
         ("reffile_format", parkeys.get_reffile_format(instrument, filekind).upper()),
-        ("row_keys", tuple([key.upper() for key in parkeys.get_row_keys(instrument, filekind)])),
+        # ("row_keys", tuple([key.upper() for key in parkeys.get_row_keys(instrument, filekind)])),
     ] if y])
 
     # Execute filekind specific customizations on header    
