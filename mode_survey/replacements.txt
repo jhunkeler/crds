@@ -7,7 +7,7 @@ acs imphttab hst_acs_imphttab.rmap vbb18107j_imp.fits w3m17171j_imp.fits
 acs mdriztab hst_acs_mdriztab.rmap s940253pj_mdz.fits ub21537aj_mdz.fits
 acs mlintab hst_acs_mlintab.rmap j4d14360j_lin.fits k9c13374j_lin.fits
 acs oscntab hst_acs_oscntab.rmap m2j1057pj_osc.fits
-acs pctetab hst_acs_pctetab.rmap w3j1327lj_cte.fits w591643nj_cte.fits
+acs pctetab hst_acs_pctetab.rmap w3j1327lj_cte.fits xa81724cj_cte.fits
 acs spottab hst_acs_spottab.rmap qap1346cj_csp.fits r3301467j_csp.fits
 cos badttab hst_cos_badttab.rmap n9n2017rl_badt.fits s7o1739kl_badt.fits
 cos bpixtab hst_cos_bpixtab.rmap w4i1707ol_bpix.fits x1u1459hl_bpix.fits

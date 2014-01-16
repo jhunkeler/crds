@@ -12,6 +12,7 @@ def main(context, comparison_files, other_params):
     for line in open(comparison_files):
         if not line.strip():
             continue
+        log.info("Certifying replacement:", line.strip())
         words = line.split()
         if len(words) == 5:  # comparison reference exists
             file1, file2 = words[-2:]
