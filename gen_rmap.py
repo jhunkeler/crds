@@ -9,12 +9,11 @@ import glob
 import re
 import pprint
 import datetime
+from collections import OrderedDict, defaultdict
 
 import cdbs_db
 
 from crds import (rmap, log, timestamp, utils, selectors)
-from crds.compat import OrderedDict
-
 from crds.hst import substitutions
 import crds.hst.acs
 import crds.hst.cos
@@ -153,13 +152,11 @@ def dicts_to_kind_map(instr, kind, row_dicts):
     """Given a list of dictionaries `row_dicts`, return an rmap
     dictionary mapping parkey bindings onto lists of date,file tuples.
     """
-    kmap = {}
+    kmap = defaultdict(list)
     for row in row_dicts:
         match_tuple = get_match_tuple(row, instr, kind)
         if match_tuple is False:
             continue
-        if match_tuple not in kmap:
-            kmap[match_tuple] = list()
         mapping = get_mapping(row)
         warned = False
         for existing in kmap[match_tuple]:
@@ -201,14 +198,12 @@ def unexplode_kmap(kmap):
     enumerate a full pararmeter cross-product...  consequently there may be
     some "fractional" tuples used to cover smaller partitions of cases.)
     """
-    useafters = {}
+    useafters = defaultdict(list)
     for match_tuple, useafter_files in kmap.items():
         for use in useafter_files:
             use = rmap.Filemap(use.date, use.file, "")
-            if use not in useafters:
-                useafters[use] = []
             useafters[use].append(match_tuple)
-    matches_view = {}
+    matches_view = defaultdict(list)
     for use, matches in useafters.items():
         cluster_key = sorted(set(matches))
         collapsed = roll_up_n_vars(cluster_key)
@@ -219,11 +214,8 @@ def unexplode_kmap(kmap):
             log.info("Exploded cluster has", exploded_cluster_len, "discrete choices.")
             log.info("Rolled up", log.PP(cluster_key), "as", collapsed)
         for key in collapsed:
-            if key not in matches_view:
-                matches_view[key] = []
             matches_view[key].append(use)
     return matches_view           
-    return factor_out_overlaps(matches_view)
 
 def overlaps(match_t1, match_t2):
     for par1, par2 in zip(match_t1, match_t2):

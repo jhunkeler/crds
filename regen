@@ -35,7 +35,7 @@ echo ">>>>>>> Installing CRDS" > /dev/stderr
 echo ">>>>>>> Generating rmaps" > /dev/stderr
 (./gen_rmaps >& gen_rmaps.out; grep -E 'error|warn' gen_rmaps.out)
 echo ">>>>>>> Generating contexts" > /dev/stderr
-(python gen_contexts.py >& gen_contexts.out; grep -E 'error|warn' gen_contexts.out)
+(python gen_contexts.py -1 >& gen_contexts.out; grep -E 'error|warn' gen_contexts.out)
 
 # Examine cdbscatalog.dat to generate the maps relating filekinds,
 # CDBS file suffixes, etc.  filekind_ext.dat and tpn_filetypes.dat
