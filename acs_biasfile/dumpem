@@ -1,0 +1,18 @@
+#! /usr/bin/env pysh
+
+from crds import pysh
+
+for id in open(sys.argv[1]):
+    out_err = pysh.out_err("python -m crds.bestrefs --load-pickles acs_biasfile_unique_corrected.pkl --types biasfile --compare-cdbs --hst --verbose --only-ids ${id}")
+    print out_err
+    for line in out_err.splitlines():
+        words = line.split()
+        if "errors" not in line or len(words) < 16:
+           continue
+        cdbs_ref = words[13][1:-1]
+        out = pysh.out_err("python db_test.py info ${cdbs_ref}")
+        print out
+        crds_ref = words[15][1:-1]
+        out = pysh.out_err("python db_test.py info ${crds_ref}")
+        print out
+
