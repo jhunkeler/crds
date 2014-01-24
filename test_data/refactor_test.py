@@ -84,15 +84,20 @@ def do_refactoring(context, new_rmap_path, old_rmap_path, new_refpath, old_refpa
     certify.certify_files([old_refpath], skip_banner=True, context=context, compare_old_reference=True, observatory="hst")
     log.info("Inserting reference", os.path.basename(old_rmap_path), old_refpath)
 
+    old_ref, new_ref = os.path.basename(old_refpath), os.path.basename(new_refpath)
+
     pysh.sh("rm -f ${new_rmap_path}")
+
+    if os.path.basename(old_refpath) not in open(old_rmap_path).read() and expected == "replace":
+       log.warning("Skipping replacement file", repr(old_refpath), "not appearing in", repr(old_rmap_path))
+       return
+
     refactor.rmap_insert_references(old_rmap_path, new_rmap_path, [new_refpath])
-    as_expected = refactor.rmap_check_modifications(old_rmap_path, new_rmap_path, expected)
+    as_expected = refactor.rmap_check_modifications(old_rmap_path, new_rmap_path, old_ref, new_ref, expected)
 
     if not as_expected or verbosity:
-        generation_info = pysh.out_err("grep %s ../../hst_gentools/gen_rmaps.out" % 
-                                       os.path.basename(old_refpath))
-        generation_info += pysh.out_err("grep %s ../../hst_gentools/gen_rmaps.out" % 
-                                        os.path.basename(new_refpath))
+        generation_info = pysh.out_err("grep %s ../../hst_gentools/gen_rmaps.out" % old_ref)
+        generation_info += pysh.out_err("grep %s ../../hst_gentools/gen_rmaps.out" % new_ref)
         if generation_info.strip():
             separator()
             log.warning("rmap generation anomalies in gen_rmaps.out:")
