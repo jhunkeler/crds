@@ -33,9 +33,9 @@ echo ">>>>>>> Installing CRDS" > /dev/stderr
 # Dump the DADSOPS dataset catalogs into pickles for testing consistent with
 # the current rmaps;  the best refs in DADSOPS
 echo ">>>>>>> Generating rmaps" > /dev/stderr
-(./gen_rmaps >& gen_rmaps.out; grep -E 'error|warn' gen_rmaps.out)
+(./gen_rmaps $* >& gen_rmaps.out; grep -E 'error|warn' gen_rmaps.out)
 echo ">>>>>>> Generating contexts" > /dev/stderr
-(python gen_contexts.py -1 >& gen_contexts.out; grep -E 'error|warn' gen_contexts.out)
+(python gen_contexts.py $* >& gen_contexts.out; grep -E 'error|warn' gen_contexts.out)
 
 # Examine cdbscatalog.dat to generate the maps relating filekinds,
 # CDBS file suffixes, etc.  filekind_ext.dat and tpn_filetypes.dat
@@ -48,5 +48,5 @@ echo ">>>>>>> Installing CRDS" > /dev/stderr
 
 # Run the CRDS certifier on the new rmaps
 echo ">>>>>>> Certifying all mappings" > /dev/stderr
-(cd certify_logs; ./certify_all |& tee certify_all.log)
+(cd certify_logs; ./certify_all $1 |& tee certify_all.log)
 
