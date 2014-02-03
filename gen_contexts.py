@@ -40,7 +40,7 @@ def generate_imap(instr, rmaps, jmap, serial):
       ("observatory" , "HST"),
       ("instrument", instr.upper()),
       ('parkey', ('REFTYPE',)),
-      ('metadata', jmap),
+      # ('metadata', jmap),
       # ("description", ("Initially generated on " + NOW)),
     ])
 
@@ -61,7 +61,7 @@ def generate_jmap(instr):
     associate references with rmaps and update rmaps.
     """
     name = "hst_"  + instr + ".jmap"
-    path = OUTDIR + "/../../jmaps/" + name
+    path = "./"+name
     typenames, parkeys, selector = tpn.get_filekind_metadata(instr)
     header = OrderedDict([
       ("name", name),
