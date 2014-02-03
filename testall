@@ -7,13 +7,13 @@ if ($# == 0) then
 	set server="http://not-a-crds-server.stsci.edu"
 	setenv CRDS_PATH ${META_PREFIX}/lib/python2.7/site-packages/crds/cache
 	setenv CRDS_SERVER_URL  http://localhost:8000
-else if ($# == 1)
+else if ($# == 1) then
 	set server="http://localhost:8000"
 	set context="$1"
-	setenv CRDS_PATH `pwd`/crds_cache
+	setenv CRDS_PATH ${META_PREFIX}/lib/python2.7/site-packages/crds/cache
 	setenv CRDS_SERVER_URL $server
 	python -m crds.sync -H --contexts $context --verbose
-else:
+else
 	set server="$1"
 	set context="$2"
 	setenv CRDS_PATH `pwd`/crds_cache
