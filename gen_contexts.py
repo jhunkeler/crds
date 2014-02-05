@@ -1,10 +1,10 @@
 import sys
 import pprint
 import os.path
+from collections import OrderedDict
 
 from crds.hst import substitutions, tpn
 from crds import (rmap, log, timestamp)
-from crds.compat import OrderedDict
 
 import crds.hst.parkeys as parkeys
 
