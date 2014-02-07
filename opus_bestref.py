@@ -60,7 +60,7 @@ def main():
         try:
             bestrefs = opus_bestrefs(dataset)
             alternates[dataset] = bestrefs
-            log.info("Bestrefs for", dataset, "=", bestrefs)
+            log.info("Bestrefs for", dataset, ":", " ".join(["=".join([key, repr(value)]) for (key, value) in sorted(bestrefs.items())]))
         except Exception, exc:
             log.error("Exception on dataset", dataset, ":", str(exc))
     save_alternate_dataset_headers(alternates)
