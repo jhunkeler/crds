@@ -1,5 +1,22 @@
 #! /bin/tcsh
 
+# Accepts one parameters,  serial number,  no leading zeros:
+#
+# $1 == the "series number" used to number all mappings, e.g. 50
+# Use $1 == -1 for a null series, e.g. hst.pmap not hst_0001.pmap
+
+set number="$1"
+
+if ( $number == "-1" || $#argv == "0") then
+  set serial=""
+  set context="hst.pmap"
+else
+  set formatted_serial="`printf %04d $1`"
+  set context="hst_${formatted_serial}.pmap"
+endif
+
+echo "number: ${number} context: ${context}"
+
 source env.csh
 
 echo ">>>>>>> Clearing reference database caches" >/dev/stderr
@@ -12,11 +29,11 @@ echo ">>>>>>> Dumping catalog datasets" >/dev/stderr
 (python db_test.py dumpall;)
 
 # Actually regenerate all the mappings
-./regen |& tee regen.out
+./regen ${number} |& tee regen.out
 
 # Run first round comparison tests to CDBS on all HST datasets.
 echo ">>>>>>> Testing all datasets" > /dev/stderr
-./testall >& testall.err.1
+./testall ${context} >& testall.err.1
 grep -E 'error|warn|datasets' testall.err.1 | grep -v -E 'pickle'
 
 # The catalog results aren't definitive.   Get backup results from OPUS for datasets with errors.
@@ -25,9 +42,9 @@ echo ">>>>>>> Getting opus bestrefs for erring datasets" >/dev/stderr
 
 # Run second round comparison tests using OPUS bestrefs corrections to DADSOPS
 echo ">>>>>>> Re-testing with revised CDBS comparison values from OPUS" >/dev/stderr
-./testall >& testall.err.2
+./testall ${context} >& testall.err.2
 grep -E 'errors|warn|datasets' testall.err.2 | grep -v -E 'pickle'
 
-echo ">>>>>>> Moving stats files to ../stats" > /dev/stderr
-mv *.stats ../stats
+# echo ">>>>>>> Moving stats files to ../stats" > /dev/stderr
+# mv *.stats ../stats
 
