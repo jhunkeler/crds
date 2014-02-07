@@ -3,7 +3,11 @@
 for instr in acs cos stis wfc3 nicmos wfpc2
 do 
 	echo ======================== $instr =========================
-	python -m crds.certify -H --verbose hst_${instr}.imap -t rmap $*
+    if [ "$1" != "" ] 
+    then
+       serial="_`printf %04d $1`"
+    fi
+	python -m crds.certify -H --verbose hst_${instr}${serial}.imap -t rmap       
 done > certify_all.log
 
 echo "============================================================"
