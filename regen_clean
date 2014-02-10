@@ -25,11 +25,11 @@ rm -f ../hst_refcache/*
 echo ">>>>>>> Clearing dataset database caches" >/dev/stderr
 rm -f ../datasets/*.pkl  opus_bestrefs.err
 
-echo ">>>>>>> Dumping catalog datasets" >/dev/stderr
-(python db_test.py dumpall;)
-
 # Actually regenerate all the mappings
 ./regen ${number} |& tee regen.out
+
+echo ">>>>>>> Dumping catalog datasets" >/dev/stderr
+(python db_test.py dumpall $context;)
 
 # Run first round comparison tests to CDBS on all HST datasets.
 echo ">>>>>>> Testing all datasets" > /dev/stderr
