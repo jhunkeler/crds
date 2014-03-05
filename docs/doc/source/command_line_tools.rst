@@ -90,7 +90,63 @@ invoked like::
 
   % python -m crds.diff  jwst_0001.pmap   jwst_0002.pmap
   (('hst.pmap', 'hst_0004.pmap'), ('hst_acs.imap', 'hst_acs_0004.imap'), ('hst_acs_darkfile.rmap', 'hst_acs_darkfile_0003.rmap'), ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.0|1.4|2.0'), '2011-03-16 23:34:35', "replaced 'v441434ej_drk.fits' with 'hst_acs_darkfile_0003.fits'")
- 
+
+
+crds.rowdiff
+------------
+Modules that are based on FITSDiff, such as crds.diff, compare
+tabular data on a column-by-column basis. Rowdiff compares tabular data
+on a row-by-row basis, producing UNIX diff-like output instead.
+Non-tabular extensions are ignored.
+
+    usage: rowdiff.py [-J] [-H] [--pdb]
+           [--ignore-fields IGNORE_FIELDS] 
+           [--fields FIELDS]
+           [--mode-fields MODE_FIELDS] old_file new_file
+    
+    Perform FITS table difference by rows
+    
+    positional arguments:
+      old_file                First FITS table to compare
+      new_file                Second FITS table to compare
+    
+    optional arguments:
+      --ignore-fields IGNORE_FIELDS
+                            List of fields to ignore
+      --fields FIELDS       List of fields to compare
+      --mode-fields MODE_FIELDS
+                            List of fields to do a mode compare
+      -J, --jwst            Force observatory to JWST for determining header conventions.
+      -H, --hst             Force observatory to HST for determining header conventions.
+      --pdb                 Run under pdb.
+
+The FITS data to be compared are required to be similar: they must have
+the same number of extensions and the types of extensions must match.
+
+The parameters --fields and --ignore-fields define which columns
+are compared between each table extension. These are mutually
+exclusive parameters and an error will generate if both are specified.
+
+First a summary of the changes between the table extension is given.
+Then, row-by-row difference is given, using unified diff syntax.
+
+The parameter --mode-fields initiates a different algorithm.
+Here, it is presumed the tabular data contains columns that can essentially
+be treated as keys upon with rows are selected. The fields specified are those
+key columns.
+
+All possible coombinations of values are determined be examining both
+extensions. Then, each table is compared against both this list and between
+each other, looking for multiply specified combinations, missing combinations,
+and, for the common combinations between the tables, whether the rest of the
+rows are equivalent or not.
+
+Examples:
+
+    % python -m crds.rowdiff s9m1329lu_off.fits s9518396u_off.fits 
+
+    % python -m rowdiff s9m1329lu_off.fits s9518396u_off.fits --mode-fields=detchip,obsdate
+
 
 crds.uses
 ---------
@@ -261,7 +317,7 @@ The CRDS sync tool is used to download CRDS rules and references from the CRDS s
 
   would first sync the cache downloading all the files in hst_0001.pmap.  Both mappings and references would then
   be checked for correct length, and reject and blacklist status.   Files reported as rejected or blacklisted by the 
-  server would be removed.
+  server would be removed.    
     
 crds.bestrefs
 -------------
@@ -334,7 +390,7 @@ The two primary modes for bestrefs involve the source of reference file matching
 lookup parameters are always associated with particular datasets and used to identify the references
 required to process those datasets.
 
-The options ``--files``, ``--datasets``, ``--instruments``, and ``--all`` determine the source of lookup parameters:
+The options ``--files``, ``--datasets``, ``--instruments``, and ``--all-instruments`` determine the source of lookup parameters:
 
 1. To find best references for a list of files do something like this::
 
@@ -352,11 +408,11 @@ the first parameter, hst.pmap,  is the context with respect to which best refere
 
 4. To do mass scale testing for all supported instruments for all cataloged datasets do::
 
-    % python -m crds.bestrefs --new-context hst.pmap --all
+    % python -m crds.bestrefs --new-context hst.pmap --all-instruments
     
 or to test for differences between two contexts do::
 
-    % python -m crds.bestrefs --new-context hst_0002.pmap --old-context hst_0001.pmap --all
+    % python -m crds.bestrefs --new-context hst_0002.pmap --old-context hst_0001.pmap --all-instruments
 
 ................
 Comparison Modes
@@ -416,6 +472,7 @@ Verbosity
 .........
 
 crds.bestrefs has ``--verbose`` and ``--verbosity=N`` parameters which can increase the amount of informational and debug output.
+
 
 
 pipeline_bestrefs
