@@ -27,6 +27,8 @@ def opus_bestrefs(dataset):
             keyword = db_colname.split("_")[2].upper()
             value = words[2].split("'")[1]
             bestrefs[keyword] = value
+        if "FATAL" in line or "ERROR" in line:
+            raise RuntimeError("FATAL or ERROR in bestrefs for", repr(dataset))
     return bestrefs
 
 def load_alternate_dataset_headers():
@@ -63,6 +65,7 @@ def main():
             log.info("Bestrefs for", dataset, ":", " ".join(["=".join([key, repr(value)]) for (key, value) in sorted(bestrefs.items())]))
         except Exception, exc:
             log.error("Exception on dataset", dataset, ":", str(exc))
+            alternates[dataset] = "NOT FOUND " + str(exc)
     save_alternate_dataset_headers(alternates)
     log.standard_status()
 
