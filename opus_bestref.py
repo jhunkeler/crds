@@ -28,7 +28,7 @@ def opus_bestrefs(dataset):
             value = words[2].split("'")[1]
             bestrefs[keyword] = value
         if "FATAL" in line or "ERROR" in line:
-            raise RuntimeError("FATAL or ERROR in bestrefs for", repr(dataset))
+            raise RuntimeError("FATAL or ERROR in output: " + str(lines))
     return bestrefs
 
 def load_alternate_dataset_headers():
@@ -39,6 +39,11 @@ def load_alternate_dataset_headers():
         alternate_headers = {}
         log.warning("Loading opus headers failed.")
     else:
+        items = alternate_headers.items()
+        for dataset, header in items:
+            if isinstance(header, str):
+                log.warning("No update for", repr(dataset), ":", header)
+                del alternate_headers[dataset]
         log.info("Loaded", BESTREF_PKL)
     return alternate_headers
 
