@@ -1,0 +1,47 @@
+This directory houses test cases used to validate the CRDS milestone-6 rmaps
+which were regenerated from CDBS and feature revised special case hooks, most
+notably for ACS BIASFILE.
+
+These test cases were selected to be representative of all known unique DADSOPS
+parameter sets, with the exception of DATE-OBS + TIME-OBS, which was abstracted
+to once case each for pre-SM4 and post-SM4.  This reduces the number of test
+cases to a level for which CDBS pipeline bestrefs can be reasonably computed,
+approximately 9000, doable in a work-day due to CDBS speeds.  In contrast, 500k
+cases would take... impossibly long...  CDBS would change during the
+computation interval.  So this phase of testing sacrifices comprehensive
+coverage for the sake of getting true CDBS pipeline bestrefs for all cases, not
+just cases where CRDS and CDBS disagree.  This is required because there are
+significant numbers of cases where CRDS and DADSOPS/CDBS agree on the *wrong*
+answer relative to pipeline bestrefs.  As of this writing it's not clear the
+current CRDS interface to DADSOPS fully represents all datasets, so this
+testing is based on unique cases as they are known now.
+
+Test cases are stored in two pickles:
+
+1. Uncorrected cases dumped from the DADSOPS database, which may themselves be
+incorrect relative to pipeline CDBS.
+
+2. Corrections from the CDBS pipeline bestrefs program run remotely on
+dmsdevvm4, representing true pipeline results for CDBS.
+
+Unlike normal comprehensive testing, ALL bestrefs are coming from the
+corrections pickle.
+
+However, due to minimal output from CDBS pipeline bestrefs, DADSOPS is still
+used by CRDS to provide the original matching parameters used by CRDS (not
+CDBS, which gets matching parameters on its own... so there is really no 
+guarantee that CRDS and CDBS use the same parameters). 
+
+As-of this round of testing,  there are two classes of error:
+
+1. WFC3 bias errors involving t6i1733ei_bia.fits known to be a problem in CDBS,
+not CRDS.
+
+2. WFC3 dark errors where CDBS updated darks yesterday and the gold standard
+CDBS corrections are stale.  So the pkl's idea of CDBS is reporting the old
+bestrefs, and CRDS is reporting the new ones.  Waiving this as a non-problem.
+
+3. WFPC2 errors where CDBS pipeline bestrefs failed so no test was performed.
+
+So, with minor caveats, the results look solid and ACS BIASFILE is now believed
+to be fully functional.
