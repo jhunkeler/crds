@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:19.288909',
+    'filekind' : 'PMSKFILE',
+    'instrument' : 'NICMOS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_nicmos_pmskfile_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('CAMERA',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'IMAGE',
+    'reffile_required' : 'NO',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : 'ALWAYS',
+    'sha1sum' : '5694dd7ee597b2267f5efabcd43fa22b8cbe1206',
+}
+
+selector = Match({
+    (2,) : UseAfter({
+        '2002-03-01 00:00:00' : 'saf02498n_pmk.fits',
+    }),
+})

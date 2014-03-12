@@ -1,0 +1,25 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:12.704832',
+    'filekind' : 'BPIXTAB',
+    'instrument' : 'COS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_cos_bpixtab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : 'ALWAYS',
+    'sha1sum' : '6adeede87d9ae0535bac45fd2681302eeca387ec',
+}
+
+selector = Match({
+    ('FUV',) : UseAfter({
+        '1996-10-01 00:00:00' : 's7g1700dl_bpix.fits',
+        '2009-05-11 00:00:00' : 'y272020sl_bpix.fits',
+    }),
+    ('NUV',) : UseAfter({
+        '1996-10-01 00:00:00' : 's7g1700pl_bpix.fits',
+        '2009-05-11 00:00:00' : 'uas19356l_bpix.fits',
+    }),
+})

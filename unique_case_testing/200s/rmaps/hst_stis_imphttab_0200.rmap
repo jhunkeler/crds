@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:28.096698',
+    'filekind' : 'IMPHTTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_imphttab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : ((), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : 'ALWAYS',
+    'sha1sum' : '9fc3b4b76bdcf626ea46596fca4168d230739cbf',
+}
+
+selector = Match({
+    () : UseAfter({
+        '1996-10-01 00:00:00' : 'y2i1649no_imp.fits',
+    }),
+})

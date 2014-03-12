@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:31.246525',
+    'filekind' : 'WCPTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_wcptab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : ((), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(OBSTYPE == "SPECTROSCOPIC")',
+    'sha1sum' : 'dce11b8a29a407febd1835e9b9b8914aecbdd59a',
+}
+
+selector = Match({
+    () : UseAfter({
+        '1997-02-12 00:00:00' : 'lag1815lo_wcp.fits',
+    }),
+})

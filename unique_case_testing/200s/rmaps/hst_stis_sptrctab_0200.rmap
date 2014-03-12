@@ -1,0 +1,28 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:31.140856',
+    'filekind' : 'SPTRCTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_sptrctab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(OBSTYPE == "SPECTROSCOPIC")',
+    'sha1sum' : 'a2d7fad2c33662f721e3c5e833bf508ffed9c5e4',
+}
+
+selector = Match({
+    ('CCD',) : UseAfter({
+        '1996-10-01 00:00:00' : 'qa31608go_1dt.fits',
+    }),
+    ('FUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'q8l14503o_1dt.fits',
+        '1999-03-14 00:00:00' : 'q8l14504o_1dt.fits',
+    }),
+    ('NUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'q8l14501o_1dt.fits',
+        '2000-06-05 00:00:00' : 'q8l14502o_1dt.fits',
+    }),
+})

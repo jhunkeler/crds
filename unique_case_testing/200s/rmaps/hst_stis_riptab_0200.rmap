@@ -1,0 +1,25 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:30.898835',
+    'filekind' : 'RIPTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_riptab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(DETECTOR != "CCD" and OBSTYPE == "SPECTROSCOPIC")',
+    'sha1sum' : '608159f021727bd6a04c534dcdc6c06bd386a1b8',
+}
+
+selector = Match({
+    ('FUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'k8m09588o_rip.fits',
+        '2009-05-11 00:00:00' : 'vb816446o_rip.fits',
+    }),
+    ('NUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'k8m0958fo_rip.fits',
+        '2009-05-11 00:00:00' : 'vb816447o_rip.fits',
+    }),
+})

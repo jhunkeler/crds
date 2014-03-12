@@ -1,0 +1,22 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:47.266892',
+    'filekind' : 'NLINFILE',
+    'instrument' : 'WFC3',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_wfc3_nlinfile_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'IMAGE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(DETECTOR == "IR")',
+    'sha1sum' : '357ae2f9541f19e124578200671e2f1ca8e27553',
+}
+
+selector = Match({
+    ('IR',) : UseAfter({
+        '2001-01-01 00:00:00' : 's9c1542fi_lin.fits',
+        '2008-02-20 00:00:00' : 'sbi18555i_lin.fits',
+        '2009-05-14 00:00:00' : 'u1k1727mi_lin.fits',
+    }),
+})

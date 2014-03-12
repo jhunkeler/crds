@@ -1,0 +1,25 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:16.222903',
+    'filekind' : 'TDSTAB',
+    'instrument' : 'COS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_cos_tdstab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR', 'OBSTYPE'), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NO',
+    'reffile_switch' : 'TDSCORR',
+    'rmap_relevance' : '((OBSTYPE == "SPECTROSCOPIC") and (TDSCORR != "OMIT"))',
+    'sha1sum' : '0f31d3655e5afc510f3ed0e34218ad90d4197736',
+}
+
+selector = Match({
+    ('FUV', 'SPECTROSCOPIC') : UseAfter({
+        '1996-10-01 00:00:00' : 't2314312l_tds.fits',
+        '2009-05-11 00:00:00' : 'x9h1254fl_tds.fits',
+    }),
+    ('NUV', 'SPECTROSCOPIC') : UseAfter({
+        '1996-10-01 00:00:00' : 't2314314l_tds.fits',
+        '2009-05-11 00:00:00' : 'u7d20378l_tds.fits',
+    }),
+})
