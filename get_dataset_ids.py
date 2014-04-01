@@ -25,7 +25,11 @@ def main(filename, important):
         if mismatched[0] >= important:
             ids.extend(mismatched[1])
     for id in ids:
-        print id
+        print get_product_id(id)
+
+def get_product_id(id):
+    """For compound dataset ids of form <product>:<expsoure> return <product>."""
+    return id.split(":")[0]
 
 if __name__ == "__main__":
     usage("<source_file> <test_count_importance_threshhold>", 2, 2);
