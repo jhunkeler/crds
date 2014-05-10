@@ -4,15 +4,15 @@ CRDS  : INFO     ######################################======================== 
 ======================== nicmos =========================
 ======================== wfpc2 =========================
 ap'
-CRDS  : DEBUG    Validating 'hst_acs_0200.imap'
+CRDS  : DEBUG    Validating 'hst_acs_0250.imap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_atodtab_0200.rmap' (2/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_atodtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_atodtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_atodtab_0250.rmap' (2/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_atodtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_atodtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_biasfile_0200.rmap' (3/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_biasfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_biasfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_biasfile_0250.rmap' (3/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_biasfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_biasfile_0250.rmap'
 CRDS  : WARNING  Match Parameter  'NAXIS1'  is unchecked.
 CRDS  : WARNING  Match Parameter  'NAXIS2'  is unchecked.
 CRDS  : WARNING  Match Parameter  'LTV1'  is unchecked.
@@ -77,29 +77,30 @@ CRDS  : WARNING  Match tuple ('WFC', 'B|C', '4.0', 'N/A', '4144.0', '2068.0', '2
 CRDS  : WARNING  Match tuple ('WFC', 'B|C', '4.0', 'N/A', '4144.0', '2068.0', '24.0', '0.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'B|BC|C', '4.0', 'N/A', '4144.0', '2068.0', '24.0', '0.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'B|C', '8.0', 'N/A', '4144.0', '2068.0', '24.0', '0.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'B|BC|C', '8.0', 'N/A', '4144.0', '2068.0', '24.0', '0.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_bpixtab_0200.rmap' (4/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_bpixtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_bpixtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_bpixtab_0250.rmap' (4/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_bpixtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_bpixtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_ccdtab_0200.rmap' (5/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_ccdtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_ccdtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_ccdtab_0250.rmap' (5/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_ccdtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_ccdtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_cfltfile_0200.rmap' (6/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_cfltfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_cfltfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_cfltfile_0250.rmap' (6/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_cfltfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_cfltfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_crrejtab_0200.rmap' (7/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_crrejtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_crrejtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_crrejtab_0250.rmap' (7/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_crrejtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_crrejtab_0250.rmap'
+CRDS  : WARNING  Match Parameter  'RPTCORR'  is unchecked.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_d2imfile_0200.rmap' (8/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_d2imfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_d2imfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_d2imfile_0250.rmap' (8/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_d2imfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_d2imfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_darkfile_0200.rmap' (9/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_darkfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_darkfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_darkfile_0250.rmap' (9/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_darkfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_darkfile_0250.rmap'
 CRDS  : WARNING  Match tuple ('HRC', 'C', '1.0|2.0|4.0|8.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('HRC', 'C', '2.0') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('HRC', 'C', '2.0') is an equal weight special case of ('HRC', 'C', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
@@ -111,19 +112,19 @@ CRDS  : WARNING  Match tuple ('WFC', 'ABCD', '1.0') is an equal weight special c
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_dgeofile_0200.rmap' (10/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_dgeofile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_dgeofile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_dgeofile_0250.rmap' (10/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_dgeofile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_dgeofile_0250.rmap'
 CRDS  : WARNING  Match tuple ('SBC', 'BLOCK1|BLOCK2|BLOCK3|BLOCK4|F115LP|F122M|F125LP|F140LP|F150LP|F165LP', 'N/A') is an equal weight special case of ('SBC', '*', 'N/A')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_drkcfile_0200.rmap' (11/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_drkcfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_drkcfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_drkcfile_0250.rmap' (11/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_drkcfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_drkcfile_0250.rmap'
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.4') is an equal weight special case of ('WFC', 'A|ABCD|AD|B|BC|C|D', '0.5|1.0|1.4|2.0')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_flshfile_0200.rmap' (12/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_flshfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_flshfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_flshfile_0250.rmap' (12/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_flshfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_flshfile_0250.rmap'
 CRDS  : WARNING  Match tuple ('HRC', 'ABCD|AD|BC|C|D', '2.0', 'HIGH', 'A') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0', 'HIGH|LOW|MED', 'A|B')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('HRC', 'ABCD|AD|BC|C|D', '2.0', 'HIGH', 'B') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0', 'HIGH|LOW|MED', 'A|B')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('HRC', 'ABCD|AD|BC|C|D', '2.0', 'LOW', 'B') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0', 'HIGH|LOW|MED', 'A|B')  requiring dynamic merging.
@@ -143,37 +144,37 @@ CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'LOW', 'B') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'HIGH|LOW|MED', 'A|B')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'MED', 'B') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|2.0|4.0|8.0', 'HIGH|LOW|MED', 'A|B')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_idctab_0200.rmap' (13/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_idctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_idctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_idctab_0250.rmap' (13/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_idctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_idctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_imphttab_0200.rmap' (14/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_imphttab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_imphttab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_imphttab_0250.rmap' (14/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_imphttab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_imphttab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_mdriztab_0200.rmap' (15/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_mdriztab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_mdriztab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_mdriztab_0250.rmap' (15/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_mdriztab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_mdriztab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_mlintab_0200.rmap' (16/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_mlintab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_mlintab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_mlintab_0250.rmap' (16/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_mlintab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_mlintab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_npolfile_0200.rmap' (17/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_npolfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_npolfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_npolfile_0250.rmap' (17/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_npolfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_npolfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_oscntab_0200.rmap' (18/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_oscntab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_oscntab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_oscntab_0250.rmap' (18/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_oscntab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_oscntab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_pctetab_0200.rmap' (19/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_pctetab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_pctetab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_pctetab_0250.rmap' (19/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_pctetab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_pctetab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_pfltfile_0200.rmap' (20/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_pfltfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_pfltfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_pfltfile_0250.rmap' (20/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_pfltfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_pfltfile_0250.rmap'
 CRDS  : WARNING  Match tuple ('HRC', 'A|ABCD|AD|B|BC|C|D', 'CLEAR1S', 'CLEAR2S', 'IMAGING', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', 'CLEAR1L|CLEAR1S|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|POL0UV|POL120UV|POL60UV', 'CLEAR2L|CLEAR2S|F220W|F250W|F330W|F344N|F410W|F435W|F814W|FR388N|FR459M|FR505N|FR647M|FR656N|FR716N|FR782N|FR914M|POL0V|POL120V|POL60V', 'IMAGING', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('HRC', 'A|ABCD|AD|B|BC|C|D', 'CLEAR1S', 'F220W', 'IMAGING', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', 'CLEAR1L|CLEAR1S|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|POL0UV|POL120UV|POL60UV', 'CLEAR2L|CLEAR2S|F220W|F250W|F330W|F344N|F410W|F435W|F814W|FR388N|FR459M|FR505N|FR647M|FR656N|FR716N|FR782N|FR914M|POL0V|POL120V|POL60V', 'IMAGING', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('HRC', 'A|ABCD|AD|B|BC|C|D', 'CLEAR1S', 'F250W', 'IMAGING', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('HRC', 'A|ABCD|AD|B|BC|C|D', 'CLEAR1L|CLEAR1S|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|POL0UV|POL120UV|POL60UV', 'CLEAR2L|CLEAR2S|F220W|F250W|F330W|F344N|F410W|F435W|F814W|FR388N|FR459M|FR505N|FR647M|FR656N|FR716N|FR782N|FR914M|POL0V|POL120V|POL60V', 'IMAGING', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
@@ -492,194 +493,194 @@ CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', 'POL60UV', 'F660N', '
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', 'POL60UV', 'F814W', 'IMAGING', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'CLEAR1L|F475W|F502N|F550M|F555W|F606W|F625W|F658N|F775W|F850LP|F892N|POL0UV|POL120UV|POL60UV', 'CLEAR2L|CLEAR2S|F330W|F410W|F435W|F814W|FR1016N|FR388N|FR423N|FR459M|FR462N|FR505N|FR555N|FR601N|FR647M|FR656N|FR716N|FR782N|FR853N|FR914M|FR931N|POL0V|POL120V|POL60V', 'IMAGING', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('WFC', 'A|ABCD|AD|B|BC|C|D', 'POL60UV', 'F814W', 'IMAGING', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', 'POL60UV', 'F814W', 'IMAGING', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_shadfile_0200.rmap' (21/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_shadfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_shadfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_shadfile_0250.rmap' (21/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_shadfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_shadfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_acs_spottab_0200.rmap' (22/22) relative to context None
-CRDS  : DEBUG    Parsing 'hst_acs_spottab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_acs_spottab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_acs_spottab_0250.rmap' (22/22) relative to context None
+CRDS  : DEBUG    Parsing 'hst_acs_spottab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_acs_spottab_0250.rmap'
 CRDS  : INFO     ########################################
 CRDS  : INFO     0 errors
-CRDS  : INFO     410 warnings
+CRDS  : INFO     411 warnings
 CRDS  : INFO     45 infos
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_cos_0200.imap' (1/19) relative to context None
-CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_cos_0200.imap'
-CRDS  : DEBUG    Validating 'hst_cos_0200.imap'
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_cos_0250.imap' (1/19) relative to context None
+CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_cos_0250.imap'
+CRDS  : DEBUG    Validating 'hst_cos_0250.imap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_badttab_0200.rmap' (2/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_badttab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_badttab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_badttab_0250.rmap' (2/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_badttab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_badttab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_bpixtab_0200.rmap' (3/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_bpixtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_bpixtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_bpixtab_0250.rmap' (3/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_bpixtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_bpixtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_brftab_0200.rmap' (4/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_brftab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_brftab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_brftab_0250.rmap' (4/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_brftab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_brftab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_brsttab_0200.rmap' (5/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_brsttab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_brsttab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_brsttab_0250.rmap' (5/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_brsttab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_brsttab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_deadtab_0200.rmap' (6/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_deadtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_deadtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_deadtab_0250.rmap' (6/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_deadtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_deadtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_disptab_0200.rmap' (7/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_disptab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_disptab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_disptab_0250.rmap' (7/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_disptab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_disptab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_flatfile_0200.rmap' (8/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_flatfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_flatfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_flatfile_0250.rmap' (8/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_flatfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_flatfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_fluxtab_0200.rmap' (9/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_fluxtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_fluxtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_fluxtab_0250.rmap' (9/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_fluxtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_fluxtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_geofile_0200.rmap' (10/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_geofile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_geofile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_geofile_0250.rmap' (10/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_geofile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_geofile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_gsagtab_0200.rmap' (11/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_gsagtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_gsagtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_gsagtab_0250.rmap' (11/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_gsagtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_gsagtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_hvtab_0200.rmap' (12/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_hvtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_hvtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_hvtab_0250.rmap' (12/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_hvtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_hvtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_lamptab_0200.rmap' (13/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_lamptab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_lamptab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_lamptab_0250.rmap' (13/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_lamptab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_lamptab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_phatab_0200.rmap' (14/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_phatab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_phatab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_phatab_0250.rmap' (14/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_phatab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_phatab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_spwcstab_0200.rmap' (15/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_spwcstab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_spwcstab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_spwcstab_0250.rmap' (15/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_spwcstab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_spwcstab_0250.rmap'
 CRDS  : WARNING  Match Parameter  'EXPTYPE'  is unchecked.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_tdstab_0200.rmap' (16/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_tdstab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_tdstab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_tdstab_0250.rmap' (16/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_tdstab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_tdstab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_walktab_0200.rmap' (17/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_walktab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_walktab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_walktab_0250.rmap' (17/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_walktab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_walktab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_wcptab_0200.rmap' (18/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_wcptab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_wcptab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_wcptab_0250.rmap' (18/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_wcptab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_wcptab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_cos_xtractab_0200.rmap' (19/19) relative to context None
-CRDS  : DEBUG    Parsing 'hst_cos_xtractab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_cos_xtractab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_cos_xtractab_0250.rmap' (19/19) relative to context None
+CRDS  : DEBUG    Parsing 'hst_cos_xtractab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_cos_xtractab_0250.rmap'
 CRDS  : INFO     ########################################
 CRDS  : INFO     0 errors
 CRDS  : INFO     1 warnings
 CRDS  : INFO     39 infos
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_stis_0200.imap' (1/33) relative to context None
-CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_stis_0200.imap'
-CRDS  : DEBUG    Validating 'hst_stis_0200.imap'
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_stis_0250.imap' (1/33) relative to context None
+CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_stis_0250.imap'
+CRDS  : DEBUG    Validating 'hst_stis_0250.imap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_apdestab_0200.rmap' (2/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_apdestab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_apdestab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_apdestab_0250.rmap' (2/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_apdestab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_apdestab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_apertab_0200.rmap' (3/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_apertab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_apertab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_apertab_0250.rmap' (3/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_apertab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_apertab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_biasfile_0200.rmap' (4/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_biasfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_biasfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_biasfile_0250.rmap' (4/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_biasfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_biasfile_0250.rmap'
 CRDS  : WARNING  Match Parameter  'CCDOFFST'  is unchecked.
 CRDS  : WARNING  Match Parameter  'BINAXIS1'  is unchecked.
 CRDS  : WARNING  Match Parameter  'BINAXIS2'  is unchecked.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_bpixtab_0200.rmap' (5/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_bpixtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_bpixtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_bpixtab_0250.rmap' (5/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_bpixtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_bpixtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_ccdtab_0200.rmap' (6/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_ccdtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_ccdtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_ccdtab_0250.rmap' (6/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_ccdtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_ccdtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_cdstab_0200.rmap' (7/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_cdstab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_cdstab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_cdstab_0250.rmap' (7/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_cdstab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_cdstab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_crrejtab_0200.rmap' (8/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_crrejtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_crrejtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_crrejtab_0250.rmap' (8/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_crrejtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_crrejtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_darkfile_0200.rmap' (9/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_darkfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_darkfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_darkfile_0250.rmap' (9/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_darkfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_darkfile_0250.rmap'
 CRDS  : WARNING  Match tuple ('CCD', 'D', '1.0|2.0|4.0|8.0') is an equal weight special case of ('CCD', 'A|B|C|D', '1.0|2.0|4.0|8.0')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_disptab_0200.rmap' (10/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_disptab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_disptab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_disptab_0250.rmap' (10/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_disptab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_disptab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_echsctab_0200.rmap' (11/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_echsctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_echsctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_echsctab_0250.rmap' (11/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_echsctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_echsctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_exstab_0200.rmap' (12/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_exstab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_exstab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_exstab_0250.rmap' (12/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_exstab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_exstab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_gactab_0200.rmap' (13/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_gactab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_gactab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_gactab_0250.rmap' (13/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_gactab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_gactab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_halotab_0200.rmap' (14/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_halotab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_halotab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_halotab_0250.rmap' (14/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_halotab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_halotab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_idctab_0200.rmap' (15/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_idctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_idctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_idctab_0250.rmap' (15/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_idctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_idctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_imphttab_0200.rmap' (16/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_imphttab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_imphttab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_imphttab_0250.rmap' (16/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_imphttab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_imphttab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_inangtab_0200.rmap' (17/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_inangtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_inangtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_inangtab_0250.rmap' (17/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_inangtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_inangtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_lamptab_0200.rmap' (18/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_lamptab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_lamptab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_lamptab_0250.rmap' (18/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_lamptab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_lamptab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_lfltfile_0200.rmap' (19/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_lfltfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_lfltfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_lfltfile_0250.rmap' (19/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_lfltfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_lfltfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_mlintab_0200.rmap' (20/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_mlintab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_mlintab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_mlintab_0250.rmap' (20/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_mlintab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_mlintab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_mofftab_0200.rmap' (21/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_mofftab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_mofftab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_mofftab_0250.rmap' (21/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_mofftab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_mofftab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_pctab_0200.rmap' (22/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_pctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_pctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_pctab_0250.rmap' (22/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_pctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_pctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_pfltfile_0200.rmap' (23/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_pfltfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_pfltfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_pfltfile_0250.rmap' (23/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_pfltfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_pfltfile_0250.rmap'
 CRDS  : WARNING  Match tuple ('CCD', 'G230MB', 'SPECTROSCOPIC', '1713.0', 'N/A') is an equal weight special case of ('CCD', 'G230MB', 'SPECTROSCOPIC', '1713.0|1854.0|1995.0|2135.0|2276.0|2416.0|2557.0|2697.0|2794.0|2836.0|2976.0|3115.0', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('CCD', 'G230MB', 'SPECTROSCOPIC', '1854.0', 'N/A') is an equal weight special case of ('CCD', 'G230MB', 'SPECTROSCOPIC', '1713.0|1854.0|1995.0|2135.0|2276.0|2416.0|2557.0|2697.0|2794.0|2836.0|2976.0|3115.0', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('CCD', 'G230MB', 'SPECTROSCOPIC', '1995.0', 'N/A') is an equal weight special case of ('CCD', 'G230MB', 'SPECTROSCOPIC', '1713.0|1854.0|1995.0|2135.0|2276.0|2416.0|2557.0|2697.0|2794.0|2836.0|2976.0|3115.0', 'N/A')  requiring dynamic merging.
@@ -729,85 +730,85 @@ CRDS  : WARNING  Match tuple ('FUV-MAMA', 'MIRFUV|MIRNUV', 'IMAGING', 'N/A', 'F2
 CRDS  : WARNING  Match tuple ('FUV-MAMA', 'MIRNUV', 'IMAGING', 'N/A', 'F25CIII|F25CN182|F25CN270|F25MGII') is an equal weight special case of ('FUV-MAMA', 'MIRNUV|MIRVIS', 'IMAGING', 'N/A', 'F25CIII|F25CN182|F25CN270|F25MGII')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('NUV-MAMA', 'MIRFUV|MIRNUV|MIRVIS', 'IMAGING', 'N/A', 'F25NDQ1|F25NDQ2|F25NDQ3|F25NDQ4') is an equal weight special case of ('NUV-MAMA', 'MIRCUV|MIRFUV|MIRNUV|MIRVIS', 'IMAGING', 'N/A', 'F25NDQ1|F25NDQ2|F25NDQ3|F25NDQ4')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_phottab_0200.rmap' (24/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_phottab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_phottab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_phottab_0250.rmap' (24/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_phottab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_phottab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_riptab_0200.rmap' (25/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_riptab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_riptab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_riptab_0250.rmap' (25/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_riptab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_riptab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_sdctab_0200.rmap' (26/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_sdctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_sdctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_sdctab_0250.rmap' (26/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_sdctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_sdctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_sptrctab_0200.rmap' (27/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_sptrctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_sptrctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_sptrctab_0250.rmap' (27/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_sptrctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_sptrctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_srwtab_0200.rmap' (28/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_srwtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_srwtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_srwtab_0250.rmap' (28/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_srwtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_srwtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_tdctab_0200.rmap' (29/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_tdctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_tdctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_tdctab_0250.rmap' (29/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_tdctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_tdctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_tdstab_0200.rmap' (30/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_tdstab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_tdstab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_tdstab_0250.rmap' (30/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_tdstab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_tdstab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_teltab_0200.rmap' (31/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_teltab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_teltab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_teltab_0250.rmap' (31/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_teltab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_teltab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_wcptab_0200.rmap' (32/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_wcptab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_wcptab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_wcptab_0250.rmap' (32/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_wcptab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_wcptab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_stis_xtractab_0200.rmap' (33/33) relative to context None
-CRDS  : DEBUG    Parsing 'hst_stis_xtractab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_stis_xtractab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_stis_xtractab_0250.rmap' (33/33) relative to context None
+CRDS  : DEBUG    Parsing 'hst_stis_xtractab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_stis_xtractab_0250.rmap'
 CRDS  : INFO     ########################################
 CRDS  : INFO     0 errors
 CRDS  : INFO     52 warnings
 CRDS  : INFO     67 infos
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfc3_0200.imap' (1/15) relative to context None
-CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfc3_0200.imap'
-CRDS  : DEBUG    Validating 'hst_wfc3_0200.imap'
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfc3_0250.imap' (1/15) relative to context None
+CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfc3_0250.imap'
+CRDS  : DEBUG    Validating 'hst_wfc3_0250.imap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_atodtab_0200.rmap' (2/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_atodtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_atodtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_atodtab_0250.rmap' (2/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_atodtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_atodtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_biasfile_0200.rmap' (3/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_biasfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_biasfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_biasfile_0250.rmap' (3/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_biasfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_biasfile_0250.rmap'
 CRDS  : WARNING  Match Parameter  'SUBARRAY'  is unchecked.
 CRDS  : WARNING  Match tuple ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-IR-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'ABCD', '1.5', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0|1.5|2.0|4.0', '1.0', '1.0', 'G280-REF|UVIS|UVIS-CENTER|UVIS-FIX|UVIS-QUAD|UVIS-QUAD-FIX|UVIS1|UVIS1-FIX|UVIS2|UVIS2-FIX', 'CONT|LINE10|LINE17|LINE25|NONE', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'A|B|C|D', '1.5', '1.0', '1.0', 'UVIS-QUAD-SUB|UVIS1-C512A-SUB|UVIS1-C512B-SUB|UVIS2-C512C-SUB|UVIS2-C512D-SUB', 'NONE', 'N/A') is an equal weight special case of ('UVIS', 'A|B|C|D', '1.5', '1.0', '1.0', 'UVIS-QUAD-SUB|UVIS1-2K2A-SUB|UVIS1-2K2B-SUB|UVIS1-C512A-SUB|UVIS1-C512B-SUB|UVIS2-2K2C-SUB|UVIS2-2K2D-SUB|UVIS2-C1K1C-SUB|UVIS2-C512C-SUB|UVIS2-C512D-SUB|UVIS2-M1K1C-SUB|UVIS2-M512C-SUB', 'NONE', 'N/A')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_bpixtab_0200.rmap' (4/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_bpixtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_bpixtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_bpixtab_0250.rmap' (4/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_bpixtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_bpixtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_ccdtab_0200.rmap' (5/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_ccdtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_ccdtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_ccdtab_0250.rmap' (5/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_ccdtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_ccdtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_crrejtab_0200.rmap' (6/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_crrejtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_crrejtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_crrejtab_0250.rmap' (6/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_crrejtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_crrejtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_d2imfile_0200.rmap' (7/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_d2imfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_d2imfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_d2imfile_0250.rmap' (7/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_d2imfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_d2imfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_darkfile_0200.rmap' (8/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_darkfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_darkfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_darkfile_0250.rmap' (8/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_darkfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_darkfile_0250.rmap'
 CRDS  : WARNING  Match Parameter  'BINAXIS1'  is unchecked.
 CRDS  : WARNING  Match Parameter  'BINAXIS2'  is unchecked.
 CRDS  : WARNING  Match Parameter  'SAMP_SEQ'  is unchecked.
@@ -835,33 +836,33 @@ CRDS  : WARNING  Match tuple ('UVIS', 'A|AC|AD|B|BC|BD|C|D', '1.0', '1.0', 'N/A'
 CRDS  : WARNING  Match tuple ('UVIS', 'A|AC|AD|B|BC|BD|C|D', '2.0', '2.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', '2.0', '2.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('UVIS', 'A|AC|AD|B|BC|BD|C|D', '3.0', '3.0', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('UVIS', 'A|ABCD|AC|AD|B|BC|BD|C|D', '3.0', '3.0', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_flshfile_0200.rmap' (9/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_flshfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_flshfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_flshfile_0250.rmap' (9/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_flshfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_flshfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_idctab_0200.rmap' (10/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_idctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_idctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_idctab_0250.rmap' (10/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_idctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_idctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_imphttab_0200.rmap' (11/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_imphttab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_imphttab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_imphttab_0250.rmap' (11/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_imphttab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_imphttab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_mdriztab_0200.rmap' (12/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_mdriztab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_mdriztab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_mdriztab_0250.rmap' (12/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_mdriztab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_mdriztab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_nlinfile_0200.rmap' (13/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_nlinfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_nlinfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_nlinfile_0250.rmap' (13/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_nlinfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_nlinfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_oscntab_0200.rmap' (14/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_oscntab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_oscntab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_oscntab_0250.rmap' (14/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_oscntab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_oscntab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfc3_pfltfile_0200.rmap' (15/15) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfc3_pfltfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfc3_pfltfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfc3_pfltfile_0250.rmap' (15/15) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfc3_pfltfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfc3_pfltfile_0250.rmap'
 CRDS  : WARNING  Match Parameter  'BINAXIS1'  is unchecked.
 CRDS  : WARNING  Match Parameter  'BINAXIS2'  is unchecked.
 CRDS  : WARNING  Match tuple ('IR', 'ABCD', 'F098M', 'N/A', 'N/A') is an equal weight special case of ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'F098M', 'N/A', 'N/A')  requiring dynamic merging.
@@ -1115,108 +1116,108 @@ CRDS  : INFO     0 errors
 CRDS  : INFO     278 warnings
 CRDS  : INFO     31 infos
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_nicmos_0200.imap' (1/18) relative to context None
-CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_nicmos_0200.imap'
-CRDS  : DEBUG    Validating 'hst_nicmos_0200.imap'
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_nicmos_0250.imap' (1/18) relative to context None
+CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_nicmos_0250.imap'
+CRDS  : DEBUG    Validating 'hst_nicmos_0250.imap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_darkfile_0200.rmap' (2/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_darkfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_darkfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_darkfile_0250.rmap' (2/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_darkfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_darkfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_flatfile_0200.rmap' (3/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_flatfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_flatfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_flatfile_0250.rmap' (3/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_flatfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_flatfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_idctab_0200.rmap' (4/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_idctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_idctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_idctab_0250.rmap' (4/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_idctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_idctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_illmfile_0200.rmap' (5/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_illmfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_illmfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_illmfile_0250.rmap' (5/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_illmfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_illmfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_maskfile_0200.rmap' (6/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_maskfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_maskfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_maskfile_0250.rmap' (6/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_maskfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_maskfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_nlinfile_0200.rmap' (7/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_nlinfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_nlinfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_nlinfile_0250.rmap' (7/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_nlinfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_nlinfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_noisfile_0200.rmap' (8/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_noisfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_noisfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_noisfile_0250.rmap' (8/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_noisfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_noisfile_0250.rmap'
 CRDS  : WARNING  Match tuple ('1.0', 'FAST', '1.0') is an equal weight special case of ('1.0', 'FAST', '1.0|2.0|3.0|4.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('2.0', 'FAST', '1.0') is an equal weight special case of ('2.0', 'FAST', '1.0|2.0|3.0|4.0')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('3.0', 'FAST', '1.0') is an equal weight special case of ('3.0', 'FAST', '1.0|2.0|3.0|4.0')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_pedsbtab_0200.rmap' (9/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_pedsbtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_pedsbtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_pedsbtab_0250.rmap' (9/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_pedsbtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_pedsbtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_phottab_0200.rmap' (10/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_phottab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_phottab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_phottab_0250.rmap' (10/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_phottab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_phottab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_pmodfile_0200.rmap' (11/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_pmodfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_pmodfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_pmodfile_0250.rmap' (11/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_pmodfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_pmodfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_pmskfile_0200.rmap' (12/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_pmskfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_pmskfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_pmskfile_0250.rmap' (12/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_pmskfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_pmskfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_rnlcortb_0200.rmap' (13/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_rnlcortb_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_rnlcortb_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_rnlcortb_0250.rmap' (13/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_rnlcortb_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_rnlcortb_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_saacntab_0200.rmap' (14/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_saacntab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_saacntab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_saacntab_0250.rmap' (14/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_saacntab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_saacntab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_saadfile_0200.rmap' (15/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_saadfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_saadfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_saadfile_0250.rmap' (15/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_saadfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_saadfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_tdffile_0200.rmap' (16/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_tdffile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_tdffile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_tdffile_0250.rmap' (16/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_tdffile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_tdffile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_tempfile_0200.rmap' (17/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_tempfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_tempfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_tempfile_0250.rmap' (17/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_tempfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_tempfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_nicmos_zprattab_0200.rmap' (18/18) relative to context None
-CRDS  : DEBUG    Parsing 'hst_nicmos_zprattab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_nicmos_zprattab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_nicmos_zprattab_0250.rmap' (18/18) relative to context None
+CRDS  : DEBUG    Parsing 'hst_nicmos_zprattab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_nicmos_zprattab_0250.rmap'
 CRDS  : INFO     ########################################
 CRDS  : INFO     0 errors
 CRDS  : INFO     3 warnings
 CRDS  : INFO     37 infos
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfpc2_0200.imap' (1/11) relative to context None
-CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfpc2_0200.imap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_0200.imap'
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfpc2_0250.imap' (1/11) relative to context None
+CRDS  : DEBUG    Parsing '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfpc2_0250.imap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_0250.imap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_atodfile_0200.rmap' (2/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_atodfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_atodfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_atodfile_0250.rmap' (2/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_atodfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_atodfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_biasfile_0200.rmap' (3/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_biasfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_biasfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_biasfile_0250.rmap' (3/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_biasfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_biasfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_darkfile_0200.rmap' (4/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_darkfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_darkfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_darkfile_0250.rmap' (4/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_darkfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_darkfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_dgeofile_0200.rmap' (5/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_dgeofile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_dgeofile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_dgeofile_0250.rmap' (5/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_dgeofile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_dgeofile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_flatfile_0200.rmap' (6/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_flatfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_flatfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_flatfile_0250.rmap' (6/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_flatfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_flatfile_0250.rmap'
 CRDS  : WARNING  Match Parameter  'IMAGETYP'  is unchecked.
 CRDS  : WARNING  Match Parameter  'FILTNAM1'  is unchecked.
 CRDS  : WARNING  Match Parameter  'FILTNAM2'  is unchecked.
@@ -1243,25 +1244,25 @@ CRDS  : WARNING  Match tuple ('FULL', '34.0', '55.0', 'N/A', 'N/A', 'N/A', 'N/A'
 CRDS  : WARNING  Match tuple ('FULL', '4.0', '5.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '4.0', '5.0|7.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : WARNING  Match tuple ('FULL', '4.0', '7.0', 'N/A', 'N/A', 'N/A', 'N/A') is an equal weight special case of ('FULL', '4.0', '5.0|7.0', 'N/A', 'N/A', 'N/A', 'N/A')  requiring dynamic merging.
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_idctab_0200.rmap' (7/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_idctab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_idctab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_idctab_0250.rmap' (7/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_idctab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_idctab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_maskfile_0200.rmap' (8/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_maskfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_maskfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_maskfile_0250.rmap' (8/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_maskfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_maskfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_offtab_0200.rmap' (9/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_offtab_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_offtab_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_offtab_0250.rmap' (9/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_offtab_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_offtab_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_shadfile_0200.rmap' (10/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_shadfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_shadfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_shadfile_0250.rmap' (10/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_shadfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_shadfile_0250.rmap'
 CRDS  : INFO     ########################################
-CRDS  : INFO     Certifying 'hst_wfpc2_wf4tfile_0200.rmap' (11/11) relative to context None
-CRDS  : DEBUG    Parsing 'hst_wfpc2_wf4tfile_0200.rmap'
-CRDS  : DEBUG    Validating 'hst_wfpc2_wf4tfile_0200.rmap'
+CRDS  : INFO     Certifying 'hst_wfpc2_wf4tfile_0250.rmap' (11/11) relative to context None
+CRDS  : DEBUG    Parsing 'hst_wfpc2_wf4tfile_0250.rmap'
+CRDS  : DEBUG    Validating 'hst_wfpc2_wf4tfile_0250.rmap'
 CRDS  : INFO     ########################################
 CRDS  : INFO     0 errors
 CRDS  : INFO     25 warnings
@@ -1269,132 +1270,132 @@ CRDS  : INFO     23 infos
 ============================================================
 ==================== summary ===============================
 ============================================================
-CRDS  : INFO     Certifying 'hst_acs_atodtab_0200.rmap' (2/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_biasfile_0200.rmap' (3/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_bpixtab_0200.rmap' (4/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_ccdtab_0200.rmap' (5/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_cfltfile_0200.rmap' (6/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_crrejtab_0200.rmap' (7/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_d2imfile_0200.rmap' (8/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_darkfile_0200.rmap' (9/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_dgeofile_0200.rmap' (10/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_drkcfile_0200.rmap' (11/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_flshfile_0200.rmap' (12/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_idctab_0200.rmap' (13/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_imphttab_0200.rmap' (14/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_mdriztab_0200.rmap' (15/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_mlintab_0200.rmap' (16/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_npolfile_0200.rmap' (17/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_oscntab_0200.rmap' (18/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_pctetab_0200.rmap' (19/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_pfltfile_0200.rmap' (20/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_shadfile_0200.rmap' (21/22) relative to context None
-CRDS  : INFO     Certifying 'hst_acs_spottab_0200.rmap' (22/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_atodtab_0250.rmap' (2/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_biasfile_0250.rmap' (3/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_bpixtab_0250.rmap' (4/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_ccdtab_0250.rmap' (5/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_cfltfile_0250.rmap' (6/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_crrejtab_0250.rmap' (7/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_d2imfile_0250.rmap' (8/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_darkfile_0250.rmap' (9/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_dgeofile_0250.rmap' (10/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_drkcfile_0250.rmap' (11/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_flshfile_0250.rmap' (12/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_idctab_0250.rmap' (13/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_imphttab_0250.rmap' (14/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_mdriztab_0250.rmap' (15/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_mlintab_0250.rmap' (16/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_npolfile_0250.rmap' (17/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_oscntab_0250.rmap' (18/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_pctetab_0250.rmap' (19/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_pfltfile_0250.rmap' (20/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_shadfile_0250.rmap' (21/22) relative to context None
+CRDS  : INFO     Certifying 'hst_acs_spottab_0250.rmap' (22/22) relative to context None
 CRDS  : INFO     0 errors
-CRDS  : INFO     410 warnings
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_cos_0200.imap' (1/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_badttab_0200.rmap' (2/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_bpixtab_0200.rmap' (3/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_brftab_0200.rmap' (4/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_brsttab_0200.rmap' (5/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_deadtab_0200.rmap' (6/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_disptab_0200.rmap' (7/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_flatfile_0200.rmap' (8/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_fluxtab_0200.rmap' (9/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_geofile_0200.rmap' (10/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_gsagtab_0200.rmap' (11/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_hvtab_0200.rmap' (12/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_lamptab_0200.rmap' (13/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_phatab_0200.rmap' (14/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_spwcstab_0200.rmap' (15/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_tdstab_0200.rmap' (16/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_walktab_0200.rmap' (17/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_wcptab_0200.rmap' (18/19) relative to context None
-CRDS  : INFO     Certifying 'hst_cos_xtractab_0200.rmap' (19/19) relative to context None
+CRDS  : INFO     411 warnings
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_cos_0250.imap' (1/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_badttab_0250.rmap' (2/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_bpixtab_0250.rmap' (3/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_brftab_0250.rmap' (4/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_brsttab_0250.rmap' (5/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_deadtab_0250.rmap' (6/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_disptab_0250.rmap' (7/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_flatfile_0250.rmap' (8/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_fluxtab_0250.rmap' (9/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_geofile_0250.rmap' (10/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_gsagtab_0250.rmap' (11/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_hvtab_0250.rmap' (12/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_lamptab_0250.rmap' (13/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_phatab_0250.rmap' (14/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_spwcstab_0250.rmap' (15/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_tdstab_0250.rmap' (16/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_walktab_0250.rmap' (17/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_wcptab_0250.rmap' (18/19) relative to context None
+CRDS  : INFO     Certifying 'hst_cos_xtractab_0250.rmap' (19/19) relative to context None
 CRDS  : INFO     0 errors
 CRDS  : INFO     1 warnings
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_stis_0200.imap' (1/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_apdestab_0200.rmap' (2/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_apertab_0200.rmap' (3/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_biasfile_0200.rmap' (4/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_bpixtab_0200.rmap' (5/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_ccdtab_0200.rmap' (6/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_cdstab_0200.rmap' (7/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_crrejtab_0200.rmap' (8/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_darkfile_0200.rmap' (9/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_disptab_0200.rmap' (10/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_echsctab_0200.rmap' (11/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_exstab_0200.rmap' (12/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_gactab_0200.rmap' (13/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_halotab_0200.rmap' (14/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_idctab_0200.rmap' (15/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_imphttab_0200.rmap' (16/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_inangtab_0200.rmap' (17/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_lamptab_0200.rmap' (18/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_lfltfile_0200.rmap' (19/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_mlintab_0200.rmap' (20/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_mofftab_0200.rmap' (21/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_pctab_0200.rmap' (22/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_pfltfile_0200.rmap' (23/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_phottab_0200.rmap' (24/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_riptab_0200.rmap' (25/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_sdctab_0200.rmap' (26/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_sptrctab_0200.rmap' (27/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_srwtab_0200.rmap' (28/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_tdctab_0200.rmap' (29/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_tdstab_0200.rmap' (30/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_teltab_0200.rmap' (31/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_wcptab_0200.rmap' (32/33) relative to context None
-CRDS  : INFO     Certifying 'hst_stis_xtractab_0200.rmap' (33/33) relative to context None
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_stis_0250.imap' (1/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_apdestab_0250.rmap' (2/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_apertab_0250.rmap' (3/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_biasfile_0250.rmap' (4/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_bpixtab_0250.rmap' (5/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_ccdtab_0250.rmap' (6/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_cdstab_0250.rmap' (7/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_crrejtab_0250.rmap' (8/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_darkfile_0250.rmap' (9/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_disptab_0250.rmap' (10/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_echsctab_0250.rmap' (11/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_exstab_0250.rmap' (12/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_gactab_0250.rmap' (13/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_halotab_0250.rmap' (14/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_idctab_0250.rmap' (15/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_imphttab_0250.rmap' (16/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_inangtab_0250.rmap' (17/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_lamptab_0250.rmap' (18/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_lfltfile_0250.rmap' (19/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_mlintab_0250.rmap' (20/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_mofftab_0250.rmap' (21/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_pctab_0250.rmap' (22/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_pfltfile_0250.rmap' (23/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_phottab_0250.rmap' (24/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_riptab_0250.rmap' (25/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_sdctab_0250.rmap' (26/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_sptrctab_0250.rmap' (27/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_srwtab_0250.rmap' (28/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_tdctab_0250.rmap' (29/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_tdstab_0250.rmap' (30/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_teltab_0250.rmap' (31/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_wcptab_0250.rmap' (32/33) relative to context None
+CRDS  : INFO     Certifying 'hst_stis_xtractab_0250.rmap' (33/33) relative to context None
 CRDS  : INFO     0 errors
 CRDS  : INFO     52 warnings
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfc3_0200.imap' (1/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_atodtab_0200.rmap' (2/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_biasfile_0200.rmap' (3/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_bpixtab_0200.rmap' (4/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_ccdtab_0200.rmap' (5/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_crrejtab_0200.rmap' (6/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_d2imfile_0200.rmap' (7/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_darkfile_0200.rmap' (8/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_flshfile_0200.rmap' (9/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_idctab_0200.rmap' (10/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_imphttab_0200.rmap' (11/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_mdriztab_0200.rmap' (12/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_nlinfile_0200.rmap' (13/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_oscntab_0200.rmap' (14/15) relative to context None
-CRDS  : INFO     Certifying 'hst_wfc3_pfltfile_0200.rmap' (15/15) relative to context None
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfc3_0250.imap' (1/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_atodtab_0250.rmap' (2/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_biasfile_0250.rmap' (3/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_bpixtab_0250.rmap' (4/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_ccdtab_0250.rmap' (5/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_crrejtab_0250.rmap' (6/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_d2imfile_0250.rmap' (7/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_darkfile_0250.rmap' (8/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_flshfile_0250.rmap' (9/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_idctab_0250.rmap' (10/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_imphttab_0250.rmap' (11/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_mdriztab_0250.rmap' (12/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_nlinfile_0250.rmap' (13/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_oscntab_0250.rmap' (14/15) relative to context None
+CRDS  : INFO     Certifying 'hst_wfc3_pfltfile_0250.rmap' (15/15) relative to context None
 CRDS  : INFO     0 errors
 CRDS  : INFO     278 warnings
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_nicmos_0200.imap' (1/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_darkfile_0200.rmap' (2/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_flatfile_0200.rmap' (3/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_idctab_0200.rmap' (4/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_illmfile_0200.rmap' (5/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_maskfile_0200.rmap' (6/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_nlinfile_0200.rmap' (7/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_noisfile_0200.rmap' (8/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_pedsbtab_0200.rmap' (9/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_phottab_0200.rmap' (10/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_pmodfile_0200.rmap' (11/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_pmskfile_0200.rmap' (12/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_rnlcortb_0200.rmap' (13/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_saacntab_0200.rmap' (14/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_saadfile_0200.rmap' (15/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_tdffile_0200.rmap' (16/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_tempfile_0200.rmap' (17/18) relative to context None
-CRDS  : INFO     Certifying 'hst_nicmos_zprattab_0200.rmap' (18/18) relative to context None
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_nicmos_0250.imap' (1/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_darkfile_0250.rmap' (2/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_flatfile_0250.rmap' (3/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_idctab_0250.rmap' (4/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_illmfile_0250.rmap' (5/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_maskfile_0250.rmap' (6/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_nlinfile_0250.rmap' (7/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_noisfile_0250.rmap' (8/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_pedsbtab_0250.rmap' (9/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_phottab_0250.rmap' (10/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_pmodfile_0250.rmap' (11/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_pmskfile_0250.rmap' (12/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_rnlcortb_0250.rmap' (13/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_saacntab_0250.rmap' (14/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_saadfile_0250.rmap' (15/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_tdffile_0250.rmap' (16/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_tempfile_0250.rmap' (17/18) relative to context None
+CRDS  : INFO     Certifying 'hst_nicmos_zprattab_0250.rmap' (18/18) relative to context None
 CRDS  : INFO     0 errors
 CRDS  : INFO     3 warnings
-CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfpc2_0200.imap' (1/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_atodfile_0200.rmap' (2/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_biasfile_0200.rmap' (3/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_darkfile_0200.rmap' (4/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_dgeofile_0200.rmap' (5/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_flatfile_0200.rmap' (6/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_idctab_0200.rmap' (7/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_maskfile_0200.rmap' (8/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_offtab_0200.rmap' (9/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_shadfile_0200.rmap' (10/11) relative to context None
-CRDS  : INFO     Certifying 'hst_wfpc2_wf4tfile_0200.rmap' (11/11) relative to context None
+CRDS  : INFO     Certifying '/Users/jmiller/work/normal/lib/python2.7/site-packages/crds/cache/mappings/hst/hst_wfpc2_0250.imap' (1/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_atodfile_0250.rmap' (2/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_biasfile_0250.rmap' (3/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_darkfile_0250.rmap' (4/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_dgeofile_0250.rmap' (5/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_flatfile_0250.rmap' (6/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_idctab_0250.rmap' (7/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_maskfile_0250.rmap' (8/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_offtab_0250.rmap' (9/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_shadfile_0250.rmap' (10/11) relative to context None
+CRDS  : INFO     Certifying 'hst_wfpc2_wf4tfile_0250.rmap' (11/11) relative to context None
 CRDS  : INFO     0 errors
 CRDS  : INFO     25 warnings

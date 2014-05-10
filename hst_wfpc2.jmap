@@ -1,0 +1,36 @@
+header = {
+    'derived_from' : 'generated 2014-05-09 21:11:48.003018',
+    'expansion_rules' : {
+    },
+    'instrument' : 'WFPC2',
+    'mapping' : 'META',
+    'name' : 'hst_wfpc2.jmap',
+    'observatory' : 'HST',
+    'parkey' : ('REFTYPE',),
+    'sha1sum' : '1794110846d2ca5ac69cb0f145d7a02f15fb3de5',
+    'typenames' : {
+        'atodfile' : ('a2d', 'a2d'),
+        'biasfile' : ('bas', 'bas'),
+        'darkfile' : ('drk', 'drk'),
+        'dgeofile' : ('dxy', 'distortion correction'),
+        'flatfile' : ('flt', 'flt'),
+        'idctab' : ('idc', 'distortion coefficients'),
+        'maskfile' : ('msk', 'msk'),
+        'offtab' : ('off', 'chip offset'),
+        'shadfile' : ('shd', 'shd'),
+        'wf4tfile' : ('w4t', 'w4t'),
+    },
+}
+
+selector = {
+    'atodfile' : ('wp2_a2d.tpn', 'wp2_a2d_ld.tpn'),
+    'biasfile' : ('wp2_bas.tpn', 'wp2_bas_ld.tpn'),
+    'darkfile' : ('wp2_drk.tpn', 'wp2_drk_ld.tpn'),
+    'dgeofile' : ('wp2_dxy.tpn', 'wp2_dxy_ld.tpn'),
+    'flatfile' : ('wp2_flt.tpn', 'wp2_flt_ld.tpn'),
+    'idctab' : ('wp2_idc.tpn', 'wp2_idc_ld.tpn'),
+    'maskfile' : ('wp2_msk.tpn', 'wp2_msk_ld.tpn'),
+    'offtab' : ('wp2_off.tpn', 'wp2_off_ld.tpn'),
+    'shadfile' : ('wp2_shd.tpn', 'wp2_shd_ld.tpn'),
+    'wf4tfile' : ('wp2_w4t.tpn', 'wp2_w4t_ld.tpn'),
+}

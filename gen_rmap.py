@@ -77,6 +77,10 @@ def gen_row_dicts(instrument, kind, condition=True):
     assigned the value "N/A" in all match tuples.
     """
     db_parkeys = list(parkeys.get_db_parkeys(instrument, kind))
+    # rptcorr is the only keyword in it's class, required for relevance,  not in reffile_ops
+    # discovered late in testing
+    if "rptcorr" in db_parkeys:
+        db_parkeys.remove("rptcorr")
     extra_parkeys = list(parkeys.get_extra_keys(instrument, kind))
     reftype = parkeys.get_reftype(instrument, kind)
     row_table = cdbs_db.get_row_table(instrument)
@@ -383,7 +387,11 @@ def get_match_tuple(row, instrument, filekind):
     # Construct a simple match tuple (no names) in the right order.
     match = []
     for pkey in db_parkeys + extra_parkeys:
-        match.append(restricted[pkey])
+        try:
+            match.append(restricted[pkey])
+        except KeyError:
+            match.append("N/A")
+            log.warning("Adding parkey", repr(pkey), "as N/A for", instrument, filekind)
     return tuple(match)
 
 def apply_restrictions(row, instrument, filekind):

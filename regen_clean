@@ -31,6 +31,8 @@ rm -f ../datasets/*.pkl  opus_bestrefs.err
 echo ">>>>>>> Dumping catalog datasets" >/dev/stderr
 (python db_test.py dumpall $context;)
 
+exit 0
+
 # Run first round comparison tests to CDBS on all HST datasets.
 echo ">>>>>>> Testing all datasets" > /dev/stderr
 ./testall ${context} >& testall.err.1
