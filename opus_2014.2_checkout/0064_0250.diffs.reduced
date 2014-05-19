@@ -1,0 +1,184 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+XXXXX COS FLUXTAB files rejected in CDBS dropped by regeneration,  Mark Bad?
+
+CRDS  : WARNING  Deletion at ('hst_cos_fluxtab_0250.rmap', ('FUV', 'SPECTROSCOPIC', '-1.0|1.0'), ('2009-05-11', '00:00:00')) deleted terminal 'u8k1433ql_phot.fits'
+CRDS  : WARNING  Deletion at ('hst_cos_fluxtab_0250.rmap', ('FUV', 'SPECTROSCOPIC', '-1.0|1.0'), ('2009-05-11', '00:00:01')) deleted terminal 'x1v17416l_phot.fits'
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+XXXXX Missing change not in CRDS regeneration info.
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_stis_0011.imap', 'hst_stis_0250.imap'), ('hst_stis_apdestab_0001.rmap', 'hst_stis_apdestab_0250.rmap'), 'header replaced \'rmap_relevance\' = \'(OBSTYPE=="SPECTROSCOPIC")\' with \'always\'')
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+XXXXX Uknown change to rmap relevance  FLASHCUR != 'NONE'  --> FLASHCUR != 'OFF',  250-series disagrees with both test and ops
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_flshfile_0002.rmap', 'hst_wfc3_flshfile_0250.rmap'), 'header replaced \'rmap_relevance\' = \'((DETECTOR == "UVIS") and (FLASHCUR !=  "NONE") and (FLSHCORR != "OMIT"))\' with 
+                                                                                                                                                                                         \'((DETECTOR == "UVIS" and FLASHCUR != "OFF") and (FLSHCORR != "OMIT"))\'')
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+XXXXX Files rejected in CDBS dropped by CRDS 250-series rules regeneration,  no change required
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0003.rmap', 'hst_cos_fluxtab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '-1.0|1.0'), ('2009-05-11', '00:00:00'), 'deleted terminal u8k1433ql_phot.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0003.rmap', 'hst_cos_fluxtab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '-1.0|1.0'), ('2009-05-11', '00:00:01'), 'deleted terminal x1v17416l_phot.fits')
+
+==================================================================================================================================================================================================================================================
+
+Changes from here down are expected:
+
+==================================================================================================================================================================================================================================================
+
+ACS BIASFILE standardize on NAXIS1, NAXIS2 vs. NUMCOLS, NUMROWS   OPUS 2014.2 fix
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_acs_0014.imap', 'hst_acs_0250.imap'), ('hst_acs_biasfile_0011.rmap', 'hst_acs_biasfile_0250.rmap'), 'different parameter lists  (DETECTOR, CCDAMP, CCDGAIN, APERTURE, NUMCOLS, NUMROWS, LTV1, LTV2, XCORNER, YCORNER, CCDCHIP) : (DETECTOR, CCDAMP, CCDGAIN, APERTURE, NAXIS1, NAXIS2, LTV1, LTV2, XCORNER, YCORNER, CCDCHIP)')
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_acs_0014.imap', 'hst_acs_0250.imap'), ('hst_acs_biasfile_0011.rmap', 'hst_acs_biasfile_0250.rmap'), "header replaced 'parkey' = (('DETECTOR', 'CCDAMP', 'CCDGAIN', 'APERTURE', 'NUMCOLS', 'NUMROWS', 'LTV1', 'LTV2', 'XCORNER', 'YCORNER', 'CCDCHIP'), ('DATE-OBS', 'TIME-OBS')) with (('DETECTOR', 'CCDAMP', 'CCDGAIN', 'APERTURE', 'NAXIS1', 'NAXIS2', 'LTV1', 'LTV2', 'XCORNER', 'YCORNER', 'CCDCHIP'), ('DATE-OBS', 'TIME-OBS'))")
+
+CRDS  : WARNING  Different lookup parameters ('hst_acs_biasfile_0250.rmap',) different parameter lists  ('DETECTOR', 'CCDAMP', 'CCDGAIN', 'APERTURE', 'NUMCOLS', 'NUMROWS', 'LTV1', 'LTV2', 'XCORNER', 'YCORNER', 'CCDCHIP') : ('DETECTOR', 'CCDAMP', 'CCDGAIN', 'APERTURE', 'NAXIS1', 'NAXIS2', 'LTV1', 'LTV2', 'XCORNER', 'YCORNER', 'CCDCHIP')
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Explicit hook versioned functions,  ACS BIASFILE hook update,  OPUS 2014.2 fix
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_acs_0014.imap', 'hst_acs_0250.imap'), ('hst_acs_biasfile_0011.rmap', 'hst_acs_biasfile_0250.rmap'), "header added 'hooks' = {'fallback_header': 'fallback_header_acs_biasfile_v2', 'precondition_header': 'precondition_header_acs_biasfile_v2'}")
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_biasfile.rmap', 'hst_wfc3_biasfile_0250.rmap'), "header added 'hooks' = {'precondition_header': 'precondition_header_wfc3_biasfile_v1'}")
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), "header added 'hooks' = {'fallback_header': 'fallback_header_wfpc2_flatfile_v1'}")
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ACS CRREJTAB add support for RPTCORR   OPUS 2014.2 fix
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_acs_0014.imap', 'hst_acs_0250.imap'), ('hst_acs_crrejtab.rmap', 'hst_acs_crrejtab_0250.rmap'), 'different parameter lists  (DETECTOR,) : (DETECTOR, RPTCORR)')
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_acs_0014.imap', 'hst_acs_0250.imap'), ('hst_acs_crrejtab.rmap', 'hst_acs_crrejtab_0250.rmap'), "header added 'extra_keys' = ('RPTCORR',)")
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_acs_0014.imap', 'hst_acs_0250.imap'), ('hst_acs_crrejtab.rmap', 'hst_acs_crrejtab_0250.rmap'), "header replaced 'parkey' = (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')) with (('DETECTOR', 'RPTCORR'), ('DATE-OBS', 'TIME-OBS'))")
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_acs_0014.imap', 'hst_acs_0250.imap'), ('hst_acs_crrejtab.rmap', 'hst_acs_crrejtab_0250.rmap'), 'header replaced \'rmap_relevance\' = \'((DETECTOR != "SBC") and (CRCORR != "OMIT"))\' with \'((DETECTOR != "SBC") and ((CRCORR != "OMIT") or (RPTCORR != "OMIT")))\'')
+
+CRDS  : WARNING  Different lookup parameters ('hst_acs_crrejtab_0250.rmap',) different parameter lists  ('DETECTOR',) : ('DETECTOR', 'RPTCORR')
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+COS XTRACTAB replace N/A LIFE_ADJ with 0.0 CDBS PR # 77586
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_xtractab.rmap', 'hst_cos_xtractab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '0.0'), ('1996-10-01', '00:00:00'), 'added Match rule for s7g17006l_1dx.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_xtractab.rmap', 'hst_cos_xtractab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '0.0'), ('2006-10-01', '00:00:00'), 'added Match rule for s7g17007l_1dx.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_xtractab.rmap', 'hst_cos_xtractab_0250.rmap'), ('NUV', 'SPECTROSCOPIC', '0.0'), ('1996-10-01', '00:00:00'), 'added Match rule for s7g1700nl_1dx.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_xtractab.rmap', 'hst_cos_xtractab_0250.rmap'), ('NUV', 'SPECTROSCOPIC', '0.0'), ('2006-10-01', '00:00:00'), 'added Match rule for s7g1700ol_1dx.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_xtractab.rmap', 'hst_cos_xtractab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', 'N/A'), ('1996-10-01', '00:00:00'), 'deleted Match rule for s7g17006l_1dx.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_xtractab.rmap', 'hst_cos_xtractab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', 'N/A'), ('2006-10-01', '00:00:00'), 'deleted Match rule for s7g17007l_1dx.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_xtractab.rmap', 'hst_cos_xtractab_0250.rmap'), ('NUV', 'SPECTROSCOPIC', 'N/A'), ('1996-10-01', '00:00:00'), 'deleted Match rule for s7g1700nl_1dx.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_cos_0015.imap', 'hst_cos_0250.imap'), ('hst_cos_xtractab.rmap', 'hst_cos_xtractab_0250.rmap'), ('NUV', 'SPECTROSCOPIC', 'N/A'), ('2006-10-01', '00:00:00'), 'deleted Match rule for s7g1700ol_1dx.fits')
+
+CRDS  : WARNING  Rule change at ('hst_cos_xtractab_0250.rmap', ('FUV', 'SPECTROSCOPIC', '0.0'), ('1996-10-01', '00:00:00')) added Match rule for 's7g17006l_1dx.fits'
+CRDS  : WARNING  Rule change at ('hst_cos_xtractab_0250.rmap', ('FUV', 'SPECTROSCOPIC', '0.0'), ('2006-10-01', '00:00:00')) added Match rule for 's7g17007l_1dx.fits'
+CRDS  : WARNING  Rule change at ('hst_cos_xtractab_0250.rmap', ('NUV', 'SPECTROSCOPIC', '0.0'), ('1996-10-01', '00:00:00')) added Match rule for 's7g1700nl_1dx.fits'
+CRDS  : WARNING  Rule change at ('hst_cos_xtractab_0250.rmap', ('NUV', 'SPECTROSCOPIC', '0.0'), ('2006-10-01', '00:00:00')) added Match rule for 's7g1700ol_1dx.fits'
+CRDS  : WARNING  Rule change at ('hst_cos_xtractab_0250.rmap', ('FUV', 'SPECTROSCOPIC', 'N/A'), ('1996-10-01', '00:00:00')) deleted Match rule for 's7g17006l_1dx.fits'
+CRDS  : WARNING  Rule change at ('hst_cos_xtractab_0250.rmap', ('FUV', 'SPECTROSCOPIC', 'N/A'), ('2006-10-01', '00:00:00')) deleted Match rule for 's7g17007l_1dx.fits'
+CRDS  : WARNING  Rule change at ('hst_cos_xtractab_0250.rmap', ('NUV', 'SPECTROSCOPIC', 'N/A'), ('1996-10-01', '00:00:00')) deleted Match rule for 's7g1700nl_1dx.fits'
+CRDS  : WARNING  Rule change at ('hst_cos_xtractab_0250.rmap', ('NUV', 'SPECTROSCOPIC', 'N/A'), ('2006-10-01', '00:00:00')) deleted Match rule for 's7g1700ol_1dx.fits'
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+WFC3 DARKFILE Removed '' as implicily 'N/A' in CRDS value conditioning.  Regenerated rmaps with SUBTYPE='' --> SUBTYPE='N/A'
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'ENG0', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau2033ti_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'ENG0', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau2033ti_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'NONE', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20340i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'NONE', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20340i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'RAPID', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20341i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'RAPID', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20341i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS100', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20342i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS100', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20342i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS200', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20343i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS200', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20343i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS25', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20344i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS25', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20344i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS350', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20345i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS350', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20345i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS50', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20346i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS50', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20346i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP100', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20347i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP100', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20347i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP200', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20348i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP200', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20348i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP25', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau20349i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP25', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau20349i_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP400', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau2034ai_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP400', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau2034ai_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP50', ''), ('2001-01-01', '00:00:00'), 'deleted Match rule for nau2034bi_drk.fits')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfc3_0024.imap', 'hst_wfc3_0250.imap'), ('hst_wfc3_darkfile_0024.rmap', 'hst_wfc3_darkfile_0250.rmap'), ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP50', 'N/A'), ('2001-01-01', '00:00:00'), 'added Match rule for nau2034bi_drk.fits')
+
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'ENG0', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau2033ti_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'NONE', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20340i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'RAPID', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20341i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS100', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20342i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS200', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20343i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS25', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20344i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS350', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20345i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS50', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20346i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP100', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20347i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP200', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20348i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP25', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau20349i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP400', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau2034ai_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP50', 'N/A'), ('2001-01-01', '00:00:00')) added Match rule for 'nau2034bi_drk.fits'
+
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'ENG0', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau2033ti_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'NONE', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20340i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'RAPID', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20341i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS100', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20342i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS200', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20343i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS25', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20344i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS350', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20345i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'SPARS50', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20346i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP100', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20347i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP200', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20348i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP25', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau20349i_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP400', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau2034ai_drk.fits'
+CRDS  : WARNING  Rule change at ('hst_wfc3_darkfile_0250.rmap', ('IR', 'A|AB|ABC|ABCD|ABD|AC|ACD|AD|B|BC|BCD|BD|C|CD|D', 'N/A', 'N/A', '2.0|2.5|3.0|4.0', 'STEP50', ''), ('2001-01-01', '00:00:00')) deleted Match rule for 'nau2034bi_drk.fits'
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+WFPC2 special case handling fix, OPUS 2014.2
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', '*', 'FR*', '# >3000 AND <=4200 #'), ('1990-01-01', '00:00:00'), 'added Match rule for m3c10045u.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', '*', 'FR*', '# >4200 AND <=5800 #'), ('1990-01-01', '00:00:00'), 'added Match rule for m3c1004fu.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', '*', 'FR*', '# >5800 AND <=7600 #'), ('1990-01-01', '00:00:00'), 'added Match rule for m3c1004nu.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', '*', 'FR*', '# >7600 AND <=10000 #'), ('1990-01-01', '00:00:00'), 'added Match rule for m3c10052u.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*', '*', '# >3000 AND <=4200 #'), ('1990-01-01', '00:00:00'), 'added Match rule for m3c10045u.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*', '*', '# >4200 AND <=5800 #'), ('1990-01-01', '00:00:00'), 'added Match rule for m3c1004fu.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*', '*', '# >5800 AND <=7600 #'), ('1990-01-01', '00:00:00'), 'added Match rule for m3c1004nu.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*', '*', '# >7600 AND <=10000 #'), ('1990-01-01', '00:00:00'), 'added Match rule for m3c10052u.r4h')
+
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*', 'NONE', '# >3000 AND <=4200 #'), ('1990-01-01', '00:00:00'), 'deleted Match rule for m3c10045u.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*', 'NONE', '# >4200 AND <=5800 #'), ('1990-01-01', '00:00:00'), 'deleted Match rule for m3c1004fu.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*', 'NONE', '# >5800 AND <=7600 #'), ('1990-01-01', '00:00:00'), 'deleted Match rule for m3c1004nu.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*', 'NONE', '# >7600 AND <=10000 #'), ('1990-01-01', '00:00:00'), 'deleted Match rule for m3c10052u.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*|NONE', 'FR*', '# >3000 AND <=4200 #'), ('1990-01-01', '00:00:00'), 'deleted Match rule for m3c10045u.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*|NONE', 'FR*', '# >4200 AND <=5800 #'), ('1990-01-01', '00:00:00'), 'deleted Match rule for m3c1004fu.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*|NONE', 'FR*', '# >5800 AND <=7600 #'), ('1990-01-01', '00:00:00'), 'deleted Match rule for m3c1004nu.r4h')
+(('hst_0064.pmap', 'hst_0250.pmap'), ('hst_wfpc2.imap', 'hst_wfpc2_0250.imap'), ('hst_wfpc2_flatfile.rmap', 'hst_wfpc2_flatfile_0250.rmap'), ('*', '*', '*', 'EXT', 'FR*|NONE', 'FR*', '# >7600 AND <=10000 #'), ('1990-01-01', '00:00:00'), 'deleted Match rule for m3c10052u.r4h')
+
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', '*', 'FR*', '# >3000 AND <=4200 #'), ('1990-01-01', '00:00:00')) added Match rule for 'm3c10045u.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', '*', 'FR*', '# >4200 AND <=5800 #'), ('1990-01-01', '00:00:00')) added Match rule for 'm3c1004fu.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', '*', 'FR*', '# >5800 AND <=7600 #'), ('1990-01-01', '00:00:00')) added Match rule for 'm3c1004nu.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', '*', 'FR*', '# >7600 AND <=10000 #'), ('1990-01-01', '00:00:00')) added Match rule for 'm3c10052u.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*', '*', '# >3000 AND <=4200 #'), ('1990-01-01', '00:00:00')) added Match rule for 'm3c10045u.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*', '*', '# >4200 AND <=5800 #'), ('1990-01-01', '00:00:00')) added Match rule for 'm3c1004fu.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*', '*', '# >5800 AND <=7600 #'), ('1990-01-01', '00:00:00')) added Match rule for 'm3c1004nu.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*', '*', '# >7600 AND <=10000 #'), ('1990-01-01', '00:00:00')) added Match rule for 'm3c10052u.r4h'
+
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*', 'NONE', '# >3000 AND <=4200 #'), ('1990-01-01', '00:00:00')) deleted Match rule for 'm3c10045u.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*', 'NONE', '# >4200 AND <=5800 #'), ('1990-01-01', '00:00:00')) deleted Match rule for 'm3c1004fu.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*', 'NONE', '# >5800 AND <=7600 #'), ('1990-01-01', '00:00:00')) deleted Match rule for 'm3c1004nu.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*', 'NONE', '# >7600 AND <=10000 #'), ('1990-01-01', '00:00:00')) deleted Match rule for 'm3c10052u.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*|NONE', 'FR*', '# >3000 AND <=4200 #'), ('1990-01-01', '00:00:00')) deleted Match rule for 'm3c10045u.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*|NONE', 'FR*', '# >4200 AND <=5800 #'), ('1990-01-01', '00:00:00')) deleted Match rule for 'm3c1004fu.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*|NONE', 'FR*', '# >5800 AND <=7600 #'), ('1990-01-01', '00:00:00')) deleted Match rule for 'm3c1004nu.r4h'
+CRDS  : WARNING  Rule change at ('hst_wfpc2_flatfile_0250.rmap', ('*', '*', '*', 'EXT', 'FR*|NONE', 'FR*', '# >7600 AND <=10000 #'), ('1990-01-01', '00:00:00')) deleted Match rule for 'm3c10052u.r4h'
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+

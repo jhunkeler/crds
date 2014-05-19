@@ -1,0 +1,9 @@
+(('hst_0218.pmap', 'hst_0252.pmap'), ('hst_cos_0202.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0202.rmap', 'hst_cos_fluxtab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:00'), 'deleted terminal u8k1433ql_phot.fits')
+(('hst_0218.pmap', 'hst_0252.pmap'), ('hst_cos_0202.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0202.rmap', 'hst_cos_fluxtab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:01'), 'deleted terminal x1v17416l_phot.fits')
+(('hst_0218.pmap', 'hst_0252.pmap'), ('hst_cos_0202.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0202.rmap', 'hst_cos_fluxtab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:02'), 'deleted terminal x6q17587l_phot.fits')
+(('hst_0218.pmap', 'hst_0252.pmap'), ('hst_cos_0202.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0202.rmap', 'hst_cos_fluxtab_0250.rmap'), ('NUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:00'), 'deleted terminal t9h1220sl_phot.fits')
+
+(('hst_0218.pmap', 'hst_0252.pmap'), ('hst_stis_0201.imap', 'hst_stis_0251.imap'), ('hst_stis_apdestab_0200.rmap', 'hst_stis_apdestab_0251.rmap'), 'header replaced \'rmap_relevance\' = \'always\' with \'(OBSTYPE=="SPECTROSCOPIC")\'')
+
+(('hst_0218.pmap', 'hst_0252.pmap'), ('hst_wfc3_0211.imap', 'hst_wfc3_0251.imap'), ('hst_wfc3_flshfile_0201.rmap', 'hst_wfc3_flshfile_0251.rmap'), 'header replaced \'rmap_relevance\' = \'((DETECTOR == "UVIS" and FLASHCUR != "OFF") and (FLSHCORR != "OMIT"))\' with \'((DETECTOR == "UVIS" and FLASHCUR != "ZERO") and (FLSHCORR != "OMIT"))\'')
+

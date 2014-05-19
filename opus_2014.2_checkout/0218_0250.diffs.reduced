@@ -1,0 +1,14 @@
+(('hst_0218.pmap', 'hst_0250.pmap'), ('acs',), 'replaced hst_acs_0203.imap with hst_acs_0250.imap')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('cos',), 'replaced hst_cos_0202.imap with hst_cos_0250.imap')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('hst_cos_0202.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0202.rmap', 'hst_cos_fluxtab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:00'), 'deleted terminal u8k1433ql_phot.fits')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('hst_cos_0202.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0202.rmap', 'hst_cos_fluxtab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:01'), 'deleted terminal x1v17416l_phot.fits')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('hst_cos_0202.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0202.rmap', 'hst_cos_fluxtab_0250.rmap'), ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:02'), 'deleted terminal x6q17587l_phot.fits')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('hst_cos_0202.imap', 'hst_cos_0250.imap'), ('hst_cos_fluxtab_0202.rmap', 'hst_cos_fluxtab_0250.rmap'), ('NUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:00'), 'deleted terminal t9h1220sl_phot.fits')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('nicmos',), 'replaced hst_nicmos_0200.imap with hst_nicmos_0250.imap')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('stis',), 'replaced hst_stis_0201.imap with hst_stis_0250.imap')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('wfc3',), 'replaced hst_wfc3_0211.imap with hst_wfc3_0250.imap')
+(('hst_0218.pmap', 'hst_0250.pmap'), ('wfpc2',), 'replaced hst_wfpc2_0201.imap with hst_wfpc2_0250.imap')
+CRDS  : WARNING  Deletion at ('hst_cos_fluxtab_0250.rmap', ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:00')) deleted terminal 'u8k1433ql_phot.fits'
+CRDS  : WARNING  Deletion at ('hst_cos_fluxtab_0250.rmap', ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:01')) deleted terminal 'x1v17416l_phot.fits'
+CRDS  : WARNING  Deletion at ('hst_cos_fluxtab_0250.rmap', ('FUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:02')) deleted terminal 'x6q17587l_phot.fits'
+CRDS  : WARNING  Deletion at ('hst_cos_fluxtab_0250.rmap', ('NUV', 'SPECTROSCOPIC', '0.0'), ('2009-05-11', '00:00:00')) deleted terminal 't9h1220sl_phot.fits'
