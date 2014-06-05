@@ -40,6 +40,8 @@ def generate_all_rmaps(instrument, serial=-1):
 def generate_rmap(instrument, filekind, serial=-1):
     log.info("Processing", instrument, filekind)
     row_dicts = get_row_dicts(instrument, filekind, condition=False)
+    if row_dicts is None:
+        row_dicts = []
     if not row_dicts and filekind not in sys.argv: 
         log.warning("No rows for",instrument,filekind)
         return # suppress empty filekinds unless explicitly requested
