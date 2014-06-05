@@ -1,5 +1,5 @@
 header = {
-    'derived_from' : 'generated 2014-05-09 21:11:48.003018',
+    'derived_from' : 'generated 2014-06-05 10:13:44.319540',
     'expansion_rules' : {
     },
     'instrument' : 'NICMOS',
@@ -7,7 +7,7 @@ header = {
     'name' : 'hst_nicmos.jmap',
     'observatory' : 'HST',
     'parkey' : ('REFTYPE',),
-    'sha1sum' : '920fef6ae4dc5b57cdf7fdb0115a3995634f09fe',
+    'sha1sum' : 'f3142bae11516f5feb4dd2f47e08257ba66c60ae',
     'typenames' : {
         'backtab' : ('bkg', 'bkg'),
         'darkfile' : ('drk', 'drk'),

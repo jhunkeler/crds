@@ -1,5 +1,5 @@
 header = {
-    'derived_from' : 'generated 2014-05-09 21:11:48.003018',
+    'derived_from' : 'generated 2014-06-05 10:13:44.319540',
     'expansion_rules' : {
         'LIFE_ADJ' : {
             "LIFE_ADJ=='-11'" : '-1.0|1.0',
@@ -15,7 +15,7 @@ header = {
     'name' : 'hst_cos.jmap',
     'observatory' : 'HST',
     'parkey' : ('REFTYPE',),
-    'sha1sum' : '38408562f025d3860e7aaf14e3fe829515e737c8',
+    'sha1sum' : 'f1c501f7fb92bb6ff8740a6d388609a2140c22b8',
     'typenames' : {
         'badttab' : ('badt', 'bad time intervals table'),
         'bpixtab' : ('bpix', 'data quality initialization table'),

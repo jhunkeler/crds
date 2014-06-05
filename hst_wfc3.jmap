@@ -1,5 +1,5 @@
 header = {
-    'derived_from' : 'generated 2014-05-09 21:11:48.003018',
+    'derived_from' : 'generated 2014-06-05 10:13:44.319540',
     'expansion_rules' : {
         'APERTURE' : {
             "DETECTOR=='UVIS' and BINAXIS1=='1' and BINAXIS2=='1' and APERTURE=='CHIP1_SUB_NOCORNERS'" : 'UVIS1-2K4-SUB|UVIS1-M512-SUB',
@@ -37,7 +37,7 @@ header = {
     'name' : 'hst_wfc3.jmap',
     'observatory' : 'HST',
     'parkey' : ('REFTYPE',),
-    'sha1sum' : 'c53794734dc75bca90fd3e3b013a385ff1950df6',
+    'sha1sum' : '370860136636487a06996a07de18b5ed7fad38cd',
     'typenames' : {
         'atodtab' : ('a2d', 'analog-to-digital'),
         'biasfile' : ('bia', 'bias'),
@@ -53,6 +53,7 @@ header = {
         'lfltfile' : ('lfl', 'large scale flat'),
         'mdriztab' : ('mdz', 'multidrizzle parameters'),
         'nlinfile' : ('lin', 'linearity coefficients'),
+        'npolfile' : ('npl', 'dxy grid'),
         'oscntab' : ('osc', 'overscan'),
         'pfltfile' : ('pfl', 'pixel-to-pixel flat'),
         'shadfile' : ('shd', 'shutter shading'),
@@ -74,6 +75,7 @@ selector = {
     'lfltfile' : ('wfc3_lfl.tpn', 'wfc3_lfl_ld.tpn'),
     'mdriztab' : ('wfc3_mdz.tpn', 'wfc3_mdz_ld.tpn'),
     'nlinfile' : ('wfc3_lin.tpn', 'wfc3_lin_ld.tpn'),
+    'npolfile' : ('wfc3_npl.tpn', 'wfc3_npl_ld.tpn'),
     'oscntab' : ('wfc3_osc.tpn', 'wfc3_osc_ld.tpn'),
     'pfltfile' : ('wfc3_pfl.tpn', 'wfc3_pfl_ld.tpn'),
     'shadfile' : ('wfc3_shd.tpn', 'wfc3_shd_ld.tpn'),

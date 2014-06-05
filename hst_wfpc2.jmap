@@ -1,5 +1,5 @@
 header = {
-    'derived_from' : 'generated 2014-05-09 21:11:48.003018',
+    'derived_from' : 'generated 2014-06-05 10:13:44.319540',
     'expansion_rules' : {
     },
     'instrument' : 'WFPC2',
@@ -7,7 +7,7 @@ header = {
     'name' : 'hst_wfpc2.jmap',
     'observatory' : 'HST',
     'parkey' : ('REFTYPE',),
-    'sha1sum' : '1794110846d2ca5ac69cb0f145d7a02f15fb3de5',
+    'sha1sum' : '7138cdfa160d33f83adfb316038ad31215e447fb',
     'typenames' : {
         'atodfile' : ('a2d', 'a2d'),
         'biasfile' : ('bas', 'bas'),

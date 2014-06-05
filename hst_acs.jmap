@@ -1,5 +1,5 @@
 header = {
-    'derived_from' : 'generated 2014-05-09 21:11:48.003018',
+    'derived_from' : 'generated 2014-06-05 10:13:44.319540',
     'expansion_rules' : {
         'APERTURE' : {
             "DETECTOR=='WFC' and APERTURE=='ANY_FULL'" : 'NONE|WFC|WFC-FIX|WFC1|WFC1-CTE|WFC1-FIX|WFC1-IRAMP|WFC1-MRAMP|WFC2|WFC2-FIX|WFC2-MRAMP|WFC2-ORAMP|WFCENTER',
@@ -42,7 +42,7 @@ header = {
     'name' : 'hst_acs.jmap',
     'observatory' : 'HST',
     'parkey' : ('REFTYPE',),
-    'sha1sum' : '88908b6f563d6838ecfe1d84b738ea607b71f106',
+    'sha1sum' : '30296279b5ac589d6a97de198cc403ca54bc010e',
     'typenames' : {
         'atodtab' : ('a2d', 'analog-to-digital'),
         'biasfile' : ('bia', 'bias'),
