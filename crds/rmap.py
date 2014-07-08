@@ -645,6 +645,28 @@ class Mapping(object):
         Overridden by PipelineMapping which figures it out from header.
         """
         return self.instrument
+
+    def apply(self, func, *args, **kargs):
+        """Apply a function recursively to this mapping and
+        all child mappings.
+        """
+
+        # Do the function on this object.
+        results = func(self, *args, **kargs)
+
+        # Now for each submapping, do the same
+        if hasattr(self, 'selections'):
+            for name, context in self.selections.items():
+                if isinstance(context, Mapping):
+                    results.extend(context.apply(func, *args, **kargs))
+
+        # that's all folks
+        return results
+    
+    def locate_file(self, filename):
+        """Return the full path (in cache or absolute) of `filename` as determined by the current environment."""
+        return locate_file(filename, self.observatory)
+
 # ===================================================================
 
 class ContextMapping(Mapping):
@@ -879,8 +901,8 @@ class InstrumentContext(ContextMapping):
     def get_item_key(self, filename):
         """Given `filename` nominally to insert, return the filekind it corresponds to."""
         _instrument, filekind = utils.get_file_properties(self.observatory, filename)
-        return filekind.lower()
-
+        return filekind.upper() if self.observatory == "jwst" else filekind.lower()
+    
     def get_equivalent_mapping(self, mapping):
         """Return the Mapping equivalent to name `mapping` in imap `self`, or None."""
         if mapping.endswith(".pmap"):
@@ -1008,8 +1030,7 @@ class ReferenceMapping(Mapping):
         `header_in` selected by this ReferenceMapping.
         """
         header_in = dict(header_in)
-        log.verbose("Getting bestrefs for", repr(self.instrument), repr(self.filekind),
-                    "parkeys", self.parkey, verbosity=55)
+        log.verbose("Getting bestrefs for", self.basename, "parkeys", self.parkey, verbosity=55)
         self.check_rmap_omit(header_in)     # Should this header keyword be omitted based on rmap_omit?
         self.check_rmap_relevance(header_in)  # Is this rmap appropriate for header
         # Some filekinds, .e.g. ACS biasfile, mutate the header
@@ -1063,6 +1084,7 @@ class ReferenceMapping(Mapping):
                 parkeys.append(key)
         if include_reffile_switch and self._reffile_switch != "NONE":
             parkeys.append(self._reffile_switch)
+        parkeys.extend(list(self.extra_keys))
         return parkeys
 
     def get_extra_parkeys(self):

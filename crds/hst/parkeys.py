@@ -40,9 +40,12 @@ class Adjustment(object):
           
 ADJUSTMENTS = {
     "acs" : {
-                "biasfile" : Adjustment(
-                    ignore=["xcorner", "ycorner", "ccdchip"],
-                    ),
+        "biasfile" : Adjustment(
+            ignore=["xcorner", "ycorner", "ccdchip"],
+            ),
+        "crrejtab" : Adjustment(
+            extra=["rptcorr"],
+            ),
              },
     "wfpc2" : {
                 "flatfile": Adjustment(
@@ -89,7 +92,7 @@ def process_reference_file_defs():
     from BeautifulSoup import BeautifulStoneSoup
 
     xml = BeautifulStoneSoup(
-            open("cdbs/cdbs_bestref/reference_file_defs.xml").read())
+            open(HERE + "/reference_file_defs.xml").read())
     rdefs = {}
     for node in xml.findAll("instrument"):
         instr = ccontents(node.instrument_name)

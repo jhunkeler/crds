@@ -8,7 +8,7 @@ from collections import defaultdict
 
 from crds import rmap, log, pysh, cmdline, utils, rowdiff, config
 
-from pyfits import FITSDiff
+from astropy.io.fits import FITSDiff
 
 # ============================================================================
         
@@ -29,7 +29,7 @@ def mapping_diffs(old_file, new_file, include_header_diffs=False):
     return differences
 
 def mapping_difference(observatory, old_file, new_file, primitive_diffs=False, check_diffs=False,
-                       mapping_text_diffs=False, include_header_diffs=True):
+                       mapping_text_diffs=False, include_header_diffs=True, hide_boring_diffs=False):
     """Print the logical differences between CRDS mappings named `old_file` 
     and `new_file`.  
     
@@ -42,6 +42,8 @@ def mapping_difference(observatory, old_file, new_file, primitive_diffs=False, c
     differences = mapping_diffs(old_file, new_file, include_header_diffs=include_header_diffs)
     if mapping_text_diffs:   # only banner when there's two kinds to differentiate
         log.write("="*20, "logical differences",  repr(old_file), "vs.", repr(new_file), "="*20)
+    if hide_boring_diffs:
+        differences = remove_boring(differences)
     for diff in sorted(differences):
         diff = unquote_diff(diff)
         if primitive_diffs:
@@ -127,6 +129,7 @@ def mapping_affected_modes(old_file, new_file, include_header_diffs=True):
     return [ tup + (("DIFF_COUNT", str(affected[tup])),) for tup in sorted(affected) ]
     
 DEFAULT_EXCLUDED_PARAMETERS = ("DATE-OBS", "TIME-OBS", "META.OBSERVATION.DATE", "DIFFERENCE", "INSTRUME", "REFTYPE")
+BORING_VARS = ["NAME", "DERIVED_FROM", "SHA1SUM", "ROW_KEYS"]  # XXX ROW_KEYS obsolete
 
 def affected_mode(diff, excluded_parameters=DEFAULT_EXCLUDED_PARAMETERS):
     """Return a list of parameter items which characterize the effect of a difference in 
@@ -147,7 +150,7 @@ def affected_mode(diff, excluded_parameters=DEFAULT_EXCLUDED_PARAMETERS):
         elif var not in excluded_parameters:
             affected.append((var, val))
         elif var == "DIFFERENCE" and "header" in val:
-            for boring in ["NAME", "DERIVED_FROM", "SHA1SUM"]:
+            for boring in BORING_VARS:
                 if "REPLACED " + repr(boring) in val.upper():
                     break
             else:
@@ -164,6 +167,15 @@ def format_affected_mode(mode):
     """Format an affected mode as a string."""
     return " ".join(["=".join([item[0], repr(item[1])]) for item in mode])
 
+def remove_boring(diffs):
+    """Remove routine differences from a list of diff tuples."""
+    result = diffs[:]
+    for diff in diffs:
+        for var in BORING_VARS:
+            if var.lower() in diff[-1]:
+                result.remove(diff)
+    return result
+
 def get_affected(old_pmap, new_pmap, include_header_diffs=True, observatory=None):
     """Examine the diffs between `old_pmap` and `new_pmap` and return sorted lists of affected instruments and types.
     
@@ -171,6 +183,7 @@ def get_affected(old_pmap, new_pmap, include_header_diffs=True, observatory=None
     """
     instrs = defaultdict(set)
     diffs = mapping_diffs(old_pmap, new_pmap, include_header_diffs=include_header_diffs)
+    diffs = remove_boring(diffs)
     if observatory is None:
         observatory = rmap.get_cached_mapping(old_pmap).observatory
     for diff in diffs:
@@ -178,7 +191,9 @@ def get_affected(old_pmap, new_pmap, include_header_diffs=True, observatory=None
             if len(step) == 2 and rmap.is_mapping(step[0]):
                 instrument, filekind = utils.get_file_properties(observatory, step[0])
                 if instrument.strip() and filekind.strip():
-                    instrs[instrument].add(filekind)
+                    if filekind not in instrs[instrument]:
+                        log.verbose("Affected", (instrument, filekind), "based on diff", diff, verbosity=20)
+                        instrs[instrument].add(filekind)
     return { key:list(val) for (key, val) in instrs.items() }
 
 # ============================================================================
@@ -317,14 +332,15 @@ def text_difference(observatory, old_file, new_file):
     pysh.sh("diff -b -c ${_loc_old_file} ${_loc_new_file}")   # secure
 
 def difference(observatory, old_file, new_file, primitive_diffs=False, check_diffs=False, mapping_text_diffs=False,
-               include_header_diffs=False):
+               include_header_diffs=False, hide_boring_diffs=False):
     """Difference different kinds of CRDS files (mappings, FITS references, etc.)
     named `old_file` and `new_file` against one another and print out the results 
     on stdout.
     """
     if rmap.is_mapping(old_file):
         mapping_difference(observatory, old_file, new_file, primitive_diffs=primitive_diffs, check_diffs=check_diffs,
-                           mapping_text_diffs=mapping_text_diffs, include_header_diffs=include_header_diffs)
+                           mapping_text_diffs=mapping_text_diffs, include_header_diffs=include_header_diffs,
+                           hide_boring_diffs=hide_boring_diffs)
     elif old_file.endswith(".fits"):
         fits_difference(observatory, old_file, new_file)
     else:
@@ -336,11 +352,36 @@ def get_added_references(old_pmap, new_pmap, cached=True):
     new_pmap = rmap.asmapping(new_pmap, cached=cached)
     return sorted(list(set(new_pmap.reference_names()) - set(old_pmap.reference_names())))
 
-def get_removed_references(old_pmap, new_pmap, cached=True):
+def get_deleted_references(old_pmap, new_pmap, cached=True):
     """Return the list of references from `new_pmap` which were not in `old_pmap`."""
     old_pmap = rmap.asmapping(old_pmap, cached=cached)
     new_pmap = rmap.asmapping(new_pmap, cached=cached)
     return sorted(list(set(old_pmap.reference_names()) - set(new_pmap.reference_names())))
+
+def get_updated_files(context1, context2):
+    """Return the sorted list of files names which are in `context2` (or any intermediate context)
+    but not in `context1`.   context2 > context1.
+    """
+    extension1 = os.path.splitext(context1)[1]
+    extension2 = os.path.splitext(context2)[1]
+    assert extension1 == extension2, \
+        "Only compare mappings of same type/extension."
+    old = context1
+    old_map = rmap.get_cached_mapping(old)
+    old_files = set(old_map.mapping_names() + old_map.reference_names())
+    all = rmap.list_mappings("*"+extension1, old_map.observatory)
+    updated = set()
+    for new in all:
+        if new > old:
+            if new <= context2:
+                new_map = rmap.get_cached_mapping(new)
+                new_files = set(new_map.mapping_names() + new_map.reference_names())
+                updated = updated.union(new_files - old_files)
+                old = new
+                old_files = new_files
+            else:
+                break
+    return sorted(list(updated))
 
 # ==============================================================================================================
     
@@ -385,8 +426,12 @@ Will recursively produce logical, textual, and FITS diffs for all changes betwee
         self.add_argument("-K", "--check-diffs", dest="check_diffs", action="store_true",
             help="Issue warnings about new rules, deletions, or reversions.")
         self.add_argument("-N", "--print-new-files", dest="print_new_files", action="store_true",
-            help="Rather than printing diffs for mappings,  print the names of new or replacement files.")
+            help="Rather than printing diffs for mappings,  print the names of new or replacement files.  Excludes intermediaries.")
+        self.add_argument("-A", "--print-all-new-files", dest="print_all_new_files", action="store_true",
+            help="Print the names of every new or replacement file in diffs between old and new.  Includes intermediaries.")
         self.add_argument("-i", "--include-header-diffs", dest="include_header_diffs", action="store_true",
+            help="Include mapping header differences in logical diffs: sha1sum, derived_from, etc.")
+        self.add_argument("-B", "--hide-boring-diffs", dest="hide_boring_diffs", action="store_true",
             help="Include mapping header differences in logical diffs: sha1sum, derived_from, etc.")
         self.add_argument("--print-affected-instruments", dest="print_affected_instruments", action="store_true",
             help="Print out the names of instruments which appear in diffs,  rather than diffs.")
@@ -398,11 +443,14 @@ Will recursively produce logical, textual, and FITS diffs for all changes betwee
 
     def main(self):
         """Perform the differencing."""
+        self.args.files = [ self.args.old_file, self.args.new_file ]   # for defining self.observatory
         self.old_file = self.resolve_context(self.args.old_file)
         self.new_file = self.resolve_context(self.args.new_file)
-        self.args.files = [ self.old_file, self.new_file ]   # for defining self.observatory
+        # self.args.files = [ self.old_file, self.new_file ]   # for defining self.observatory
         if self.args.print_new_files:
             return self.print_new_files()
+        elif self.args.print_all_new_files:
+            return self.print_all_new_files()
         elif self.args.print_affected_instruments:
             return self.print_affected_instruments()
         elif self.args.print_affected_types:
@@ -413,7 +461,8 @@ Will recursively produce logical, textual, and FITS diffs for all changes betwee
             return difference(self.observatory, self.old_file, self.new_file, 
                    primitive_diffs=self.args.primitive_diffs, check_diffs=self.args.check_diffs,
                    mapping_text_diffs=self.args.mapping_text_diffs,
-                   include_header_diffs=self.args.include_header_diffs)
+                   include_header_diffs=self.args.include_header_diffs,
+                   hide_boring_diffs=self.args.hide_boring_diffs)
     
     def print_new_files(self):
         """Print the references or mappings which are new additions or replacements when comparing mappings."""
@@ -429,6 +478,18 @@ Will recursively produce logical, textual, and FITS diffs for all changes betwee
             elif action == "replace":
                 _old_val, replacement = map(os.path.basename, diff_replace_old_new(diff))
                 print replacement, self.instrument_filekind(replacement)
+
+    def print_all_new_files(self):
+        """Print the names of all files which are in `new_file` (or any intermediary context) but not
+        in `old_file`.   new_file > old_file.  Both new_file and old_file are similar mappings.
+        """
+        updated = get_updated_files(self.old_file, self.new_file)
+        for mapping in updated:
+            if rmap.is_mapping(mapping):
+                print(mapping), self.instrument_filekind(mapping)
+        for reference in updated:
+            if not rmap.is_mapping(reference):
+                print reference, self.instrument_filekind(reference)
     
     def instrument_filekind(self, filename):
         """Return the instrument and filekind of `filename` as a space separated string."""
@@ -456,6 +517,6 @@ Will recursively produce logical, textual, and FITS diffs for all changes betwee
         modes = mapping_affected_modes(self.old_file, self.new_file, self.args.include_header_diffs)
         for affected in modes:
             print(format_affected_mode(affected))
-        
+
 if __name__ == "__main__":
     DiffScript()()

@@ -15,6 +15,7 @@ from .proxy import CheckingProxy, ServiceError, CrdsError
 # heavy versions of core CRDS modules defined in one place, client minimally
 # dependent on core for configuration, logging, and  file path management.
 from crds import utils, log, config
+from crds.client import proxy
 
 # ==============================================================================
 
@@ -37,6 +38,8 @@ __all__ = [
            "get_crds_server",
          
            "list_mappings",
+           "list_references",
+
            "get_file_chunk",
            "get_url",
            "get_file_info",
@@ -71,10 +74,6 @@ __all__ = [
 
 # ============================================================================
 
-CRDS_DATA_CHUNK_SIZE = 2**23   # 8M, HTTP, sha1sum,  but maybe not RPC.
-
-# ============================================================================
-
 # Server for CRDS services and mappings
 
 URL_SUFFIX = "/json/"
@@ -93,7 +92,7 @@ def set_crds_server(url):
     e.g. 'http://localhost:8000'
     """
     if not url.startswith("https://") and "localhost" not in url:
-        log.warning("CRDS_SERVER_URL does not start with https://")
+        log.warning("CRDS_SERVER_URL does not start with https://  ::", url)
     if url.endswith("/"):
         url = url[:-1]
     global URL, S
@@ -105,42 +104,27 @@ def get_crds_server():
     """
     url = URL[:-len(URL_SUFFIX)]
     if not url.startswith("https://") and "localhost" not in url:
-        log.warning("CRDS_SERVER_URL does not start with https://")
+        log.warning("CRDS_SERVER_URL does not start with https://  ::", url)
     return url
 
 set_crds_server(URL)
 
-# ============================================================================
-
-def get_download_mode():
-    """Return the mode used to download references and mappings,  either normal
-    "http" file transfer or json "rpc" based.   In theory HTTP optimizes better 
-    with direct support for static files from Apache,  but RPC is more flexible
-    and works through firewalls.   The key distinction is that HTTP mode can
-    work with a server which is not the same as the CRDS server (perhaps an
-    archive server).   Once/if a public archive server is available with normal 
-    URLs,  that wopuld be the preferred means to get references and mappings.
-    """
-    mode = os.environ.get("CRDS_DOWNLOAD_MODE", "http").lower()
-    assert mode in ["http","rpc"], \
-        "Invalid CRDS_DOWNLOAD_MODE setting.  Use 'http' (preferred) " + \
-        "or 'rpc' (through firewall)."
-    return mode
-
-def get_checksum_flag():
-    """Return True if the environment is configured for checksums."""
-    return bool(os.environ.get("CRDS_DOWNLOAD_CHECKSUMS", "1"))
-
 # =============================================================================
-def srepr(o):
+def srepr(obj):
     """Return the repr() of the str() of `o`"""
-    return repr(str(o))
+    return repr(str(obj))
 
 def list_mappings(observatory=None, glob_pattern="*"):
     """Return the list of mappings associated with `observatory`
     which match `glob_pattern`.
     """
     return [str(x) for x in S.list_mappings(observatory, glob_pattern)]
+
+def list_references(observatory=None, glob_pattern="*"):
+    """Return the list of references associated with `observatory`
+    which match `glob_pattern`.
+    """
+    return [str(x) for x in S.list_references(observatory, glob_pattern)]
 
 def get_mapping_url(pipeline_context, mapping):
     """Returns a URL for the specified pmap, imap, or rmap file.
@@ -196,6 +180,7 @@ def get_file_info_map(observatory, files=None, fields=None):
 
 def get_sqlite_db(observatory):
     """Download the CRDS database as a SQLite database."""
+    assert not config.get_cache_readonly(), "Readonly cache, updating the SQLite database cannot be done."""
     encoded_compressed_data = S.get_sqlite_db(observatory)
     data = zlib.decompress(base64.b64decode(encoded_compressed_data))
     path = config.get_sqlite3_db_path(observatory)
@@ -296,19 +281,31 @@ def get_server_info():
     except ServiceError, exc:
         raise CrdsNetworkError("network connection failed: " + srepr(get_crds_server()) + " : " + str(exc))
 
-def get_dataset_headers_by_id(context, dataset_ids):
+@utils.cached
+def get_cached_server_info():
+    """Cached version of get_server_info(),  nominally one fetch per process run."""
+    return get_server_info()
+
+def get_server_version():
+    """Return the API version of the current CRDS server."""
+    info = get_cached_server_info()
+    return info["crds_version"]["str"]
+
+def get_dataset_headers_by_id(context, dataset_ids, datasets_since=None):
     """Return { dataset_id : { header } } for `dataset_ids`."""
-    return S.get_dataset_headers_by_id(context, dataset_ids)
-
-def get_dataset_headers_by_instrument(context, instrument, datasets_since=None):
-    """Return { dataset_id : { header } } for `instrument`."""
-    if datasets_since is None:
-        datasets_since = "1900-01-01T00:00:00"
-    return S.get_dataset_headers_by_instrument(context, instrument, datasets_since)
-
-def get_dataset_ids(context, instrument):
+    if get_server_version() >= "1.0":
+        return S.get_dataset_headers_by_id(context, dataset_ids, datasets_since)
+    else:
+        assert datasets_since is None, "datasets_since not supported by this server."
+        return S.get_dataset_headers_by_id(context, dataset_ids)
+    
+def get_dataset_ids(context, instrument, datasets_since=None):
     """Return [ dataset_id, ...] for `instrument`."""
-    return S.get_dataset_ids(context, instrument)
+    if get_server_version() >= "1.0":
+        return S.get_dataset_ids(context, instrument, datasets_since)
+    else:
+        assert datasets_since is None, "datasets_since not supported by this server."
+        return S.get_dataset_ids(context, instrument)
 
 def get_required_parkeys(context):
     """Return a mapping from instruments to lists of parameter names required to
@@ -318,7 +315,21 @@ def get_required_parkeys(context):
     """
     return S.get_required_parkeys(context)
 
-
+def get_dataset_headers_by_instrument(context, instrument, datasets_since=None):
+    """Return { dataset_id : { header } } for `instrument`."""
+    max_ids_per_rpc = get_cached_server_info().get("max_headers_per_rpc", 5000)
+    try:
+        ids = get_dataset_ids(context, instrument, datasets_since)
+    except Exception, exc:
+        log.verbose_warning("get_dataset_ids failed.  ignoring datasets_since = ", repr(datasets_since))
+        ids = get_dataset_ids(context, instrument)        
+    headers = {}
+    for i in range(0, len(ids), max_ids_per_rpc):
+        id_slice = ids[i : i + max_ids_per_rpc]
+        log.verbose("Dumping datasets for", repr(instrument), "ids", i , "of", len(ids), verbosity=20)
+        header_slice = get_dataset_headers_by_id(context, id_slice)
+        headers.update(header_slice)
+    return headers
 
 # ==============================================================================
 
@@ -358,11 +369,6 @@ def observatory_from_string(string):
 
 # ==============================================================================
 
-@utils.cached
-def get_cached_server_info():
-    """Cached version of get_server_info(),  nominally one fetch per process run."""
-    return get_server_info()
-
 class FileCacher(object):
     """FileCacher gets remote files with simple names into a local cache.
     """
@@ -387,9 +393,12 @@ class FileCacher(object):
         downloads = []
         for name in names:
             localpath = self.locate(pipeline_context, name)
+            if name.lower() in ["n/a", "undefined"]:
+                continue
             if (not os.path.exists(localpath)):
                 downloads.append(name)
             elif ignore_cache:
+                assert not config.get_cache_readonly(), "Readonly cache,  cannot ignore cache and re-fetch."
                 downloads.append(name)
                 with log.error_on_exception("Ignore_cache=True and Failed removing existing", repr(name)):
                     os.chmod(localpath, 0666)
@@ -398,7 +407,7 @@ class FileCacher(object):
         if downloads:
             n_bytes = self.download_files(pipeline_context, downloads, localpaths, raise_exceptions)
         else:
-            log.verbose("Skipping download for cached files", names, verbosity=60)
+            log.verbose("Skipping download for cached files", sorted(names), verbosity=60)
             n_bytes = 0
         if api == 1:
             return localpaths
@@ -424,6 +433,9 @@ class FileCacher(object):
         """Serial file-by-file download."""
         obs = self.observatory_from_context(pipeline_context)
         self.info_map = get_file_info_map(obs, downloads, ["sha1sum", "size"])
+        if config.get_cache_readonly():
+            log.verbose("Readonly cache, skipping download of (first 5):", repr(downloads[:5]), verbosity=70)
+            return 0
         n_bytes = 0
         for name in downloads:
             try:
@@ -439,20 +451,12 @@ class FileCacher(object):
 
     def download(self, pipeline_context, name, localpath):
         """Download a single file."""
-        log.verbose("Fetching", repr(name), "to", repr(localpath), verbosity=10)
+        assert not config.get_cache_readonly(), "Readonly cache,  cannot download files."
+        log.info("Fetching", repr(name), "to", repr(localpath), "of size", 
+                 utils.human_format_number(int(self.info_map[name]["size"])), "bytes.")
         try:
             utils.ensure_dir_exists(localpath)
-            if get_download_mode() == "http":
-                generator = self.get_data_http(pipeline_context, name)
-            else:
-                generator = self.get_data_rpc(pipeline_context, name)
-            n_bytes = 0
-            with open(localpath, "wb+") as outfile:
-                for data in generator:
-                    outfile.write(data)
-                    n_bytes += len(data)
-            self.verify_file(name, localpath)
-            return n_bytes
+            return proxy.apply_with_retries(self.download_core, pipeline_context, name, localpath)
         except Exception, exc:
             # traceback.print_exc()
             try:
@@ -462,8 +466,22 @@ class FileCacher(object):
             raise CrdsDownloadError("Error fetching data for " + srepr(name) + 
                                      " from context " + srepr(pipeline_context) + 
                                      " at server " + srepr(get_crds_server()) + 
-                                     " with mode " + srepr(get_download_mode()) +
+                                     " with mode " + srepr(config.get_download_mode()) +
                                      " : " + str(exc))
+
+    def download_core(self, pipeline_context, name, localpath):
+        """Download and verify file `name` under context `pipeline_context` to `localpath`."""
+        if config.get_download_mode() == "http":
+            generator = self.get_data_http(pipeline_context, name)
+        else:
+            generator = self.get_data_rpc(pipeline_context, name)
+        n_bytes = 0
+        with open(localpath, "wb+") as outfile:
+            for data in generator:
+                outfile.write(data)
+                n_bytes += len(data)
+        self.verify_file(name, localpath)
+        return n_bytes
             
     def get_data_rpc(self, pipeline_context, filename):
         """Yields successive manageable chunks for `file` fetched via jsonrpc."""
@@ -471,10 +489,10 @@ class FileCacher(object):
         chunks = 1
         while chunk < chunks:
             stats = utils.TimingStats()
-            stats.increment("bytes", CRDS_DATA_CHUNK_SIZE)
+            stats.increment("bytes", config.CRDS_DATA_CHUNK_SIZE)
             chunks, data = get_file_chunk(pipeline_context, filename, chunk)
             status = stats.status("bytes")
-            log.verbose("Transferred RPC", repr(filename), chunk, " of ", chunks, "at", status[1])
+            log.verbose("Transferred RPC", repr(filename), chunk, " of ", chunks, "at", status[1], verbosity=20)
             chunk += 1
             yield data
     
@@ -490,16 +508,16 @@ class FileCacher(object):
             infile = urllib2.urlopen(url)
             chunk = 0
             stats = utils.TimingStats()
-            stats.increment("bytes", CRDS_DATA_CHUNK_SIZE)
-            data = infile.read(CRDS_DATA_CHUNK_SIZE)
+            stats.increment("bytes", config.CRDS_DATA_CHUNK_SIZE)
+            data = infile.read(config.CRDS_DATA_CHUNK_SIZE)
             status = stats.status("bytes")
             while data:
-                log.verbose("Transferred HTTP", repr(filename), "chunk", chunk, "at", status[1])
+                log.verbose("Transferred HTTP", repr(filename), "chunk", chunk, "at", status[1], verbosity=20)
                 yield data
                 chunk += 1
                 stats = utils.TimingStats()
-                stats.increment("bytes", CRDS_DATA_CHUNK_SIZE)
-                data = infile.read(CRDS_DATA_CHUNK_SIZE)
+                stats.increment("bytes", config.CRDS_DATA_CHUNK_SIZE)
+                data = infile.read(config.CRDS_DATA_CHUNK_SIZE)
                 status = stats.status("bytes")
         finally:
             try:
@@ -527,7 +545,7 @@ class FileCacher(object):
         if original_length != local_length:
             raise CrdsDownloadError("downloaded file size " + str(local_length) +
                                     " does not match server size " + str(original_length))
-        if not get_checksum_flag():
+        if not config.get_checksum_flag():
             log.verbose("Skipping sha1sum with CRDS_DOWNLOAD_CHECKSUMS=False")
         elif remote_info["sha1sum"] not in ["", "none"]:
             original_sha1sum = remote_info["sha1sum"]
@@ -556,16 +574,21 @@ class BundleCacher(FileCacher):
         for name in localpaths:
             if name not in downloads:
                 log.verbose("Skipping existing file", repr(name), verbosity=60)
-        self.fetch_bundle(bundlepath, downloads)
-        n_bytes = self.unpack_bundle(bundlepath, downloads, localpaths)
+        if self.fetch_bundle(bundlepath, downloads):
+            n_bytes = self.unpack_bundle(bundlepath, downloads, localpaths)
+        else:
+            n_bytes = 0
         for name in downloads:
             self.verify_file(name, localpaths[name])
         return n_bytes
 
     def fetch_bundle(self, bundlepath, downloads):
         """Ask the CRDS server for an archive of the files listed in `downloads`
-        and store the archive in filename `bundlepath`.
+        and store the archive in filename `bundlepath`.  Returns `need_unpack`.
         """
+        if config.get_cache_readonly():
+            log.verbose("Readonly cache, skipping bundle download for (first 5):", repr(downloads[:5]), verbosity=70)
+            return False
         bundle = os.path.basename(bundlepath)
         url = get_crds_server() + "/get_archive/" + bundle + "?"
         for i, name in enumerate(sorted(downloads)):
@@ -576,11 +599,15 @@ class BundleCacher(FileCacher):
         with open(bundlepath, "wb+") as outfile:
             for data in generator:
                 outfile.write(data)
-        
+        return True
+    
     def unpack_bundle(self, bundlepath, downloads, localpaths):
         """Unpack the files listed in `downloads` from the archive at `bundlepath`
         storing the extracted files at paths defined by `localpaths`.
         """
+        if config.get_cache_readonly():
+            log.verbose("Readonly cache, skipping bundle unpack for (first 5):", repr(downloads[:5]), verbosity=70)
+            return 0
         n_bytes = 0
         with tarfile.open(bundlepath) as tar:
             for name in sorted(downloads):

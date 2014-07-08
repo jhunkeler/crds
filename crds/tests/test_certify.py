@@ -20,7 +20,7 @@ class TestHSTTpninfoClass(CRDSTestCase):
         hstlocator = utils.get_locator_module("hst")
         self.tpninfos = hstlocator.get_tpninfos('acs_idc.tpn')
         self.validators = [certify.validator(info) for info in self.tpninfos]
-        os.environ['CRDS_SERVER_URL'] = 'http://not-a-crds-server.stsci.edu'
+        os.environ['CRDS_SERVER_URL'] = 'https://crds-serverless-mode.stsci.edu'
         os.environ['CRDS_MAPPATH'] = self.hst_mappath
         os.environ['CRDS_PATH'] = "/grp/crds/hst"
         os.environ["CRDS_CONTEXT"] ="hst.pmap"
@@ -60,4 +60,14 @@ class TestValidatorClasses(CRDSTestCase):
         from crds import certify
         certify.certify_files([self.data("v8q1445xx_idc.fits")], observatory="hst", 
                               context="hst.pmap", compare_old_reference=True)
+        
+    def test_loadall_type_constraints_hst(self):
+        """Prove the HST constraint files are loadable."""
+        from crds.hst import locate
+        locate.load_all_type_constraints()
+
+    def test_loadall_type_constraints_jwst(self):
+        """Prove the JWST constraint files are loadable."""
+        from crds.jwst import locate
+        locate.load_all_type_constraints()
 

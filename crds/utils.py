@@ -14,7 +14,15 @@ import ast
 
 from crds import log, config
 
-CRDS_CHECKSUM_BLOCK_SIZE = 2**26
+# ===================================================================
+
+class Struct(dict):
+    """A dictionary which supports dotted access to members."""
+    def __getattr__(self, name):
+        return self[name]
+
+    def __setattr__(self, name, val):
+        self[name] = val
 
 # ===================================================================
 def cached(func):
@@ -250,7 +258,11 @@ class TimingStats(object):
         self.elapsed = None
         self.output = log.info if output is None else output
         self.start()
-
+    
+    def get_stat(self, name):
+        """Return the value of statistic `name`."""
+        return self.counts[name]
+    
     def increment(self, name, amount=1):
         """Add `amount` to stat count for `name`."""
         self.counts[name] += amount
@@ -283,32 +295,31 @@ class TimingStats(object):
     def status(self, name):
         """Return human readable (count, rate) for `name`."""
         self.stop()
-        count = self._human_format(self.counts[name]) + " " + name
-        rate = self._human_format(self.counts[name] / self.elapsed.total_seconds()) + " " + name+"-per-second"
+        count = human_format_number(self.counts[name]) + " " + name
+        rate = human_format_number(self.counts[name] / self.elapsed.total_seconds()) + " " + name+"-per-second"
         return count, rate
         
-    def _human_format(self, number):
-        """Format `number` roughly in engineering units."""
-        convert = [
-            (1e12, "T"),
-            (1e9 , "G"),
-            (1e6 , "M"),
-            (1e3 , "K"),
-            ]
-        for limit, sym in convert:
-            if isinstance(number, float) and number > limit:
-                number /= limit
-                break
-        else:
-            sym = ""
-        if isinstance(number, (int, long)):
-            return "%d" % number
-        else:
-            return "%0.2f %s" % (number, sym)
-    
     def msg(self, *args):
         """Format (*args, **keys) using log.format() and call output()."""
         self.output(*args, eol="")
+
+def human_format_number(number):
+    convert = [
+        (1e12, "T"),
+        (1e9 , "G"),
+        (1e6 , "M"),
+        (1e3 , "K"),
+        ]
+    for limit, sym in convert:
+        if isinstance(number, (float,int,long)) and number > limit:
+            number /= limit
+            break
+    else:
+        sym = ""
+    if isinstance(number, (int, long)):
+        return "%d" % number
+    else:
+        return "%0.2f %s" % (number, sym)
 
 # ===================================================================
 
@@ -369,7 +380,7 @@ def checksum(pathname):
         size = 0
         insize = os.stat(pathname).st_size
         while size < insize:
-            block = infile.read(CRDS_CHECKSUM_BLOCK_SIZE)
+            block = infile.read(config.CRDS_CHECKSUM_BLOCK_SIZE)
             size += len(block)
             xsum.update(block)
     return xsum.hexdigest()

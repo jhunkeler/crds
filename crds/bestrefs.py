@@ -7,15 +7,21 @@ For more details on the several modes of operations and command line parameters 
 """
 import sys
 import os
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import cPickle
 
-import pyfits
+from astropy.io import fits as pyfits
 
 import crds
-from crds import (log, rmap, data_file, utils, cmdline, CrdsError, heavy_client, diff, timestamp, matches)
+from crds import (log, rmap, data_file, utils, cmdline, CrdsError, heavy_client, diff, timestamp, matches, config)
+from crds import (table_effects,)
 from crds.client import api
 
+# ===================================================================
+
+MIN_DATE = "1900-01-01 00:00:00"
+MAX_DATE = "9999-01-01 23:59:59"
+    
 # ===================================================================
 
 UpdateTuple = namedtuple("UpdateTuple", ["instrument", "filekind", "old_reference", "new_reference"])
@@ -37,7 +43,6 @@ class HeaderGenerator(object):
     """Generic source for lookup parameters and historical comparison results."""
     def __init__(self, context, sources, datasets_since):
         self.context = context
-        self.ctx = crds.get_cached_mapping(self.context)
         self.sources = sources
         self.pmap = rmap.get_cached_mapping(context)
         self.headers = {}
@@ -48,10 +53,11 @@ class HeaderGenerator(object):
         for source in self.sources:
             with log.error_on_exception("Failed loading source", repr(source), 
                                         "from", repr(self.__class__.__name__)):
-                instrument = self.ctx.get_instrument(self.header(source))
+                instrument = self.pmap.get_instrument(self.header(source))
                 exptime = matches.get_exptime(self.header(source))
                 since = self.datasets_since(instrument)
-                if exptime >= since:
+                # since == None when no command line argument given.
+                if since is None or exptime >= since:
                     yield source
                 else:
                     log.verbose("Dropping source", repr(source), 
@@ -68,11 +74,19 @@ class HeaderGenerator(object):
         were identified by --datsets-since=auto.
         """
         if isinstance(self._datasets_since, dict):
-            return self._datasets_since.get(instrument.lower(),  "9999-01-01 23:59:59")
+            return self._datasets_since.get(instrument.lower(),  MIN_DATE)
         else:
             return self._datasets_since
 
     def header(self, source):
+        """Return the full header corresponding to `source`.   If header is a string, raise an exception."""
+        header = self._header(source)
+        if isinstance(header, str):
+            raise RuntimeError("Failed to fetch header: " + header)
+        else:
+            return header
+
+    def _header(self, source):
         """Return the full header corresponding to `source`.   Source is a dataset id or filename."""
         return self.headers[source]
         
@@ -80,7 +94,8 @@ class HeaderGenerator(object):
         """Return the parameters corresponding to `source` used to drive a best references lookup."""
         try:
             hdr = self.header(source)
-            min_hdr = self.pmap.minimize_header(hdr)
+            # min_hdr = self.pmap.minimize_header(hdr)
+            min_hdr = hdr  # rmap parameter minimization excludes table row parameters
             min_hdr = { key.upper():utils.condition_value(val) for (key, val) in min_hdr.items() }
             log.verbose("Bestref parameters for", repr(source), "with respect to", 
                         repr(self.context) + ":\n", log.PP(min_hdr))
@@ -120,11 +135,17 @@ class HeaderGenerator(object):
         if only_ids is None:
             only_ids = headers2.keys()
             
+        items = headers2.items()
+        for dataset_id, header in items:
+            if isinstance(header, basestring):
+                log.warning("Skipping bad dataset", dataset_id, ":", headers2[dataset_id])
+                del headers2[dataset_id]
+
         # Munge for consistent case and value formatting regardless of source
         headers2 = { dataset_id.upper() : 
                         { key.upper():utils.condition_value(val) for (key,val) in headers2[dataset_id].items() } 
                         for dataset_id in headers2 if dataset_id in only_ids }
-
+        
         # replace param-by-param,  not id-by-id, since headers2[id] may be partial
         for dataset_id in headers2:
             if dataset_id not in self.headers:
@@ -149,7 +170,7 @@ class HeaderGenerator(object):
 
 class FileHeaderGenerator(HeaderGenerator):
     """Generates lookup parameters and old bestrefs from dataset files."""
-    def header(self, filename):
+    def _header(self, filename):
         """Get the best references recommendations recorded in the header of file `dataset`."""
         if filename not in self.headers:
             self.headers[filename] = data_file.get_header(filename, observatory=self.pmap.observatory)
@@ -172,30 +193,89 @@ class DatasetHeaderGenerator(HeaderGenerator):
         log.info("Dumping dataset parameters from CRDS server at", repr(server), "for", repr(datasets))
         self.headers = api.get_dataset_headers_by_id(context, datasets)
         log.info("Dumped", len(self.headers), "of", len(datasets), "datasets from CRDS server at", repr(server))
+
+        # every command line id should correspond to 1 or more headers
+        for source in self.sources:
+            if self.matching_two_part_id(source) not in self.headers.keys():
+                log.warning("Dataset", repr(source), "isn't represented by downloaded parameters.")
+
+        # Process according to downloaded 2-part ids,  not command line ids.
+        self.sources = self.headers.keys()
+
+    def matching_two_part_id(self, source):
+        """Convert any command line dataset id into it's matching two part id.
+        
+        matching_two_part_id(<association>)                  -->  <association>  : <first_member>
+
+        matching_two_part_id(<association>:<member>)         -->  <association>  : <member>
+        matching_two_part_id(<unassociated>)                 -->  <unassociated> : <unassociated>
+        matching_two_part_id(<unassociated>:<unassociated>)  -->  <unassociated> : <unassociated>
+        """
+        parts = source.split(":")
+        assert 1 <= len(parts) <= 2, "Invalid dataset id " + repr(source)
+        try:   # when specifying datasets with 1-part id, return first of "associated ids"
+               # when specifying datasets with 2-part id,
+            if len(parts) == 1:
+                return sorted(id for id in self.headers if parts[0] in id)[0]
+            else:
+                return source
+        except:
+            return source
     
 class InstrumentHeaderGenerator(HeaderGenerator):
     """Generates lookup parameters and historical best references from a list of instrument names.  Server/DB based."""
-    def __init__(self, context, instruments, datasets_since):
+    def __init__(self, context, instruments, datasets_since, save_pickles, server_info):
         """"Contact the CRDS server and get headers for the list of `instruments` names with respect to `context`."""
-        super(InstrumentHeaderGenerator, self).__init__(context, instruments, datasets_since)
-        self.context = context
+        super(InstrumentHeaderGenerator, self).__init__(context, [], datasets_since)
         self.instruments = instruments
-        self.sources = self.download_datasets()
-
-    def download_datasets(self):
-        """Download and filter the datasets."""
+        self.sources = self.determine_source_ids()
+        self.save_pickles = save_pickles
+        try:
+            self.segment_size = server_info.max_headers_per_rpc
+        except:
+            self.segment_size = 5000
+            
+    def determine_source_ids(self):
+        """Return the dataset ids for all instruments."""
         server = api.get_crds_server()
-        sorted_sources = []
+        source_ids = []
         for instrument in self.instruments:
             since_date = self.datasets_since(instrument)
-            log.info("Dumping dataset parameters for", repr(instrument), "from CRDS server at", repr(server),
-                     "since", repr(since_date))
-            more = api.get_dataset_headers_by_instrument(self.context, instrument, since_date)
-            log.info("Dumped", len(more), "datasets for", repr(instrument), "from CRDS server at", repr(server),
-                     "since", repr(since_date))
-            self.headers.update(more)
-            sorted_sources.extend(sorted(more.keys()))
-        return sorted_sources
+            if since_date:
+                log.info("Dumping dataset parameters for", repr(instrument), "from CRDS server at", repr(server),
+                         "since", repr(since_date))
+            else:
+                log.info("Dumping dataset parameters for", repr(instrument), "from CRDS server at", repr(server))
+            instr_ids = api.get_dataset_ids(self.context, instrument, self.datasets_since(instrument))
+            log.info("Downloaded ", len(instr_ids), "dataset ids for", repr(instrument), "since", repr(since_date)) 
+            source_ids.extend(instr_ids)
+        return source_ids
+    
+    def _header(self, source):
+        """Return the header associated with dataset id `source`,  fetching the surround segment of
+        headers if `source` is not already in the cached set of headers.
+        """
+        if source not in self.headers:
+            self.fetch_source_segment(source)
+        return self.headers[source]
+
+    def fetch_source_segment(self, source):
+        """Return the segment of dataset ids which surrounds id `source`."""
+        try:
+            index = self.sources.index(source) // self.segment_size
+        except ValueError:
+            raise CrdsError("Unknown dataset id " + repr(source))
+        lower = index * self.segment_size
+        upper = (index +1) * self.segment_size
+        segment_ids = self.sources[lower:upper]
+        log.verbose("Dumping", len(segment_ids), "datasets from indices", lower, "to", 
+                    lower + len(segment_ids), verbosity=20)
+        dumped_headers = api.get_dataset_headers_by_id(self.context, segment_ids)
+        log.verbose("Dumped", len(dumped_headers), "datasets", verbosity=20)
+        if self.save_pickles:  #  keep all headers,  causes memory problems with multiple instruments on ~8G ram.
+            self.headers.update(dumped_headers)
+        else:  # conserve memory by keeping only the last N headers
+            self.headers = dumped_headers
 
 class PickleHeaderGenerator(HeaderGenerator):
     """Generates lookup parameters and historical best references from a list of pickle files
@@ -224,23 +304,29 @@ def update_file_bestrefs(pmap, dataset, updates):
     """Update the header of `dataset` with best reference recommendations
     `bestrefs` determined by context named `pmap`.
     """
+    if not updates:
+        return
+
     pmap = rmap.asmapping(pmap)
-    # XXX TODO switch pyfits.setval to data_file.setval if a data model equivalent
-    # is defined for CRDS_CTX
-    
-    # Here we use the dataset file because we know we have the full path, 
-    # whereas the reference we'd have to locate.
-    instrument = utils.file_to_instrument(dataset)
+    version_info = heavy_client.version_info()
+    instrument = updates[0].instrument
     prefix = pmap.locate.get_env_prefix(instrument)    
-    log.verbose("Setting", repr(dataset), "CRDS_CTX =", repr(pmap.name))
     hdulist = pyfits.open(dataset, mode="update")
-    hdulist[0].header["CRDS_CTX"] = pmap.basename
+
+    # XXX TODO switch pyfits.setval to data_file.setval
+    def set_key(keyword, value):
+        log.verbose("Setting", repr(dataset), keyword, "=", value)
+        hdulist[0].header[keyword] = value
+
+    set_key("CRDS_CTX", pmap.basename)
+    set_key("CRDS_VER", version_info)
+
     for update in sorted(updates):
         new_ref = update.new_reference.upper()
         if new_ref != "N/A":
             new_ref = (prefix + new_ref).lower()
-        log.verbose("Setting", repr(dataset), update.filekind.upper(), "=", repr(new_ref))
-        hdulist[0].header[update.filekind] = new_ref
+        set_key(update.filekind.upper(), new_ref)
+
     hdulist.close()
 
 # ============================================================================
@@ -249,7 +335,9 @@ def reformat_date_or_auto(date):
     """Add 'auto' as an extra valid value for --datasets-since dates.  Auto means figure out dates-since
     based on USEAFTER dates (recorded in rmaps as DATE-OBS TIME-OBS or META.OBSERVATION.DATE).
     """
-    if date.lower() == "auto":
+    if date is None:
+        return date
+    elif date.lower() == "auto":
         return "auto"
     else:
         return timestamp.reformat_date(date)
@@ -373,7 +461,7 @@ and debug output.
                 
         cmdline.UniqueErrorsMixin.__init__(self, *args, **keys)
             
-        self.updates = {}                  # map of reference updates
+        self.updates = OrderedDict()  # map of reference updates
         self.process_filekinds = [typ.lower() for typ in self.args.types ]    # list of filekind str's
         self.skip_filekinds = [typ.lower() for typ in self.args.skip_types]
         self.affected_instruments = None
@@ -394,8 +482,6 @@ and debug output.
         
         self.pickle_headers = None  # any headers loaded from pickle files
         
-        self.sources_processed = 0     # datasets actually processed,  particulary when restricted by id
-
         if self.args.remote_bestrefs:
             os.environ["CRDS_MODE"] = "remote"
             
@@ -406,14 +492,27 @@ and debug output.
         
         self.new_context, self.old_context, self.newctx, self.oldctx = self.setup_contexts()
         
+        # Support 0 to 1 mutually exclusive source modes and/or any number of pickles
+        exclusive_source_modes = [self.args.files, self.args.datasets, self.args.instruments, 
+                                  self.args.diffs_only, self.args.all_instruments]
+        source_modes = len(exclusive_source_modes) - exclusive_source_modes.count(None)
+        using_pickles = int(bool(self.args.load_pickles))
+        assert source_modes <= 1 and (source_modes + using_pickles) >= 1, \
+            "Must specify one of: --files, --datasets, --instruments, --all-instruments, --diffs-only and/or --load-pickles."
+
         if self.args.diffs_only:
             assert self.new_context and self.old_context, "--diffs-only only works for context-to-context bestrefs."
-            assert not self.args.instruments, "--diffs-only automatically selects processed instruments."
             self.affected_instruments = diff.get_affected(self.old_context, self.new_context)
-            log.info("Differences from", repr(self.old_context), "-->", repr(self.new_context), "affect:\n", 
-                    log.PP(self.affected_instruments))
-            self.args.instruments = self.affected_instruments.keys()
-        
+            log.info("Mapping differences from", repr(self.old_context), "-->", repr(self.new_context), "affect:\n", 
+                     log.PP(self.affected_instruments))
+            self.instruments = self.affected_instruments.keys()
+        elif self.args.instruments:
+            self.instruments = self.args.instruments
+        elif self.args.all_instruments:
+            self.instruments = self.newctx.locate.INSTRUMENTS
+        else:
+            self.instruments = []
+
         if self.args.datasets_since == "auto":
             datasets_since = self.auto_datasets_since()
         else:
@@ -429,7 +528,7 @@ and debug output.
 
         if self.args.files and not self.args.update_bestrefs:
             log.info("No file header updates requested;  dry run.")
-    
+
     def auto_datasets_since(self):
         """Support --datasets-since="auto" and compute min EXPTIME for all references determined by diffs.
         
@@ -439,9 +538,16 @@ and debug output.
         for instrument in self.oldctx.selections:
             old_imap = self.oldctx.get_imap(instrument)
             new_imap = self.newctx.get_imap(instrument)
-            new_references = diff.get_added_references(old_imap, new_imap)
-            if new_references:
-                datasets_since[instrument] = exptime = matches.get_minimum_exptime(new_imap.name, new_references)
+            added_references = diff.get_added_references(old_imap, new_imap)
+            deleted_references = diff.get_deleted_references(old_imap, new_imap)
+            added_exp_time = deleted_exp_time = MAX_DATE
+            if added_references:
+                added_exp_time = matches.get_minimum_exptime(new_imap.name, added_references)
+            if deleted_references:
+                deleted_exp_time = matches.get_minimum_exptime(old_imap.name, deleted_references)
+            exp_time = min(added_exp_time, deleted_exp_time)
+            if exp_time != MAX_DATE: # if a USEAFTER min found,  remember it.
+                datasets_since[instrument] = exp_time
         log.info("Possibly affected --datasets-since dates determined by", 
                  repr(self.old_context), "-->", repr(self.new_context), "are:\n", log.PP(datasets_since))
         return datasets_since
@@ -467,14 +573,23 @@ and debug output.
         self.add_argument("-d", "--datasets", nargs="+", metavar="IDs", default=None,
             help="Dataset ids to consult database for matching parameters and old results.")
         
+        self.add_argument("--all-instruments", action="store_true", default=None,
+            help="Compute best references for cataloged datasets for all supported instruments in database.")
+        
         self.add_argument("-i", "--instruments", nargs="+", metavar="INSTRUMENTS", default=None,
             help="Instruments to compute best references for, all historical datasets in database.")
         
+        self.add_argument("-t", "--types", nargs="+",  metavar="REFERENCE_TYPES",  default=(),
+            help="A list of reference types to process,  defaulting to all types.")
+        
+        self.add_argument("-k", "--skip-types", nargs="+",  metavar="SKIPPED_REFERENCE_TYPES",  default=(),
+            help="A list of reference types which should not be processed,  defaulting to nothing.")
+        
         self.add_argument("--diffs-only", action="store_true", default=None,
-            help="For context-to-context comparison, only choose instruments and types based on diffs.")
+            help="For context-to-context comparison, choose only instruments and types from context differences.")
 
-        self.add_argument("--all-instruments", action="store_true", default=None,
-            help="Compute best references for cataloged datasets for all supported instruments in database.")
+        self.add_argument("--datasets-since", default=None, type=reformat_date_or_auto,
+            help="Cut-off date for datasets, none earlier than this.  Use 'auto' to exploit reference USEAFTER.")
         
         self.add_argument("-p", "--load-pickles", nargs="*", default=None,
             help="Load dataset headers and prior bestrefs from pickle files,  in worst-to-best update order.")
@@ -485,35 +600,29 @@ and debug output.
         self.add_argument("--only-ids", nargs="*", default=None, dest="only_ids", metavar="IDS",
             help="If specified, process only the listed dataset ids.")
         
-        self.add_argument("-t", "--types", nargs="+",  metavar="REFERENCE_TYPES",  default=(),
-            help="A list of reference types to process,  defaulting to all types.")
-        
-        self.add_argument("-k", "--skip-types", nargs="+",  metavar="SKIPPED_REFERENCE_TYPES",  default=(),
-            help="A list of reference types which should be skipped,  defaulting to nothing.")
-        
-        self.add_argument("-u", "--update-bestrefs",  dest="update_bestrefs",
-            help="Update dataset headers with new best reference recommendations.", 
-            action="store_true")
-        
-        self.add_argument("--print-affected",
-            help="Print names of data sets for which the new context would assign new references.",
-            action="store_true")
+        self.add_argument("-u", "--update-bestrefs",  dest="update_bestrefs", action="store_true", 
+            help="Update dataset headers with new best reference recommendations.")
+                    
+        self.add_argument("--print-affected", dest="print_affected", action="store_true",
+            help="Print names of products for which the new context would assign new references for some exposure.")
     
-        self.add_argument("--print-affected-details",
-            help="Include instrument and affected types in addition to names of affected datasets.",
-            action="store_true")
+        self.add_argument("--print-affected-details", action="store_true",
+            help="Include instrument and affected types in addition to compound names of affected exposures.")
     
-        self.add_argument("--print-new-references",
-            help="Prints messages detailing each reference file change.   If no comparison "
-                "was requested,  prints all best references.",
-            action="store_true")
+        self.add_argument("--print-new-references", action="store_true",
+            help="Prints one line per reference file change.  If no comparison requested,  prints all bestrefs.")
     
-        self.add_argument("-r", "--remote-bestrefs",
-            help="Compute best references on CRDS server,  convenience for env var CRDS_MODE='remote'",
-            action="store_true")
+        self.add_argument("--print-update-counts", action="store_true",
+            help="Prints dictionary of update counts by instrument and type,  status on updated files.")
+    
+        self.add_argument("-r", "--remote-bestrefs", action="store_true",
+            help="Compute best references on CRDS server,  convenience for env var CRDS_MODE='remote'")
         
-        self.add_argument("-s", "--sync-references", action="store_true",
-            help="Fetch the refefences recommended by new context to the local cache.")
+        self.add_argument("-m", "--sync-mappings", default="1", dest="sync_mappings", type=int,
+            help="Fetch the required context mappings to the local cache.  Defaults TRUE.")
+
+        self.add_argument("-s", "--sync-references", default="0", dest="sync_references", type=int,
+            help="Fetch the refefences recommended by new context to the local cache. Defaults FALSE.")
         
         self.add_argument("--differences-are-errors", action="store_true",
             help="Treat recommendation differences between new context and original source as errors.")
@@ -530,9 +639,8 @@ and debug output.
         self.add_argument("--compare-cdbs", action="store_true",
             help="Abbreviation for --compare-source-bestrefs --differences-are-errors --dump-unique-errors --stats")
         
-        self.add_argument("--datasets-since", default="1900-01-01T00:00:00", type=reformat_date_or_auto,
-            help="Date prior to which datasets are not considered for context change effects.  Use 'auto' to exploit reference USEAFTER.")
-        
+        self.add_argument("-z", "--optimize-tables", action="store_true", 
+            help="If set, apply row-based optimizations to screen out inconsequential table updates.")
         cmdline.UniqueErrorsMixin.add_args(self)
     
     def setup_contexts(self):
@@ -563,7 +671,7 @@ and debug output.
         if context is None:
             return
         # Get subset of bad files contained by this context.
-        bad_contained = heavy_client.get_bad_mappings_in_context(context)
+        bad_contained = heavy_client.get_bad_mappings_in_context(self.observatory, context)
         if bad_contained:
             if self.args.bad_files_are_errors:
                 self.log_and_track_error("ALL", "ALL", "ALL", name, "=", repr(context), 
@@ -574,6 +682,7 @@ and debug output.
             log.verbose(name, "=", repr(context), "contains bad rules", repr(bad_contained))
 
     def warn_bad_reference(self, dataset, instrument, filekind, reference):
+        """Issue a warning if `reference` is a known bad file."""
         if reference.lower() in self.bad_files:
             if self.args.bad_files_are_errors:
                 self.log_and_track_error(dataset, instrument, filekind, "File", repr(reference), 
@@ -597,16 +706,21 @@ and debug output.
     def sync_context(self, context):
         """Recursively cache the new and comparison mappings."""
         if context:
-            log.verbose("Syncing context", repr(context), verbosity=25)
             try:
                 rmap.get_cached_mapping(context)   # if it loads,  it's cached.
                 return
             except IOError:
-                try:
-                    api.dump_mappings(context)   # otherwise fetch it.
-                except Exception, exc:
-                    log.error("Failed to download context", repr(context), "from CRDS server", repr(api.get_crds_server()))
-                    sys.exit(-1)
+                assert not config.get_cache_readonly(), "Failed loading " + repr(context) + "but CRDS cache is readonly."
+                if self.args.sync_mappings:
+                    log.verbose("Syncing context", repr(context), verbosity=25)
+                    self.require_server_connection()
+                    try:
+                        api.dump_mappings(context)   # otherwise fetch it.
+                    except Exception, exc:
+                        log.error("Failed to download context", repr(context), "from CRDS server", repr(api.get_crds_server()))
+                        sys.exit(-1)
+                else:
+                    raise RuntimeError("Context '{}' is not available in the local cache and --sync-mappings=False.".format(context))
 
     def locate_file(self, filename):
         """Locate a dataset file leaving the path unchanged. Applies to self.args.files"""
@@ -614,10 +728,6 @@ and debug output.
     
     def init_headers(self, context, datasets_since):
         """Create header a header generator for `context`,  interpreting command line parameters."""
-        source_modes = [self.args.files, self.args.datasets, self.args.instruments, 
-                        self.args.all_instruments].count(None)
-        assert (4 - source_modes <= 1) and (source_modes + int(bool(self.args.load_pickles)) >= 1), \
-            "Must specify one and only one of: --files, --datasets, --instruments, --all-instruments, --load-pickles."
         if self.args.files:
             new_headers = FileHeaderGenerator(context, self.args.files, datasets_since)
             # log.info("Computing bestrefs for dataset files", self.args.files)
@@ -625,11 +735,12 @@ and debug output.
             self.require_server_connection()
             new_headers = DatasetHeaderGenerator(context, [dset.upper() for dset in self.args.datasets], datasets_since)
             log.info("Computing bestrefs for datasets", repr(self.args.datasets))
-        elif self.args.instruments or self.args.all_instruments:
+        elif self.instruments:
             self.require_server_connection()
-            instruments = self.newctx.locate.INSTRUMENTS if self.args.all_instruments else self.args.instruments
-            log.info("Computing bestrefs for db datasets for", repr(instruments))
-            new_headers = InstrumentHeaderGenerator(context, instruments, datasets_since)
+            log.info("Computing bestrefs for db datasets for", repr(self.instruments))
+            if self.args.save_pickle and len(self.instruments) > 1:
+                log.warning("--save-pickle with multiple instruments may require > 8G ram.")
+            new_headers = InstrumentHeaderGenerator(context, self.instruments, datasets_since, self.args.save_pickle, self.server_info)
         elif self.args.load_pickles:
             # log.info("Computing bestrefs solely from pickle files:", repr(self.args.load_pickles))
             new_headers = {}
@@ -654,9 +765,9 @@ and debug output.
         compare_prior = \
             self.args.old_context or \
             self.args.compare_source_bestrefs or \
-            self.args.update_bestrefs or \
             self.args.print_affected or \
             self.args.print_affected_details
+            # self.args.update_bestrefs or \
         old_headers = old_fname = None
         if compare_prior:
             if self.args.old_context:
@@ -676,10 +787,10 @@ and debug output.
         
         self.complex_init()   # Finish __init__() inside --pdb
         
-        datasets = [ dataset for dataset in self.new_headers 
-                     if (not self.args.only_ids) or dataset in self.args.only_ids ]
-            
-        for dataset in datasets:
+        for dataset in self.new_headers:
+            if self.args.only_ids and dataset not in self.args.only_ids:
+                log.verbose("Skipping", repr(dataset), "not in --only-ids", verbosity=80)
+                continue
             updates = self.process(dataset)
             if updates:
                 self.updates[dataset] = updates
@@ -688,7 +799,7 @@ and debug output.
 
         self.report_stats()
 
-        log.verbose(self.sources_processed, "sources processed", verbosity=30)
+        log.verbose(self.get_stat("datasets"), "sources processed", verbosity=30)
         log.verbose(len(self.updates), "source updates", verbosity=30)
         log.standard_status()
         return log.errors()
@@ -709,7 +820,6 @@ and debug output.
 
     def _process(self, dataset):
         """Core best references,  add to update tuples."""
-        self.sources_processed += 1
         new_header = self.new_headers.get_lookup_parameters(dataset)
         instrument = self.newctx.get_instrument(new_header)
         new_bestrefs = self.get_bestrefs(instrument, dataset, self.newctx, new_header)
@@ -720,6 +830,8 @@ and debug output.
             else:
                 old_bestrefs = self.old_headers.get_old_bestrefs(dataset)
             updates = self.compare_bestrefs(instrument, dataset, new_bestrefs, old_bestrefs)
+            if self.args.optimize_tables:
+                updates = self.optimize_tables(dataset, updates)
         else:
             updates = self.screen_bestrefs(instrument, dataset, new_bestrefs)
         return updates
@@ -769,30 +881,13 @@ and debug output.
                 log.verbose(self.format_prefix(dataset, instrument, filekind), 
                             "Skipping type.", verbosity=55)
                 continue
-            
-            new_org = cleanpath(newrefs.get(filekind, "UNDEFINED"))
-            new = new_org.upper()
-            
-            if new.startswith("NOT FOUND N/A"):
-                log.verbose(self.format_prefix(dataset, instrument, filekind), 
-                            "Filetype N/A for dataset.", self.update_promise, verbosity=55)
-                new = "N/A"
-            elif new.startswith(("NOT FOUND NO MATCH", "UNDEFINED")):
-                if self.args.na_differences_matter:  # track these when N/A is being scrutinized, regardless of diff.
-                    self.log_and_track_error(dataset, instrument, filekind, 
-                        "No CRDS match found => 'N/A'.", self.update_promise)
-                else:
-                    log.verbose(self.format_prefix(dataset, instrument, filekind),
-                        "No CRDS match found => 'N/A'.", self.update_promise)
-                new = "N/A"
-            elif new.startswith("NOT FOUND"):
-                self.log_and_track_error(dataset, instrument, filekind,
-                            "Bestref FAILED:", new_org[len("NOT FOUND"):], self.no_update)
-                continue
-            else:
+
+            new_ok, new_org, new = self.handle_na_and_not_found("New:", newrefs, dataset, instrument, filekind, 
+                                                       ("NOT FOUND NO MATCH","UNDEFINED"))
+            if new_ok:
                 log.verbose(self.format_prefix(dataset, instrument, filekind), 
                             "Bestref FOUND:", repr(new_org).lower(),  self.update_promise, verbosity=55)
-            updates.append(UpdateTuple(instrument, filekind, None, new))
+                updates.append(UpdateTuple(instrument, filekind, None, new))
 
         return updates
     
@@ -813,45 +908,28 @@ and debug output.
                             "Skipping type.", verbosity=55)
                 continue
             
-            new_org = cleanpath(newrefs.get(filekind, "UNDEFINED"))
-            new = new_org.upper()
-            
-            old = cleanpath(oldrefs.get(filekind, "UNDEFINED")).strip().upper()
-        
-            if old in ("N/A", "NONE", "", "*"):
-                old = "N/A"
-            if new.startswith("NOT FOUND N/A"):
-                new = "N/A"
-            
-            if new.startswith(("NOT FOUND NO MATCH","UNDEFINED")):
-                new = "N/A"
-                if self.args.na_differences_matter:  # track these when N/A is being scrutinized, regardless of diff.
-                    self.log_and_track_error(dataset, instrument, filekind, 
-                        "No CRDS match found => 'N/A'.")
-                else:
-                    log.verbose(self.format_prefix(dataset, instrument, filekind),
-                        "No CRDS match found => 'N/A'.")
-            elif new.startswith("NOT FOUND"):
-                self.log_and_track_error(dataset, instrument, filekind, 
-                    "Bestref FAILED:", new_org[len("NOT FOUND"):], self.no_update)
+            _ok, old_org, old = self.handle_na_and_not_found("Old:", oldrefs, dataset, instrument, filekind, 
+                                                        ("NOT FOUND NO MATCH",)) # omit UNDEFINED for useless update check.
+            new_ok, new_org, new = self.handle_na_and_not_found("New:", newrefs, dataset, instrument, filekind, 
+                                                       ("NOT FOUND NO MATCH","UNDEFINED"))
+            if not new_ok:
                 continue
-
-            if old == "UNDEFINED" and new == "N/A" and not self.args.na_differences_matter:
+            
+            if old == "UNDEFINED" and new == "N/A" and not self.args.undefined_differences_matter:
                 log.verbose(self.format_prefix(dataset, instrument, filekind),
-                    "New best reference: 'UNDEFINED' --> 'N/A',  Special case,  useless reprocessing.", 
-                    self.no_update, verbosity=30)
+                            "New best reference: 'UNDEFINED' --> 'N/A',  Special case,  useless reprocessing.", 
+                            self.no_update, verbosity=30)
                 continue
 
             if new != old:
                 if self.args.differences_are_errors:
                     #  By default, either CDBS or CRDS scoring a reference as N/A short circuits mismatch errors.
-                    if (old != "UNDEFINED") or self.args.undefined_differences_matter:
-                        if (old != "N/A" and new != "N/A") or self.args.na_differences_matter:
-                            self.log_and_track_error(dataset, instrument, filekind, 
-                                "Comparison difference:", repr(old).lower(), "-->", repr(new).lower(), self.update_promise)
-                elif self.args.print_new_references or log.get_verbose() or self.args.files:
+                    if (old != "N/A" and new != "N/A") or self.args.na_differences_matter:
+                        self.log_and_track_error(dataset, instrument, filekind, 
+                            "Comparison difference:", repr(old).lower(), "-->", repr(new).lower(), self.update_promise)
+                elif self.args.print_new_references or log.get_verbose() >= 30 or self.args.files:
                     log.info(self.format_prefix(dataset, instrument, filekind), 
-                            "New best reference:", repr(old).lower(), "-->", repr(new).lower(), self.update_promise)
+                             "New best reference:", repr(old).lower(), "-->", repr(new).lower(), self.update_promise)
                 updates.append(UpdateTuple(instrument, filekind, old, new))
             else:
                 log.verbose(self.format_prefix(dataset, instrument, filekind), 
@@ -859,7 +937,7 @@ and debug output.
         
         # Check for missing references in `newrefs`.
         for filekind in oldrefs:
-            if filekind not in newrefs and filekind in self.process_filekinds:
+            if new_org == "UNDEFINED" and new_org != old_org and filekind in self.process_filekinds:
                 if self.args.differences_are_errors:
                     self.log_and_track_error(dataset, instrument, filekind, 
                         "No new reference recommended. Old reference was", repr(old).lower(), self.no_update, verbosity=30)
@@ -868,33 +946,137 @@ and debug output.
                         "No new reference recommended. Old reference was", repr(old).lower(), self.no_update, verbosity=30)            
 
         return updates
-    
+
+    def handle_na_and_not_found(self, name, bestrefs, dataset, instrument, filekind, na_conversions):
+        """Fetch the bestref for `filekind` from `bestrefs`, and handle conversions to N/A
+        and CRDS NOT FOUND errors.
+        
+        `name` is a string identifier for this conversion, Old or New.
+        `bestrefs` is a dictionary { filekind : bestref, }
+        na_conversions is a tuple of string prefixes which convert the raw bestref to N/A.
+        
+        Return (ref_ok, raw_ref, ref)  where:
+            raw_ref is the original name of the reference,  stripped of any iref$ prefix.
+            ref is the fully normalized name of the reference, converted to N/A as needed.
+            ref_ok is True IFF bestrefs did not fail altogether.
+        """
+        ref_org = cleanpath(bestrefs.get(filekind, "UNDEFINED")).strip()
+        ref = ref_org.upper()
+        if ref == "N/A" or ref.startswith("NOT FOUND N/A"):
+            log.verbose(self.format_prefix(dataset, instrument, filekind),
+                        "Bestref is natural N/A.", verbosity=55)
+            ref = "N/A"
+        elif ref in ("NONE", "", "*"):
+            log.verbose(self.format_prefix(dataset, instrument, filekind),
+                        "Mapping", repr(ref), "to N/A.", verbosity=55)
+            ref = "N/A"
+        ref_ok = True
+        if ref.startswith(na_conversions):   
+            ref = "N/A"
+            if self.args.na_differences_matter:  # track these when N/A is being scrutinized, regardless of diff.
+                self.log_and_track_error(dataset, instrument, filekind, 
+                                         name,  "No match found => 'N/A'.")
+            else:
+                log.verbose(self.format_prefix(dataset, instrument, filekind),
+                            name, "No match found => 'N/A'.")
+        elif ref.startswith("NOT FOUND"):
+            self.log_and_track_error(dataset, instrument, filekind, 
+                                     name, "Bestref FAILED:", ref_org[len("NOT FOUND"):])
+            ref_ok = False
+        return ref_ok, ref_org, ref
+
+
     def post_processing(self):
         """Given the computed update list, print out results,  update file headers, and fetch missing references."""
-        # (dataset, filekind, old, new)
         if self.args.save_pickle:
             self.new_headers.save_pickle(self.args.save_pickle, only_ids=self.args.only_ids)
         self.warn_bad_updates()
-        if self.args.print_affected or self.args.print_affected_details:
-            for dataset in self.updates:
-                if self.updates[dataset]:
-                    if self.args.print_affected_details:
-                        types = sorted([update.filekind for update in self.updates[dataset]])
-                        print("{} {} {}".format(dataset.lower(), self.updates[dataset][0].instrument.lower(), " ".join(types)))
-                    else:
-                        print(dataset.lower()) 
+        if self.args.print_update_counts:
+            self.print_update_stats()
+        if self.args.print_affected:
+            self.print_affected()
+        if self.args.print_affected_details:
+            self.print_affected_details()
         if self.args.print_new_references:
-            for dataset in self.updates:
-                for reftype in self.updates[dataset]:
-                    print(dataset.lower() + " " + " ".join([str(val).lower() for val in reftype]))
+            self.print_new_references()
         if self.args.update_bestrefs:
             log.verbose("Performing best references updates.")
             self.new_headers.handle_updates(self.updates)
         if self.args.sync_references:
-            references = [ tup.new_reference.lower() for dataset in self.updates for tup in self.updates[dataset]]
-            api.dump_references(self.new_context, references, ignore_cache=self.args.ignore_cache, 
-                                raise_exceptions=self.args.pdb)
+            self.sync_references()
         self.dump_unique_errors()
+        
+    def optimize_tables(self, dataset, updates):
+        """Drop table updates for which the reference change doesn't matter based upon examining the
+        selected rows.
+        """
+        for update in updates:
+            new_header = self.new_headers.get_lookup_parameters(dataset)
+            if not table_effects.is_reprocessing_required(
+                dataset, new_header, self.old_context, self.new_context, 
+                update.old_reference, update.new_reference):
+                updates.remove(update) # reprocessing not required, ignore update.
+                log.verbose("Removing table update for", update.instrument, update.filekind, dataset, 
+                            "no effective change from reference", repr(update.old_reference),
+                            "-->", repr(update.new_reference), verbosity=25)
+        return updates
+
+    def print_affected(self):
+        """Print the product id for any product which has new bestrefs for any
+        of its component exposures.   All components share a common product id.
+        """
+        affected_products = set([self.dataset_to_product_id(dataset) 
+                                 for dataset in self.updates 
+                                 if self.updates[dataset]])
+        log.info("Affected products =", len(affected_products))
+        for product in sorted(affected_products):
+            print(product)
+        sys.stdout.flush()
+
+    def dataset_to_product_id(self, dataset):
+        """CRDS manages products and associations using : separated compound IDs of indeterminate
+        complexity.  The only thing guaranteed is that the first colon-section of the dataset ID is the
+        product (for possible reprocessing) which is reported whenever any bestref changes for any
+        dataset ID beginning with that prefix.
+        """
+        return dataset.split(":")[0].lower()
+    
+    def print_affected_details(self):
+        """Print compound ID, instrument, and affected reference types for every exposure with new best references,
+        one line per exposure.
+        """
+        for dataset in self.updates:
+            if self.updates[dataset]:
+                types = sorted([update.filekind for update in self.updates[dataset]])
+                print("{} {} {}".format(dataset.lower(), self.updates[dataset][0].instrument.lower(), " ".join(types)))
+        sys.stdout.flush()
+
+    def print_update_stats(self):
+        """Print compound ID, instrument, and affected reference types for every exposure with new best references,
+        one line per exposure.
+        """
+        stats = dict()
+        for dataset in self.updates:
+            for update in self.updates[dataset]:
+                if update.instrument not in stats:
+                    stats[update.instrument] = dict()
+                if update.filekind not in stats[update.instrument]:
+                    stats[update.instrument][update.filekind] = 0
+                stats[update.instrument][update.filekind] += 1
+        log.info("Updated exposure counts:\n", log.PP(stats))
+
+    def print_new_references(self):
+        """Print the compound id and update tuple for each exposure with updates."""
+        for dataset in sorted(self.updates):
+            for update in self.updates[dataset]:
+                print(dataset.lower() + " " + " ".join([str(val).lower() for val in update]))
+        sys.stdout.flush()
+                
+    def sync_references(self):
+        """Locally cache the new references referred to by updates."""
+        assert not self.readonly_cache, "Readonly cache,  cannot fetch references."
+        references = [ tup.new_reference.lower() for dataset in self.updates for tup in self.updates[dataset]]
+        api.dump_references(self.new_context, references, raise_exceptions=self.args.pdb)
 
 # ===================================================================
 

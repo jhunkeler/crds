@@ -1,0 +1,61 @@
+#! /bin/sh 
+
+# usage:  unsafe_sync <options for crds.sync>
+#
+#   options:  --all --fetch-references --verbose --check-files 
+#
+#   requires:  
+#        CRDS_PATH        (cache directory)
+#        CRDS_LOCKS       (locks directory,  defaults CRDS_PATH)
+#        CRDS_SERVER_URL  (server synced from)
+#
+# This script is intended to be run manually,  paradoxically at 
+# points which are known to be "safe".  Safe is when:
+#
+# 1. It's OK for the default operational context to change.
+#
+# 2. It's OK for the CRDS cache config area to change because
+#    there is little chance of observing a partial update with
+#    bestefs or another sync.
+#
+# 3. This script won't conflict data transfers in  another 
+#    cron-based sync.
+
+# Use an flock to prevent multiple concurrent syncs, safe or unsafe.  
+
+# The intent of this organization is that "safe_sync" (elsewhere in a cron)
+# does the heavy lifting of data transfer, and consequently, since no new rules
+# or references are downloaded during unsafe_sync, unsafe_sync should update
+# configuration in 10-20 seconds.  This is not however guaranteed, it's
+# possible new files can be archived between the last safe_sync and this
+# unsafe_sync...  in which case they'll download here, possibly taking minutes
+# or hours.  So unsafe_sync has to be run with some awareness that it is safe
+# with respect to local pipeline operation and new remote archive deliveries...
+# or addditional undesired latenencies will be introduced.
+
+# Make CRDS cache config area writable before syncing to allow an update
+# This will update the default context as well as awareness of bad files.
+
+# default CRDS_LOCKS to CRDS_PATH unless it is known that the CRDS_PATH
+# file system has broken flock's
+if [[ -z "$CRDS_LOCKS" ]]
+then
+    export CRDS_LOCKS="$CRDS_PATH"
+fi
+
+( flock --exclusive --nonblock 200 
+  if [[ $? == 1 ]]
+  then # fail immediately if lock unavailable 
+      echo "unsafe_sync: WARNING: failed to obtain crds.sync.lock"
+      exit 1
+  else 
+      echo "unsafe_sync: INFO: obtained crds.sync.lock"
+      ( flock --exclusive 201  # wait indefinitely for bestrefs
+	chmod 664 ${CRDS_PATH}/config/{hst,jwst}/* >& /dev/null 
+	python -m crds.sync $* 
+	chmod 444 ${CRDS_PATH}/config/{hst,jwst}/* >& /dev/null
+      ) 201> ${CRDS_LOCKS}/crds.config.lock 
+  fi
+) 200> ${CRDS_LOCKS}/crds.sync.lock 
+exit 0
+

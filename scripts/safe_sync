@@ -1,0 +1,47 @@
+#! /bin/sh 
+
+# usage:  safe_sync 
+#
+#   options:  --all --fetch-references --verbose --check-files
+#
+#   requires:  
+#        CRDS_PATH        (cache directory)
+#        CRDS_LOCKS       (locks directory, defaults CRDS_PATH)
+#        CRDS_SERVER_URL  (server synced from)
+#
+# This script is intended to be run in a cron job at a relatively high rate,
+# say once every 10 minutes.
+
+# The main purpose of safe_sync is to perform bulk data transfers of
+# new references and rules which are not yet in operational use.  This
+# script will not update the operational context so running it will
+# not put the newly downloaded files into effect, it just pre-caches
+# them. New files should become sync'able as soon as they are archived
+# at STScI.  The default operational context is changed by running
+# unsafe_sync.   The default context is controlled by the STScI pipeline
+# and updated at some point after files are archived.
+
+# safe_sync renders the config area of the CRDS cache readonly, so it
+# will not update the config area, and any bestrefs running in
+# parallel processses won't see partial updates to the config area or
+# perform their own (successful) updates either.  safe_sync does not
+# block safe_bestefs with a lock.  safe_sync blocks itself and
+# unsafe_sync from concurrent runs using crds.sync.lock.
+
+# To prevent a long queue of blocked sync cron jobs,  cron jobs which
+# trigger during an on-going cron_sync fail immediately.  Subsequent
+# cron jobs resume normally.
+
+( flock --exclusive --nonblock 200 # --nonblock means fail on unavailable locks
+  if [[ $? == 1 ]]
+  then
+    echo "safe_sync: WARNING: failed to obtain crds.sync.lock"
+    exit 1
+  else
+    echo "safe_sync: INFO: obtained crds.sync.lock"
+    chmod 444 ${CRDS_PATH}/config/{hst,jwst}/* >& /dev/null 
+    python -m crds.sync $* 
+  fi
+) 200> ${CRDS_LOCKS}/crds.sync.lock 
+exit 0
+

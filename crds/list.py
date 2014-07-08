@@ -6,7 +6,7 @@ from __future__ import print_function
 import os.path
 
 import crds
-from crds import cmdline, rmap, log, config
+from crds import cmdline, rmap, log, config, heavy_client
 from crds.client import api
 
 class ListScript(cmdline.ContextsScript):
@@ -131,12 +131,19 @@ class ListScript(cmdline.ContextsScript):
     def list_config(self):
         """Print out configuration info about the current environment and server."""
         info = config.get_crds_env_vars()
+        real_paths = config.get_crds_actual_paths(self.observatory)
         server = self.server_info
+        current_server_url = api.get_crds_server()
         _print_dict("CRDS Environment", info)
+        _print_dict("CRDS Server Url Used", { "url" : current_server_url })
+        _print_dict("CRDS Actual Paths", real_paths)
         _print_dict("CRDS Server Info", server, 
                     ["observatory", "status", "operational_context", "last_synced", 
                      "reference_url", "mapping_url",])
-        _print_dict("CRDS Package", { "crds" : repr(crds) })
+        _print_dict("CRDS Package", { 
+                "crds" : repr(crds),
+                "version": heavy_client.version_info() 
+                })
     
 def _print_dict(title, d, selected = None):
     """Print out dictionary `d` with a one line `title`."""

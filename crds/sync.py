@@ -13,9 +13,14 @@ Or explicitly list the files you want cached:
 
   % python -m crds.sync --files <references or mappings to cache>
 
-Synced datasets can be explicitly listed:
+To sync best references and rules for specific dataset FITS files:
 
-  % python -m crds.sync --contexts hst_0001.pmap hst_0002.pmap --datasets *.fits
+  % python -m crds.sync --contexts hst_0001.pmap hst_0002.pmap --dataset-files *.fits --fetch-references
+
+To sync best references and rules for specific dataset ids:
+
+  % python -m crds.sync --contexts hst_0001.pmap hst_0002.pmap --dataset-ids J6M915030 --fetch-references
+
 """
 import sys
 import os
@@ -23,7 +28,7 @@ import os.path
 import re
 
 import crds.client.api as api
-from crds import (rmap, log, data_file, cmdline, utils)
+from crds import (rmap, log, data_file, cmdline, utils, config)
 import crds
 
 # ============================================================================
@@ -70,7 +75,8 @@ class SyncScript(cmdline.ContextsScript):
                 % python -m crds.sync  --contexts hst_0001.pmap hst_0002.pmap  --fetch-references
      
             will download all the references mentioned by contexts 0001 and 0002.   
-            this can be a huge undertaking and should be done with care.
+            this can be a huge (1T+) network download and should generally only be used by
+            institutions,  not individual researchers.
             
     * Removing files:
               
@@ -84,29 +90,33 @@ class SyncScript(cmdline.ContextsScript):
     
             this would remove reference files which are *not* in 4 or 5.
         
-    * References for particular datasets can be cached like this::
+    * References for particular dataset files can be cached like this::
                 
-         % python -m crds.sync  --contexts hst_0001.pmap hst_0002.pmap --datasets  <dataset_files...>
+         % python -m crds.sync  --contexts hst_0001.pmap hst_0002.pmap --dataset-files  <dataset_files...> e.g. acs_J8D219010.fits
     
-      this will fetch all the references required to support the listed datasets for contexts 0001 and 0002.
-      this mode does not update dataset file headers.  See also crds.bestrefs for header updates.
+      This will fetch all the references required to support the listed datasets for contexts 0001 and 0002.
+      This mode does not update dataset file headers.  See also crds.bestrefs for header updates.
+              
+    * References for particular dataset ids can be cached like this::
+                
+         % python -m crds.sync  --contexts hst_0001.pmap hst_0002.pmap --dataset-ids  <ids...>  e.g. J6M915030
+    
+      This will fetch all the references required to support the listed dataset ids for contexts 0001 and 0002.
               
     * Checking the cache::
         
         % python -m crds.sync --contexts hst_0001.pmap --fetch-references --check-files --check-sha1sum --repair-files
     
       would first sync the cache downloading all the files in hst_0001.pmap.  Both mappings and references would then
-      be checked for correct length, sha1sum, and reject and blacklist status.   Any files with bad length or checksum
-      would then be deleted and re-downloaded.   This is really intended for an *existing* cache,  where the actual
-      sync download process is a null operation which just determines the list of files to check.
+      be checked for correct length, sha1sum, and status.   Any files with bad length or checksum
+      would then be deleted and re-downloaded.   This is really intended for an *existing* cache.
       
     * Removing blacklisted or rejected files::
               
         % python -m crds.sync --contexts hst_0001.pmap --fetch-references --check-files --purge-rejected --purge-blacklisted
     
       would first sync the cache downloading all the files in hst_0001.pmap.  Both mappings and references would then
-      be checked for correct length, and reject and blacklist status.   Files reported as rejected or blacklisted by 
-      the server would be removed.
+      be checked for correct length.   Files reported as rejected or blacklisted by the server would be removed.
     """
     
     # ------------------------------------------------------------------------------------------
@@ -114,8 +124,10 @@ class SyncScript(cmdline.ContextsScript):
     def add_args(self):    
         super(SyncScript, self).add_args()
         self.add_argument("--files", nargs="*", help="Explicitly list files to be synced.")
-        self.add_argument('--datasets', metavar='DATASET', type=cmdline.dataset, nargs='*',
-                          help='Cache references for the specified datasets.')
+        self.add_argument('--dataset-files', metavar='DATASET', type=cmdline.dataset, nargs='*',
+                          help='Cache references for the specified datasets FITS files.')
+        self.add_argument('--dataset-ids', metavar='DATASET', type=str, nargs='*',
+                          help='Cache references for the specified datasets FITS files.')
         self.add_argument('--fetch-references', action='store_true', dest="fetch_references",
                           help='Cache all the references for the specified contexts.')        
         self.add_argument('--purge-references', action='store_true', dest="purge_references",
@@ -144,6 +156,8 @@ class SyncScript(cmdline.ContextsScript):
         """Synchronize files."""
         if self.args.repair_files:
             self.args.check_files = True
+        assert not (self.args.repair_files and self.readonly_cache), \
+            "--repair-files and readonly cache are mutually exclusive."
         self.require_server_connection()
         if self.args.files:
             self.sync_explicit_files()
@@ -154,12 +168,11 @@ class SyncScript(cmdline.ContextsScript):
             active_mappings = self.get_context_mappings()
             verify_file_list = active_mappings
             if self.args.fetch_references or self.args.purge_references:
-                if self.args.datasets:
+                if self.args.dataset_files or self.args.dataset_ids:
                     active_references = self.sync_datasets()
                 else:
                     active_references = self.get_context_references()
-                active_references += self.get_conjugates(active_references)
-                active_references = sorted(set(active_references))
+                active_references = sorted(set(active_references + self.get_conjugates(active_references)))
                 if self.args.fetch_references:
                     self.fetch_references(active_references)
                     verify_file_list += active_references
@@ -168,9 +181,9 @@ class SyncScript(cmdline.ContextsScript):
             if self.args.purge_mappings:
                 self.purge_mappings()
         else:
-            log.error("Define --contexts, --files, or --fetch-sqlite-db to sync.")
+            log.error("Define --all, --contexts, --last, --range, --files, or --fetch-sqlite-db to sync.")
             sys.exit(-1)
-        if self.args.check_files:
+        if self.args.check_files or self.args.check_sha1sum or self.args.repair_files:
             self.verify_files(verify_file_list)
         self.report_stats()
         log.standard_status()
@@ -235,20 +248,31 @@ class SyncScript(cmdline.ContextsScript):
     def sync_datasets(self):
         """Sync mappings and references for datasets with respect to `self.contexts`."""
         if not self.contexts:
-            log.error("Define --contexts under which references are fetched for --datasets.""")
+            log.error("Define --contexts under which references are fetched for --dataset-files or --dataset-ids.""")
             sys.exit(-1)
         active_references = []
         for context in self.contexts:
-            for dataset in self.args.datasets:
+            if self.args.dataset_ids:
+                with log.error_on_exception("Failed to get matching parameters for", self.args.dataset_ids):
+                    id_headers = api.get_dataset_headers_by_id(context, self.args.dataset_ids)
+            for dataset in self.args.dataset_files or self.args.dataset_ids:
                 log.info("Syncing context '%s' dataset '%s'." % (context, dataset))
                 with log.error_on_exception("Failed to get matching parameters from", repr(dataset)):
-                    header = data_file.get_conditioned_header(dataset, observatory=self.observatory)
-                    with log.error_on_exception("Failed syncing references for dataset", repr(dataset), 
-                                                "under context", repr(context)):   
-                        bestrefs = crds.getrecommendations(header, context=context, observatory=self.observatory, 
-                                                           ignore_cache=self.args.ignore_cache)
-                        active_references.extend(bestrefs.values())
-        return set(active_references)
+                    if self.args.dataset_files:
+                        headers = { dataset : data_file.get_conditioned_header(dataset, observatory=self.observatory) }
+                    else:
+                        headers = { dataset_id : header for (dataset_id, header) in id_headers.items() if
+                                    dataset in dataset_id }
+                    for assc_dataset, header in headers.items():
+                        with log.error_on_exception("Failed syncing references for dataset", repr(assc_dataset), 
+                                                    "under context", repr(context)):   
+                            bestrefs = crds.getrecommendations(header, context=context, observatory=self.observatory, 
+                                                               ignore_cache=self.args.ignore_cache)
+                            log.verbose("Best references for", repr(assc_dataset), "are", bestrefs)
+                            active_references.extend(bestrefs.values())
+        active_references = [ ref for ref in active_references if not ref.startswith("NOT FOUND") ]
+        log.verbose("Syncing references for datasets:", repr(active_references))
+        return list(set(active_references))
         
     # ------------------------------------------------------------------------------------------
     

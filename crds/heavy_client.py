@@ -30,6 +30,7 @@ import os
 import pprint
 import glob
 import ast
+import traceback
 
 import crds.client as light_client
 from . import rmap, log, utils, config
@@ -38,6 +39,7 @@ __all__ = ["getreferences", "getrecommendations"]
 
 # ============================================================================
 
+# !!!!! interface to jwst_lib.stpipe.crds_client
 def getreferences(parameters, reftypes=None, context=None, ignore_cache=False,
                   observatory="jwst"):
     """
@@ -149,8 +151,6 @@ def _initial_recommendations(
 
     mode, final_context = get_processing_mode(observatory, context)
 
-    warn_bad_context(final_context)
-
     if mode == "local":
         bestrefs = local_bestrefs(
             parameters, reftypes=reftypes, context=final_context, ignore_cache=ignore_cache)
@@ -158,30 +158,35 @@ def _initial_recommendations(
         log.verbose("Computing best references remotely.")
         bestrefs = light_client.get_best_references(final_context, parameters, reftypes=reftypes)
     
+    warn_bad_context(observatory, final_context)
     warn_bad_references(observatory, bestrefs)
         
     return final_context, bestrefs
 
 # ============================================================================
 
-def warn_bad_context(context):
+def warn_bad_context(observatory, context):
     """Issue a warning if `context` is a known bad file, or contains bad files."""
-    bad_contained = get_bad_mappings_in_context(context)
+    bad_contained = get_bad_mappings_in_context(observatory, context)
     if bad_contained:
         log.warning("Final context", repr(context), 
                     "is bad or contains bad rules.  It may produce scientifically invalid results.")
         log.verbose("Final context", repr(context), "contains bad files:", repr(bad_contained))
 
-def get_bad_mappings_in_context(context):
+def get_bad_mappings_in_context(observatory, context):
     """Return the list of bad files (defined by the server) contained by `context`."""
-    mapping = crds.get_cached_mapping(context)
-    contained_mappings = set(mapping.mapping_names())
-    bad_mappings = get_bad_files(mapping.observatory)
+    mode, _jnk = get_processing_mode(observatory, context)
+    if mode == "remote":
+        contained_mappings = set(light_client.get_mapping_names(context))
+    else:
+        mapping = crds.get_cached_mapping(context)
+        contained_mappings = set(mapping.mapping_names())
+    bad_mappings = get_config_info(observatory).bad_files_set
     return sorted(list(contained_mappings.intersection(bad_mappings)))
 
 def warn_bad_references(observatory, bestrefs):
     """Scan `bestrefs` mapping { filekind : bestref_path, ...} for bad references."""
-    bad_files = get_bad_files(observatory)
+    bad_files = get_config_info(observatory).bad_files_set
     base_bestrefs = { reftype:os.path.basename(ref) for (reftype, ref) in bestrefs.items() }
     for reftype, ref in base_bestrefs.items():
         if ref in bad_files:
@@ -244,14 +249,15 @@ def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
         try:
             light_client.dump_mappings(context, ignore_cache=ignore_cache)
         except crds.CrdsError, exc:
-            import traceback
             traceback.print_exc()
-            raise crds.CrdsNetworkError("Network failure caching mapping files: " + str(exc))
+            raise crds.CrdsNetworkError("Failed caching mapping files: " + str(exc))
     # Finally do the best refs computation using pmap methods from local code.
     bestrefs = rmap.get_best_references(context, parameters, reftypes)
     return bestrefs
 
 # ============================================================================
+
+# !!!!! interface to jwst_lib.stpipe.crds_client
 
 # Because get_processing_mode is a cached function,  it's results will not
 # change after the first call without some special action.
@@ -261,11 +267,11 @@ def get_processing_mode(observatory, context=None):
     """Return the processing mode (local, remote) and the .pmap name to be used
     for best references selections.
     """
-    connected, info = get_config_info(observatory)
+    info = get_config_info(observatory)
         
-    effective_mode = get_effective_mode(connected, info["crds_version"]["str"])
+    effective_mode = get_effective_mode(info.connected, info.crds_version["str"])
 
-    final_context = get_final_context(connected, context, info)
+    final_context = get_final_context(info, context)
 
     return effective_mode, final_context
 
@@ -288,7 +294,7 @@ def get_effective_mode(connected,  server_version):
         log.warning("Computing bestrefs locally with obsolete client.   Recommended references may be sub-optimal.")
     return effective_mode
 
-def get_final_context(connected, context, info):
+def get_final_context(info, context):
     """Based on env CRDS_CONTEXT, the `context` parameter, and the server's reported,
     cached, or defaulted `operational_context`,  choose the pipeline mapping which 
     defines the reference selection rules.
@@ -296,24 +302,22 @@ def get_final_context(connected, context, info):
     Returns   a .pmap name
     """
     env_context = config.get_crds_env_context()
-    if context and not context.endswith("-operational"):    # context parameter trumps all, XXX-operational is default
+    if context and not context.endswith("-operational"):    # context parameter trumps all, <observatory>-operational is default
         input_context = context
-        log.verbose("Using reference file selection rules", srepr(input_context), 
-                    "defined by caller.")
-        info["status"] = "getreferences() context parameter"
+        log.verbose("Using reference file selection rules", srepr(input_context), "defined by caller.")
+        info.status = "getreferences() context parameter"
     elif env_context:
         input_context = env_context
         log.verbose("Using reference file selection rules", srepr(input_context), 
                     "defined by environment CRDS_CONTEXT.")
-        info["status"] = "env var CRDS_CONTEXT"
+        info.status = "env var CRDS_CONTEXT"
     else:
-        input_context = str(info["operational_context"])
-        log.verbose("Using reference selection rules", srepr(input_context), 
-                    "defined by", info["status"] + ".")
-    final_context = translate_date_based_context(connected, info, input_context)
+        input_context = str(info.operational_context)
+        log.verbose("Using reference selection rules", srepr(input_context), "defined by", info.status + ".")
+    final_context = translate_date_based_context(info, input_context)
     return final_context
 
-def translate_date_based_context(connected, info, context):
+def translate_date_based_context(info, context):
     """Check to see if `input_context` is based upon date rather than a context filename.  If it's 
     just a filename,  return it.  If it's a date spec,  ask the server to interpret the date into 
     a context filename.   If it's a date spec and not `connected`,  raise an exception.
@@ -321,10 +325,10 @@ def translate_date_based_context(connected, info, context):
     if config.is_mapping(context):
         return context
     else:
-        if not connected:
+        if not info.connected:
             raise crds.CrdsError("Specified CRDS context by date and CRDS server is not reachable.")
         try:
-            translated = light_client.get_context_by_date(context, observatory=info["observatory"])
+            translated = light_client.get_context_by_date(context, observatory=info.observatory)
         except Exception, exc:
             log.error("Failed to translate date based context", repr(context), ":", str(exc))
             raise
@@ -352,13 +356,12 @@ def minor_version(vers):
  
 # ============================================================================
 
-@utils.cached
-def get_bad_files(observatory):
-    """Return the set of known bad files.   This encapsulates one implementation of a bad files
-    set based on the server info.
-    """
-    info = get_config_info(observatory)[1]
-    return set(info.get("bad_files", "").split())
+class ConfigInfo(utils.Struct):
+    """Encapsulate CRDS cache config info."""
+    @property
+    def bad_files_set(self):
+        """Return the set of references and mappings which are considered scientifically invalid."""
+        return set(self.get("bad_files", "").split())
 
 @utils.cached
 def get_config_info(observatory):
@@ -368,54 +371,57 @@ def get_config_info(observatory):
     2. The cache from a prior server access.
     3. The basic CRDS installation.
     
-    Return (connected_flag,  {server_info})
+    Return ConfigInfo
     """
     try:
-        info = light_client.get_server_info()
-        info["status"] = "server"
-        connected = True
+        info = ConfigInfo(light_client.get_server_info())
+        info.status = "server"
+        info.connected = True
+        log.verbose("Connected to server at", repr(light_client.get_crds_server()))
     except light_client.CrdsError:
-        log.verbose_warning("Couldn't contact CRDS server:", 
-                    srepr(light_client.get_crds_server()))
+        log.verbose_warning("Couldn't contact CRDS server:", srepr(light_client.get_crds_server()))
         info = load_server_info(observatory)
-        connected = False
-    else:
-        cache_server_info(observatory, info)  # save locally
-    return connected, info
+        info.connected = False
+    if info.connected:
+        cache_server_info(info, observatory)  # save locally
+    info.readonly = config.get_cache_readonly()
+    return info
 
-def cache_server_info(observatory, info):
+def cache_server_info(info, observatory):
     """Write down the server `info` dictionary to help configure off-line use."""
-    path = config.get_crds_config_path() + "/" + observatory
+    if config.get_cache_readonly():
+        log.verbose("Readonly cache, skipping cache config write.", verbosity=70)
+        return
+    path = config.get_crds_config_path(observatory)
     try:
-        server_config = path + "/server_config"
+        server_config = os.path.join(path, "server_config")
         utils.ensure_dir_exists(server_config)
         with open(server_config, "w+") as file_:
             file_.write(pprint.pformat(info))
     except IOError, exc:
-        log.warning("Couldn't save CRDS server info:", repr(exc))
+        log.verbose_warning("Couldn't save CRDS server info:", repr(exc))
     try:
-        bad_files = path + "/bad_files.txt"
+        bad_files = os.path.join(path, "bad_files.txt")
         utils.ensure_dir_exists(bad_files)
         bad_files_lines = "\n".join(info.get("bad_files","").split()) + "\n"
         with open(bad_files, "w+") as file_:
             file_.write(bad_files_lines)
     except IOError, exc:
-        log.warning("Couldn't save CRDS bad files list:", repr(exc))
+        log.verbose_warning("Couldn't save CRDS bad files list:", repr(exc))
         
 def load_server_info(observatory):
     """Return last connected server status to help configure off-line use."""
-    server_config = config.get_crds_config_path() + "/" + observatory + "/server_config"
+    server_config = os.path.join(config.get_crds_config_path(observatory), "server_config")
     try:
         with open(server_config) as file_:
-            info = ast.literal_eval(file_.read())
-            info["status"] = "cache"
+            info = ConfigInfo(ast.literal_eval(file_.read()))
+        info.status = "cache"
         log.verbose_warning("Loading server context and version info from cache '%s'." % server_config, 
                             "References may be sub-optimal.")
     except IOError:
         log.verbose_warning("Couldn't load cached server info from '%s'." % server_config,
                             "Using pre-installed CRDS context.  References may be sub-optimal." )
         info = get_installed_info(observatory)
-        info["status"] = "s/w install"
     return info
 
 def get_installed_info(observatory):
@@ -442,11 +448,12 @@ def get_installed_info(observatory):
     except IndexError, exc:
         raise crds.CrdsError("Configuration or install error.  Can't find any .pmaps at " + 
                         repr(where) + " : " + str(exc))
-    return dict(
+    return ConfigInfo(
             edit_context = pmap,
             operational_context = pmap,
             observatory = observatory,
             bad_files = "",
+            status = "s/w install",
             crds_version = dict( str="0.0.0"),
             last_synced = "Not connected and not cached,  using installed mappings only.",
             reference_url = "Not connected",

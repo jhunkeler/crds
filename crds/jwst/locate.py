@@ -15,7 +15,7 @@ from . import tpn
 # =======================================================================
 
 try:
-    from jwstlib.models import DataModel
+    from jwst_lib.models import DataModel
     MODEL = DataModel()
 except Exception:
     MODEL = None
@@ -53,7 +53,7 @@ def reference_exists(reference):
 # from observatory-unique ways of specifying and caching Validator parameters.
 
 from crds.jwst.tpn import get_tpninfos   #  reference_name_to_validator_key, mapping_validator_key  defined here.
-from crds.jwst.__init__ import INSTRUMENTS, FILEKINDS, EXTENSIONS
+from crds.jwst.__init__ import INSTRUMENTS, FILEKINDS, EXTENSIONS, FILETYPE_TO_FILEKIND, FILEKIND_TO_FILETYPE
 
 # =======================================================================
 
@@ -222,25 +222,17 @@ def ref_properties_from_cdbs_path(filename):
 
 # =======================================================================
 
-REFTYPE_TO_FILEKIND = {
-    "DETECTOR PARAMETERS" : "AMPLIFIER",
-    "PIXEL-TO-PIXEL FLAT" : "FLAT",
-    "PHOTOMETRIC CALIBRATION" : "PHOTOM",
-}
-
-FILEKIND_TO_REFTYPE = utils.invert_dict(REFTYPE_TO_FILEKIND)
-
-def reftype_to_filekind(reftype):
-    reftype = reftype.upper()
-    if reftype in REFTYPE_TO_FILEKIND:
-        return REFTYPE_TO_FILEKIND[reftype].lower()
+def filetype_to_filekind(filetype):
+    filetype = filetype.upper()
+    if filetype in FILETYPE_TO_FILEKIND:
+        return FILETYPE_TO_FILEKIND[filetype].lower()
     else:
-        return reftype.lower()
+        return filetype.lower()
 
-def filekind_to_reftype(filekind):
+def filekind_to_filetype(filekind):
     filekind = filekind.upper()
-    if filekind in FILEKIND_TO_REFTYPE:
-        return FILEKIND_TO_REFTYPE[filekind]
+    if filekind in FILEKIND_TO_FILETYPE:
+        return FILEKIND_TO_FILETYPE[filekind]
     else:
         return filekind
 
@@ -254,8 +246,7 @@ def ref_properties_from_header(filename):
     instrument = header.get("INSTRUME", "UNDEFINED").lower()
     assert instrument in INSTRUMENTS, \
         "Invalid instrument " + repr(instrument) + " in file " + repr(filename)
-    reftype = header.get("REFTYPE", "UNDEFINED").lower()
-    filekind = reftype_to_filekind(reftype)
+    filekind = header.get("REFTYPE", "UNDEFINED").lower()
     assert filekind in FILEKINDS, \
         "Invalid file type " + repr(filekind) + " in file " + repr(filename)    
     return path, "jwst", instrument, filekind, serial, ext
@@ -288,6 +279,7 @@ def reference_keys_to_dataset_keys(instrument, filekind, header):
     terms rmaps know:  dataset keywords.
     """
     return dict(header)    # NOOP for JWST for now.
+
 #   See hst/locate.py
 #    inv_trans = utils.invert_dict(
 #        PARKEYS[instrument][filekind]["db_translations"])
@@ -314,7 +306,7 @@ class MissingDependencyError(Exception):
 def fits_to_parkeys(fits_header):
     """Map a FITS header onto rmap parkeys appropriate for JWST."""
     if MODEL is None:
-        raise MissingDependencyError("JWST data model is not installed.   Cannot fits_to_parkeys().   Install jwstlib.")
+        raise MissingDependencyError("JWST data model is not installed.   Cannot fits_to_parkeys().   Install jwst_lib.")
     parkeys = {}
     for key, value in fits_header.items():
         key, value = str(key), str(value)
@@ -337,4 +329,8 @@ def fits_to_parkeys(fits_header):
 def get_env_prefix(instrument):
     """Return the environment variable prefix (IRAF prefix) for `instrument`."""
     return ""
+
+def load_all_type_constraints():
+    """Load all the JWST type constraint files."""
+    raise NotImplementedError("expected failure,  JWST type constraints not implemented yet.")
 

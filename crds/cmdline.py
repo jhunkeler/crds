@@ -3,6 +3,7 @@
 MAYBE integrate rc, environment, and command line parameters.
 """
 import sys
+import os
 import argparse
 import pdb
 import cProfile as profile
@@ -36,7 +37,7 @@ def dataset(filename):
 def reference_file(filename):
     """Ensure `filename` is a reference file."""
     assert re.match(".*(.fits|.finf|.r[0-9][hd])", filename), \
-        "A .fits or .finf file is required but got: '%s'" % filename
+        "A .fits or .finf reference file is required but got: '%s'" % filename
     return filename
 
 def mapping(filename):
@@ -116,6 +117,8 @@ class Script(object):
         self.add_args()
         self.add_standard_args()
         self.args = self.parser.parse_args(argv[1:])
+        if self.args.readonly_cache:
+            config.set_cache_readonly(True)
         log.set_verbose(self.args.verbosity or self.args.verbose)
         log.reset()  # reset the infos, warnings, and errors counters as if new commmand line run.
         
@@ -140,43 +143,52 @@ class Script(object):
         # raise NotImplementedError("Script subclasses have to define add_args().")
     
     @property
+    def readonly_cache(self):
+        """Return True of the cache is readonly."""
+        return config.get_cache_readonly()
+    
+    @property
     @utils.cached
     def observatory(self):
         """Return either the command-line override observatory,  or the one determined
         by the client/server exchange.
         """
-        obs = None
         if self.args.jwst:
-            obs = "jwst"
+            return self.set_server("jwst")
         if self.args.hst:
-            assert obs in [None, "hst"], "Ambiguous observatory. Only work on HST or JWST files at one time."
-            obs = "hst"
-        if hasattr(self, "contexts"):
-            for file in self.contexts:
-                if file.startswith("hst"):
-                    assert obs in [None, "hst"], "Ambiguous observatory. Only work on HST or JWST files at one time."
-                    obs = "hst"
-                if file.startswith("jwst"):
-                    assert obs in [None, "jwst"], "Ambiguous observatory. Only work on HST or JWST files at one time."
-                    obs = "jwst"
-        if hasattr(self.args, "files"):
-            files = self.args.files if self.args.files else []
-            for file in files:
-                if file.startswith("hst"):
-                    obs = "hst"
-                    break
-                if file.startswith("jwst"):
-                    obs = "jwst"
-                    break
-            if obs is None:
-                for file in files:
-                    with log.verbose_on_exception("Failed file_to_observatory for", repr(file)):
-                        obs = utils.file_to_observatory(file)
-                        break
-        if obs is None:
-            obs = api.get_default_observatory()
-        return obs
+            return self.set_server("hst")
         
+        obs = os.environ.get("CRDS_OBSERVATORY", None)
+        if obs:
+            self.set_server(obs.lower())
+        
+        files = []
+        if hasattr(self, "contexts"):
+            files += self.contexts
+        if hasattr(self.args, "files"):
+            files += self.args.files if self.args.files else []
+            
+        for file_ in files:
+            if file_.startswith("hst"):
+                return self.set_server("hst")
+            if file_.startswith("jwst"):
+                return self.set_server("jwst")
+
+        for file_ in files:
+            with log.verbose_on_exception("Failed file_to_observatory for", repr(file_)):
+                return self.set_server(utils.file_to_observatory(file_))
+
+        return api.get_default_observatory()
+
+    def set_server(self, observatory):
+        """Based on `observatory`,  set the CRDS server to an appropriate default,  particularly
+        for the case where CRDS_SERVER_URL is not set.
+        """
+        url = config.get_server_url(observatory)
+        if url is not None:
+            api.set_crds_server(url)
+        return observatory
+    
     def _add_key(self, key, parser_pars):
         """Add any defined class attribute for `key` to dict `parser_pars`."""
         inlined = getattr(self, key, parser_pars)
@@ -194,6 +206,8 @@ class Script(object):
             help="Set log verbosity to True,  nominal debug level.", action="store_true")
         self.add_argument("--verbosity", 
             help="Set log verbosity to a specific level: 0..100.", type=int, default=0)
+        self.add_argument("-R", "--readonly-cache", action="store_true",
+            help="Don't modify the CRDS cache.  Not compatible with options which implicitly modify the cache.")
         self.add_argument("-V", "--version", 
             help="Print the software version and exit.", action="store_true")
         self.add_argument("-J", "--jwst", dest="jwst", action="store_true",
@@ -214,23 +228,21 @@ class Script(object):
     def require_server_connection(self):
         """Check a *required* server connection and ERROR/exit if offline."""
         try:
-            connected, info = heavy_client.get_config_info(self.observatory)
-            if not connected:
+            if not self.server_info.connected:
                 raise RuntimeError("Required server connection unavailable.")
         except Exception, exc:
             self.fatal_error("Failed connecting to CRDS server at CRDS_SERVER_URL =", 
                              repr(api.get_crds_server()), "::", str(exc))
-        return info
             
     @property
     def server_info(self):
         """Return the server_info dict from the CRDS server *or* cache config for non-networked use where possible."""
-        return heavy_client.get_config_info(self.observatory)[1]
+        return heavy_client.get_config_info(self.observatory)
 
     @property
     def bad_files(self):
         """Return the current list of ALL known bad mappings and references, not context-specific."""
-        return heavy_client.get_bad_files(self.observatory)
+        return self.server_info.bad_files_set
 
     @property
     def default_context(self):
@@ -247,7 +259,7 @@ class Script(object):
                 files.extend(self.load_file_list(fname[1:]))
             else:
                 files.append(fname)
-        return [file.lower() for file in files]
+        return [fname.lower() for fname in files]
     
     def load_file_list(self, at_file):
         """Recursively load an @-file, returning a list of words/files.
@@ -302,9 +314,13 @@ class Script(object):
         if self.args.stats:
             self.stats.report()
     
-    def increment_stat(self, name, amount):
+    def increment_stat(self, name, amount=1):
         """Add `amount` to the statistics counter for `name`."""
         self.stats.increment(name, amount)
+        
+    def get_stat(self, name):
+        """Return statistic `name`."""
+        return self.stats.get_stat(name)
 
     def run(self, *args, **keys):
         """script.run() is the same thing as script() but more explicit."""
@@ -419,7 +435,8 @@ class ContextsScript(Script):
             contexts = [self.resolve_context(ctx) for ctx in self.args.contexts]
         elif self.args.all:
             assert not self.args.range or self.args.last, "Cannot specify --all and --range or --last"
-            contexts = self._list_mappings()
+            self._all_mappings = self._list_mappings("*.*map")
+            contexts = [ file for file in self._all_mappings if file.endswith(".pmap") ]
         elif self.args.last:
             assert not self.args.range or self.args.all, "Cannot specify --last and --range or --all"
             contexts = self._list_mappings()[-self.args.last:]
@@ -438,10 +455,10 @@ class ContextsScript(Script):
             contexts = [self.resolve_context(self.observatory + "-operational")]
         return sorted(contexts)
 
-    def _list_mappings(self):
+    def _list_mappings(self, glob_pattern="*.pmap"):
         """Return a list of all the .pmap's on the CRDS Server."""
         self.require_server_connection()
-        return api.list_mappings(glob_pattern="*.pmap")
+        return api.list_mappings(glob_pattern=glob_pattern)
     
     def dump_files(self, context, files=None, ignore_cache=None):
         """Download mapping or reference `files1` with respect to `context`,  tracking stats."""
@@ -454,22 +471,35 @@ class ContextsScript(Script):
 
     def get_context_mappings(self):
         """Return the set of mappings which are pointed to by the mappings
-        in `contexts`.
+        in `self.contexts`.
         """
         files = set()
         useable_contexts = []
         if not self.contexts:
             return []
-        for context in self.contexts:
-            with log.warn_on_exception("Failed listing mappings for", repr(context)):
-                try:
+
+        if self.args.all:
+            files = self._all_mappings
+            pmaps = sorted([file for file in files if file.endswith(".pmap")])
+            useable_contexts = []
+            with log.warn_on_exception("Failed dumping mappings for", repr(self.contexts)):
+                self.dump_files(pmaps[-1], files)
+            for context in self.contexts:
+                with log.warn_on_exception("Failed loading context", repr(context)):
                     pmap = rmap.get_cached_mapping(context)
-                    files = files.union(pmap.mapping_names())
-                except:
-                    files = files.union(api.get_mapping_names(context))
-                useable_contexts.append(context)
-        with log.warn_on_exception("Failed dumping mappings for", repr(context)):
-            self.dump_files(useable_contexts[0], files)
+                    useable_contexts.append(context)
+        else:
+            for context in self.contexts:
+                with log.warn_on_exception("Failed listing mappings for", repr(context)):
+                    try:
+                        pmap = rmap.get_cached_mapping(context)
+                        files = files.union(pmap.mapping_names())
+                    except:
+                        files = files.union(api.get_mapping_names(context))
+                    useable_contexts.append(context)
+            with log.warn_on_exception("Failed dumping mappings for", repr(self.contexts)):
+                self.dump_files(useable_contexts[0], files)
+
         self.contexts = useable_contexts  # XXXX reset self.contexts
         return sorted(files)
     

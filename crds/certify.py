@@ -7,7 +7,7 @@ import os
 import re
 from collections import defaultdict, namedtuple
 
-import pyfits
+from astropy.io import fits as pyfits
 import numpy as np
 
 from crds import rmap, log, timestamp, utils, data_file, diff, cmdline
@@ -392,8 +392,11 @@ def validators_by_typekey(key, observatory):
     """
     locator = utils.get_locator_module(observatory)
     # Make and cache Validators for `filename`s reference file type.
-    validators = [validator(x) for x in locator.get_tpninfos(*key)]
-    log.verbose("Validators for", repr(key), "=", log.PP(validators))
+    try:
+        validators = [validator(x) for x in locator.get_tpninfos(*key)]
+        log.verbose("Validators for", repr(key), "=", log.PP(validators))
+    except Exception, exc:
+        raise RuntimeError("FAILED loading type contraints for " + repr(key) + " with " + repr(exc))
     return validators
 
 # ============================================================================
@@ -555,10 +558,11 @@ class ReferenceCertifier(Certifier):
                 log.warning("No comparison reference for", repr(self.basefile), 
                             "in context", repr(self.context) + ". Skipping table comparison.")
                 return
-        n_old_hdus = len(pyfits.open(self.filename))
+        n_old_hdus = len(pyfits.open(old_reference))
         n_new_hdus = len(pyfits.open(self.filename))
         if n_old_hdus != n_new_hdus:
-            log.warning("Differing HDU counts in", repr(old_reference), "and", repr(self.basefile))
+            log.warning("Differing HDU counts in", repr(old_reference), "and", repr(self.basefile), ":",
+                        n_old_hdus, "vs.", n_new_hdus)
 
         for i in range(1, min(n_new_hdus, n_old_hdus)):
             self.trap("checking table modes", self.check_table_modes, old_reference, ext=i)
