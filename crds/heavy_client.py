@@ -465,7 +465,8 @@ def version_info():
     try:
         from . import svn_version
         lines = svn_version.__full_svn_info__.strip().split("\n")
-        return ", ".join([line for line in lines if line.startswith(("URL","Revision"))])
+        svn = ", ".join([line for line in lines if line.startswith(("URL","Revision"))])
+        return crds.__version__ + ", " + svn
     except Exception:
         return "unknown"
 # ============================================================================
