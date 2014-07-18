@@ -1,0 +1,26 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:54:28.777853',
+    'filekind' : 'IMPHTTAB',
+    'instrument' : 'ACS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_acs_imphttab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'YES',
+    'reffile_switch' : 'PHOTCORR',
+    'rmap_relevance' : '(PHOTCORR != "OMIT")',
+    'sha1sum' : '84d6a117d52ee602ee9cf23e82722ba3d3480688',
+}
+
+selector = Match({
+    ('HRC',) : UseAfter({
+        '2002-03-01 00:00:00' : 'w3m1716tj_imp.fits',
+    }),
+    ('SBC',) : UseAfter({
+        '2002-03-01 00:00:00' : 'xb61855jj_imp.fits',
+    }),
+    ('WFC',) : UseAfter({
+        '2002-03-01 00:00:00' : 'w3m17171j_imp.fits',
+    }),
+})

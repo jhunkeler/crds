@@ -1,0 +1,26 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:27.999428',
+    'filekind' : 'DISPTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_disptab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(OBSTYPE == "SPECTROSCOPIC")',
+    'sha1sum' : '1886d1d4aa1a820830b435891cab0a1ab9610665',
+}
+
+selector = Match({
+    ('CCD',) : UseAfter({
+        '1996-10-01 00:00:00' : 'l2j0137to_dsp.fits',
+    }),
+    ('FUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'm7p16110o_dsp.fits',
+    }),
+    ('NUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'm7p16111o_dsp.fits',
+    }),
+})

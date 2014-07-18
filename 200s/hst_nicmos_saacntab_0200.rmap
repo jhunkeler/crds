@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:19.310585',
+    'filekind' : 'SAACNTAB',
+    'instrument' : 'NICMOS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_nicmos_saacntab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : ((), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : 'ALWAYS',
+    'sha1sum' : '2e58f7695823e05bf8b30446c5d6ac015dd4dfd8',
+}
+
+selector = Match({
+    () : UseAfter({
+        '1999-07-27 00:00:00' : 't231621gn_scn.fits',
+    }),
+})

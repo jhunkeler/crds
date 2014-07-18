@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:14.906345',
+    'filekind' : 'GEOFILE',
+    'instrument' : 'COS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_cos_geofile_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'IMAGE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(DETECTOR == "FUV")',
+    'sha1sum' : '4b23aff8c6f65f90a59105dbb191d13ae80569f4',
+}
+
+selector = Match({
+    ('FUV',) : UseAfter({
+        '1996-10-01 00:00:00' : 'r7p1113nl_geo.fits',
+        '2003-10-10 00:00:00' : 'x1u1459gl_geo.fits',
+    }),
+})

@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:31.229238',
+    'filekind' : 'TELTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_teltab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(DETECTOR != "CCD" and OBSTYPE == "SPECTROSCOPIC")',
+    'sha1sum' : '7ed7fe857da71ccd1517b84fa6e3468ac90b1b98',
+}
+
+selector = Match({
+    ('FUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'k8m0958ao_tel.fits',
+    }),
+    ('NUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'k8m0958ho_tel.fits',
+    }),
+})

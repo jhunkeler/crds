@@ -1,0 +1,26 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:54:28.800829',
+    'filekind' : 'MDRIZTAB',
+    'instrument' : 'ACS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_acs_mdriztab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'YES',
+    'reffile_switch' : 'DRIZCORR',
+    'rmap_relevance' : '(DRIZCORR != "OMIT")',
+    'sha1sum' : '0abd6f11038dccb30af9147914cb0682cfcc4157',
+}
+
+selector = Match({
+    ('HRC',) : UseAfter({
+        '1991-01-01 00:00:00' : 'ub215378j_mdz.fits',
+    }),
+    ('SBC',) : UseAfter({
+        '1991-01-01 00:00:00' : 'ub215379j_mdz.fits',
+    }),
+    ('WFC',) : UseAfter({
+        '1991-01-01 00:00:00' : 'ub21537aj_mdz.fits',
+    }),
+})

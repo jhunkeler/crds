@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:31.191417',
+    'filekind' : 'TDCTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_tdctab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(DETECTOR == "NUV-MAMA")',
+    'sha1sum' : 'f21572f272de73259760769ea7cbc3a535fd2a37',
+}
+
+selector = Match({
+    ('NUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'v2a1955fo_tdc.fits',
+        '2009-08-06 16:20:00' : 'xaf1519so_tdc.fits',
+    }),
+})

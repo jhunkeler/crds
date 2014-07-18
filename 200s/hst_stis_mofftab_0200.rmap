@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:28.875578',
+    'filekind' : 'MOFFTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_mofftab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '(DETECTOR != "CCD" and OBSTYPE == "SPECTROSCOPIC")',
+    'sha1sum' : '2c5f6e5a89c5a8ae35f90a7fec8a60b38e6a6d68',
+}
+
+selector = Match({
+    ('FUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'h4s1350io_moc.fits',
+    }),
+    ('NUV-MAMA',) : UseAfter({
+        '1996-10-01 00:00:00' : 'h4s1350ko_moc.fits',
+    }),
+})

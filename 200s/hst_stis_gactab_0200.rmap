@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:28.051411',
+    'filekind' : 'GACTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_gactab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : '((OBSTYPE == "SPECTROSCOPIC") and (DETECTOR == "CCD"))',
+    'sha1sum' : '1520bd5fd12300ba7a676d10ccf654828310c387',
+}
+
+selector = Match({
+    ('CCD',) : UseAfter({
+        '1997-01-01 00:00:00' : 'p9r19203o_gac.fits',
+    }),
+})

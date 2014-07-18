@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'generated from CDBS database 2014-03-11 15:55:20.001196',
+    'filekind' : 'APERTAB',
+    'instrument' : 'STIS',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_stis_apertab_0200.rmap',
+    'observatory' : 'HST',
+    'parkey' : ((), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NONE',
+    'reffile_switch' : 'NONE',
+    'rmap_relevance' : 'ALWAYS',
+    'sha1sum' : '20ae18eb150bdb3f1476cbcdfc627e320542f88a',
+}
+
+selector = Match({
+    () : UseAfter({
+        '1996-10-01 00:00:00' : 'n7p1032ao_apt.fits',
+    }),
+})
