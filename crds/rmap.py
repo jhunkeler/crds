@@ -585,10 +585,9 @@ class Mapping(object):
         """Returns { filekind : set( ref_file_name... ) }"""
         return { filekind:selector.reference_names() for (filekind, selector) in self.selections.items() }
 
-    def mapping_names(self, full_path=False):
+    def mapping_names(self):
         """Returns a list of mapping files associated with this Mapping"""
-        name = self.filename if full_path else self.basename
-        return sorted([name] + [nam for selector in self.selections.values() for nam in selector.mapping_names(full_path)])
+        return sorted([self.basename] + [name for selector in self.selections.values() for name in selector.mapping_names()])
  
     def file_matches(self, filename):
         """Return the "extended match tuples" which can be followed to arrive at `filename`."""
@@ -855,7 +854,9 @@ class InstrumentContext(ContextMapping):
                     pkmap[parkey] = set()
                 pkmap[parkey] = pkmap[parkey].union(choices)
         for parkey, choices in pkmap.items():
-            pkmap[parkey] = sorted(list(pkmap[parkey]))
+            pkmap[parkey] = list(pkmap[parkey])
+            if "CORR" not in parkey:
+                pkmap[parkey].sort()
         return pkmap
 
     def get_valid_values_map(self, condition=False, remove_special=True):
@@ -1019,6 +1020,7 @@ class ReferenceMapping(Mapping):
             log.verbose("Using hook", repr(hook_name), "for rmap", repr(self.basename), verbosity=55)
         return hook
         
+    # Unusual caching style implements deferred loading of .tpn files,  fairly slow.
     @property
     @utils.cached
     def tpn_valid_values(self):
@@ -1070,9 +1072,9 @@ class ReferenceMapping(Mapping):
         """
         return self.selector.reference_names()
 
-    def mapping_names(self, full_path=False):
+    def mapping_names(self):
         """Return name of this ReferenceMapping as degenerate list of 1 item."""
-        return [self.filename if full_path else self.basename]
+        return [self.basename]
 
     def get_required_parkeys(self, include_reffile_switch=True):
         """Return the list of parkey names needed to select from this rmap."""
@@ -1108,7 +1110,15 @@ class ReferenceMapping(Mapping):
 
         Return { parkey : [match values, ...], ... }
         """
-        return self.selector.get_parkey_map()
+        parkey_map = self.selector.get_parkey_map()
+        tpn_values = self.tpn_valid_values
+        for key in self.get_extra_parkeys():
+            if key in parkey_map and "CORR" not in key:
+                continue
+            parkey_map[key] = tpn_values.get(key, [])
+            if key.endswith("CORR"):  #  and parkey_map[key] == []:
+                parkey_map[key] = ["PERFORM", "OMIT", "NONE", "COMPLETE", "UNDEFINED"]
+        return parkey_map
 
     def get_valid_values_map(self, condition=True):
         """Based on the TPNs,  return a mapping from each of the required
