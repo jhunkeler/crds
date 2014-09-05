@@ -25,6 +25,20 @@ class Struct(dict):
         self[name] = val
 
 # ===================================================================
+
+def traced(func):
+    """Issue a verbose message showing parameters and possibly return val."""
+    def func2(*args, **keys):
+        log.verbose("trace:", func.__name__, args if args else "", keys if keys else "", verbosity=55)
+        result = func(*args, **keys)
+        log.verbose("trace result:", func.__name__, ":", result, verbosity=55)
+        return result
+    func2.__name__ = func.__name__
+    func2._traced = True
+    return func2
+
+# ===================================================================
+
 def cached(func):
     """The cached decorator embeds a dictionary in a function wrapper to
     capture prior results.   
@@ -246,7 +260,6 @@ def capture_output(func):
 
     return CapturedFunction()
 
-
 # ===================================================================
 
 class TimingStats(object):
@@ -348,12 +361,12 @@ def evalfile(fname):
 
 # ===================================================================
 
-def create_path(path, mode=0755):
+@traced
+def create_path(path, mode=int("755", 8)):
     """Recursively traverses directory path creating directories as
     needed so that the entire path exists.
     """
-    if path.startswith("./"):
-        path = path[2:]
+    path = os.path.abspath(path)
     if os.path.exists(path):
         return
     current = []
@@ -362,12 +375,13 @@ def create_path(path, mode=0755):
             current.append("/")
             continue
         current.append(str(part))
-        subdir = os.path.join(*current)
-        subdir.replace("//","/")
+        subdir = os.path.abspath(os.path.join(*current))
         if not os.path.exists(subdir):
+            log.verbose("Creating", repr(subdir))
             os.mkdir(subdir, mode)
 
-def ensure_dir_exists(fullpath, mode=0755):
+@traced
+def ensure_dir_exists(fullpath, mode=int("755", 8)):
     """Creates dirs from `fullpath` if they don't already exist.
     """
     create_path(os.path.dirname(fullpath), mode)

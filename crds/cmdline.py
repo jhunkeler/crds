@@ -6,7 +6,7 @@ import sys
 import os
 import argparse
 import pdb
-import cProfile as profile
+import cProfile, pstats, StringIO
 import re
 from collections import Counter
 
@@ -104,6 +104,7 @@ class Script(object):
     
     def __init__(self, argv=None, parser_pars=None):
         self.stats = utils.TimingStats()
+        self._already_reported_stats = False
         if isinstance(argv, basestring):
             argv = argv.split()
         elif argv is None:
@@ -120,6 +121,8 @@ class Script(object):
         if self.args.readonly_cache:
             config.set_cache_readonly(True)
         log.set_verbose(log.get_verbose() or self.args.verbosity or self.args.verbose)
+        # log.verbose("Script parameters:", os.path.basename(argv[0]), *argv[1:])
+        log.set_log_time(config.get_log_time() or self.args.log_time)
         log.reset()  # reset the infos, warnings, and errors counters as if new commmand line run.
         
     def main(self):
@@ -132,7 +135,9 @@ class Script(object):
         call tree of code which is run inside the profiler or debugger.
         """
         self.contexts = self.determine_contexts()
-        return self.main()
+        result = self.main()
+        self.report_stats()  # here if not called already
+        return result
         
     def determine_contexts(self):
         """Return the list of contexts used by this invocation of the script.  Empty for Script."""
@@ -218,6 +223,8 @@ class Script(object):
             help="Track and print timing statistics.")
         self.add_argument("--profile", 
             help="Output profile stats to the specified file.", type=str, default="")
+        self.add_argument("--log-time", action="store_true",
+            help="Add date/time to log messages.")
         self.add_argument("--pdb", 
             help="Run under pdb.", action="store_true")
         
@@ -303,16 +310,31 @@ class Script(object):
         if self.args.version:
             _show_version()
         elif self.args.profile:
-            profile.runctx("self._main()", locals(), locals(), self.args.profile)
+            if self.args.profile == "console":
+                self._console_profile(self._main)
+            else:
+                cProfile.runctx("self._main()", locals(), locals(), self.args.profile)
         elif self.args.pdb:
             pdb.runctx("self._main()", locals(), locals())
         else:
             return self._main()
     
+    def _console_profile(self, function, sort_by="cumulative", top_n=100):
+        """Run `function` under the profiler and print results to console."""
+        pr = cProfile.Profile()
+        pr.enable()
+        function()
+        pr.disable()
+        s = StringIO.StringIO()
+        ps = pstats.Stats(pr, stream=s).sort_stats(sort_by)
+        ps.print_stats(top_n)
+        print(s.getvalue())
+
     def report_stats(self):
         """Print out collected statistics."""
-        if self.args.stats:
+        if self.args.stats and not self._already_reported_stats:
             self.stats.report()
+            self._already_reported_stats = True
     
     def increment_stat(self, name, amount=1):
         """Add `amount` to the statistics counter for `name`."""
@@ -421,27 +443,28 @@ class ContextsScript(Script):
             help='Operate for pipeline context ids (.pmaps) between <MIN> and <MAX>.')
         self.add_argument('--all', action='store_true',
             help='Operate with respect to all known CRDS contexts.')
-        self.add_argument('--last', metavar="N", type=int, default=None,
+        self.add_argument('--last-n-contexts', metavar="N", type=int, default=None,
             help='Operate with respect to the last N contexts.')
         self.add_argument('-i', '--ignore-cache', action='store_true', dest="ignore_cache",
                           help="Download required files even if they're already in the cache.")
 
     def determine_contexts(self):
         """Support explicit specification of contexts, context id range, or all."""
+        log.verbose("Determining contexts.", verbosity=55)
         if self.args.contexts:
             assert not self.args.range, 'Cannot specify explicit contexts and --range'
             assert not self.args.all, 'Cannot specify explicit contexts and --all'
             # permit instrument and reference mappings,  not just pipelines:
             contexts = [self.resolve_context(ctx) for ctx in self.args.contexts]
         elif self.args.all:
-            assert not self.args.range or self.args.last, "Cannot specify --all and --range or --last"
+            assert not self.args.range or self.args.last_n_contexts, "Cannot specify --all and --range or --last"
             self._all_mappings = self._list_mappings("*.*map")
             contexts = [ file for file in self._all_mappings if file.endswith(".pmap") ]
-        elif self.args.last:
+        elif self.args.last_n_contexts:
             assert not self.args.range or self.args.all, "Cannot specify --last and --range or --all"
-            contexts = self._list_mappings()[-self.args.last:]
+            contexts = self._list_mappings()[-self.args.last_n_contexts:]
         elif self.args.range:
-            assert not self.args.all or self.args.last, "Cannot specify --range and --last or --all"
+            assert not self.args.all or self.args.last_n_contexts, "Cannot specify --range and --last or --all"
             rmin, rmax = self.args.range
             contexts = []
             all_contexts = self._list_mappings()
@@ -453,6 +476,7 @@ class ContextsScript(Script):
                         contexts.append(context)
         else:
             contexts = [self.resolve_context(self.observatory + "-operational")]
+        log.verbose("Determined contexts: ", contexts, verbosity=55)
         return sorted(contexts)
 
     def _list_mappings(self, glob_pattern="*.pmap"):
@@ -477,7 +501,7 @@ class ContextsScript(Script):
         useable_contexts = []
         if not self.contexts:
             return []
-
+        log.verbose("Getting all mappings for specified contexts.", verbosity=55)
         if self.args.all:
             files = self._all_mappings
             pmaps = sorted([file for file in files if file.endswith(".pmap")])
@@ -504,7 +528,9 @@ class ContextsScript(Script):
                     self.dump_files(useable_contexts[-1], files)
 
         self.contexts = useable_contexts  # XXXX reset self.contexts
-        return sorted(files)
+        files = sorted(files)
+        log.verbose("Got mappings from specified (usable) contexts: ", files, verbosity=55)
+        return files
     
     def get_context_references(self):
         """Return the set of references which are pointed to by the references

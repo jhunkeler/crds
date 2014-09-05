@@ -207,6 +207,10 @@ def get_ignore_checksum():
     """Returns environment override for disabling mapping checksums during development."""
     return env_to_bool("CRDS_IGNORE_MAPPING_CHECKSUM", False)
 
+def get_log_time():
+    """Returns override flag for outputting time in log messages."""
+    return env_to_bool("CRDS_LOG_TIME", False)
+
 # ===========================================================================
 
 def get_crds_env_vars():
@@ -361,7 +365,7 @@ def check_path(path):
 
 # Standard date time format using T separator for command line use specifying contexts.
 # e.g. 2040-02-22T12:01:30.4567
-CONTEXT_DATETIME_RE_STR = r"\d\d\d\d\-\d\d\-\d\dT\d\d:\d\d:\d\d(\.\d+)?"
+CONTEXT_DATETIME_RE_STR = r"\d\d\d\d\-\d\d\-\d\d(T\d\d:\d\d:\d\d(\.\d+)?)?"
 CONTEXT_DATETIME_RE = re.compile(complete_re(CONTEXT_DATETIME_RE_STR))
 
 # e.g.  hst, hst-acs, hst-acs-darkfile

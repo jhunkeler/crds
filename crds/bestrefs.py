@@ -732,14 +732,15 @@ and debug output.
                 rmap.get_cached_mapping(context)   # if it loads,  it's cached.
                 return
             except IOError:
-                assert not config.get_cache_readonly(), "Failed loading " + repr(context) + "but CRDS cache is readonly."
+                assert not config.get_cache_readonly(), "Failed loading " + repr(context) + " but CRDS cache is readonly."
                 if self.args.sync_mappings:
                     log.verbose("Syncing context", repr(context), verbosity=25)
                     self.require_server_connection()
                     try:
                         api.dump_mappings(context)   # otherwise fetch it.
                     except Exception, exc:
-                        log.error("Failed to download context", repr(context), "from CRDS server", repr(api.get_crds_server()))
+                        log.error("Failed to download context", repr(context), "from CRDS server", repr(api.get_crds_server()), 
+                                  ":", str(exc))
                         sys.exit(-1)
                 else:
                     raise RuntimeError("Context '{}' is not available in the local cache and --sync-mappings=False.".format(context))
