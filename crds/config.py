@@ -243,10 +243,24 @@ def get_download_mode():
     URLs,  that wopuld be the preferred means to get references and mappings.
     """
     mode = os.environ.get("CRDS_DOWNLOAD_MODE", "http").lower()
-    assert mode in ["http","rpc"], \
-        "Invalid CRDS_DOWNLOAD_MODE setting.  Use 'http' (preferred) " + \
-        "or 'rpc' (through firewall)."
+    assert mode in ["http", "rpc", "plugin"], \
+        "Invalid CRDS_DOWNLOAD_MODE setting.  Use 'http' (default), 'rpc' (port forwarding), or 'plugin' (fastest)."
     return mode
+
+def get_download_plugin():
+    """Fetch a command template from the environment to use a as a substitute for CRDS
+    built-in downloaders.
+    """
+    if "CRDS_DOWNLOAD_MODE" in os.environ and os.environ["CRDS_DOWNLOAD_MODE"].lower() != "plugin":
+        return None
+    elif "CRDS_DOWNLOAD_PLUGIN" in os.environ:
+        return os.environ["CRDS_DOWNLOAD_PLUGIN"]
+    elif get_download_mode() == "plugin":
+        for path in ["/usr/local/bin", "/usr/bin", "/sw/bin"]:
+            program = os.path.join(path, "wget")
+            if os.path.exists(program):
+                return program + " --no-check-certificate --quiet ${SOURCE_URL}  -O ${OUTPUT_PATH}"
+    return None
 
 def get_checksum_flag():
     """Return True if the environment is configured for checksums."""
