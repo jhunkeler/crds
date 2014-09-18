@@ -326,6 +326,9 @@ def update_file_bestrefs(pmap, dataset, updates):
             new_ref = (prefix + new_ref).lower()
         set_key(update.filekind.upper(), new_ref)
 
+    for hdu in hdulist:
+        hdu.data
+
     hdulist.close()
 
 # ============================================================================
