@@ -138,7 +138,17 @@ class Script(object):
         result = self.main()
         self.report_stats()  # here if not called already
         return result
-        
+    
+    @property
+    def locator(self):
+        """Return the module for observatory specific file locations and plugins functions."""
+        return utils.get_locator_module(self.observatory)
+    
+    @property
+    def obs_pkg(self):
+        """Return the package __init__ for observatory specific constants."""
+        return utils.get_observatory_package(self.observatory)
+    
     def determine_contexts(self):
         """Return the list of contexts used by this invocation of the script.  Empty for Script."""
         return []    
@@ -240,11 +250,14 @@ class Script(object):
         except Exception, exc:
             self.fatal_error("Failed connecting to CRDS server at CRDS_SERVER_URL =", 
                              repr(api.get_crds_server()), "::", str(exc))
-            
+    
     @property
-    def server_info(self):
+    @utils.cached        
+    def server_info(self):   # see also crds.sync server_info which does not update.
         """Return the server_info dict from the CRDS server *or* cache config for non-networked use where possible."""
-        return heavy_client.get_config_info(self.observatory)
+        info = heavy_client.get_config_info(self.observatory)
+        heavy_client.update_config_info(self.observatory)
+        return info
 
     @property
     def bad_files(self):

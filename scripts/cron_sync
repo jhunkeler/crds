@@ -2,7 +2,13 @@
 
 # usage:  cron_sync
 #
-#    options:  --fetch-references --verbose --check-files --check-sha1sum
+#    options:  --check-files --check-sha1sum --fetch-references [context selection]
+#
+#    example context selections:
+#        nothing ==  hst-operational
+#        --contexts hst-operational
+#        --last 5
+#        --all
 #
 #   requires:  
 #        CRDS_PATH        (cache directory)
@@ -22,29 +28,33 @@
 #
 #   system load  -- doing both safe and unsafe syncs currently runs
 #                   for about a minute,  presumably using primarily
-#                   CPU and network,  not memory or disk.
+#                   CPU and network,  not memory or disk.   This is
+#                   the nominal case where nothing is new or changing.
 
-# safe_sync does bulk reference and mappings transfers without blocking
-# parallel pipeline bestrefs.  It may run for hours.
+# Common code and settings between safe and unsafe_sync
+. crds_sync_env
 
-setenv CRDS_CLIENT_RETRY_COUNT 20
-setenv CRDS_CLIENT_RETRY_DELAY_SECONDS 10
-
-# default CRDS_LOCKS to CRDS_PATH unless it is known that the CRDS_PATH
-# file system has broken flock's
-if [[ -z "$CRDS_LOCKS" ]]
-then
-    export CRDS_LOCKS="$CRDS_PATH"
-fi
-
-safe_sync $*
-if [[ $? != 1 ]]
-then
-    # unsafe_sync blocks pipeline bestrefs,  but with near certainty,
-    # it should only run for 30 seconds to update the config area.
-    unsafe_sync  $*
-fi
-exit $?
+( flock --exclusive --nonblock 200 # --nonblock means fail on unavailable locks,  cron collision
+  if [[ $? == 1 ]]
+  then
+    echo "cron_sync: WARNING: failed to obtain crds.sync.lock"
+    exit 1
+  else
+     echo "cron_sync: INFO: obtained crds.sync.lock"
+    
+     # safe_sync doesn't block bestrefs, syncs rules and references,  doesn't update context / config
+     safe_sync $*
+    
+     # fail here for cron collision
+     if [[ $? != 1 ]]
+     then
+        # unsafe_sync blocks bestrefs, shouldn't sync rules, doesn't sync references, updates context / config.
+        unsafe_sync
+     fi
+  fi
+    
+) 200> ${CRDS_LOCKS}/crds.sync.lock 
+exit 0
 
 #  Summarizing overall design of sync + bestrefs at remote sites:
 #
@@ -52,40 +62,25 @@ exit $?
 #   The nominal safe_sync rate for background reference transfer,
 #   i.e. reference pre-positioning, is once every 30 minutes.  If
 #   there's nothing new,  not much happens.   If there are new files,
-#   safe_sync might run longer than 30 minutes.  So there is latency,
-#   and there is duration.  30 minutes,  maybe several hours and
-#   indeterminate.
+#   safe_sync might run longer than 30 minutes.  So there is latency
+#   of 30 minutes,  but indeterminate transfer times which may exceed
+#   30 minutes causing the periodic cron_sync to collide with itself.
+#   sync.lock manages the collisions causing the 2nd cron_sync to 
+#   immediately fail.
 #
 #   crds.config.lock ensures that unsafe_sync and safe_bestrefs
 #   do not concurrently use or modify the cache config area.
+#   Additionally,  when running serverless or with a readonly cache,
+#   bestrefs will not attempt to update the configuration area.
 #
-#   chmod'ing the config area readonly ensures that neither cron'ed
-#   safe_sync nor parallel safe_bestrefs can modify the config area,
-#   without using a lock which would also serialize parallel bestrefs.
-#   both attempt to update the config area and fail silently unless
-#   --verbose is used,  which emits warnings.
-#
-#   chmod'ing the config area read-write enables unsafe_sync to modify
-#   it, but safe_sync and safe_bestrefs are both excluded by
-#   crds.sync.lock (immediate fail) and crds.config.lock (5 minute
-#   timeout) respectively.  unsafe_sync fails immediately for
-#   crds.sync.lock (vs. safe_sync) and blocks on crds.config.lock
-#   (vs. safe_bestrefs) indefinitely.
+#   As a redundant measure,  to avoid reading half-written files 
+#   in bestrefs should locking prove ineffective,  updates to
+#   the cache config area are designed to be atomic,  first written
+#   to temporary files,  then swapped into final locations with what
+#   should be UNIX kernel level atomicity.
 #
 #   As a fail-safe measure,  presuming a "little concurrency risk"
 #   is better than a total fail,  safe_bestrefs only waits on the
 #   crds.config.lock for 3 minutes... then proceeds unconcerned.
 #   Currently unsafe_sync runs around 30 seconds.
 
-# There is a small design flaw here where new rules or references
-# become available during safe_sync... and since they're missed, are
-# then transferred while unsafe_sync has bestrefs blocked out.  Since
-# reference transfers typically take many minutes, safe_bestrefs is
-# designed to abandon concurrency control in that case and proceed,
-# risking concurrency issues.  Since reference transfers take the bulk
-# of the blocked time, and the config sync should happen in the first
-# 30 seconds, the only remaining issue is bestrefs-to-bestrefs updates
-# of the config area.  In that case, parallel bestrefs will all be
-# writing the config area with the same unchanged static info they
-# read in... presumably all identical but perhaps truncating the
-# config for some reader.  Next release for that.

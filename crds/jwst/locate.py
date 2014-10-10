@@ -263,36 +263,37 @@ def mapping_validator_key(mapping):
     return (mapping.instrument, mapping.filekind, "_ld.tpn")
 # =============================================================================
 
-def reference_keys_to_dataset_keys(instrument, filekind, header):
-    """Given a header dictionary for a reference file,  map the header back to
-    keys relevant to datasets.   So for ACS biasfile the reference says BINAXIS1
-    but the dataset says NUMCOLS.   This would convert { "BINAXIS1": 1024 } to
-    { "NUMCOLS" : 1024 }.
+def reference_keys_to_dataset_keys(rmapping, header):
+    """Given a header dictionary for a reference file, map the header back to keys
+    relevant to datasets.  So for ACS biasfile the reference says BINAXIS1 but
+    the dataset says NUMCOLS.  This would convert { "BINAXIS1": 1024 } to {
+    "NUMCOLS" : 1024 }.
     
     In general,  rmap parkeys are matched against datset values and are defined
     as dataset header keywords.   For refactoring though,  what's initially
     available are reference file keywords...  which need to be mapped into the
     terms rmaps know:  dataset keywords.
     """
-    return dict(header)    # NOOP for JWST for now.
-
-#   See hst/locate.py
-#    inv_trans = utils.invert_dict(
-#        PARKEYS[instrument][filekind]["db_translations"])
-#    return { inv_trans.get(key.lower(), key).upper(): header[key] for key in header }
+    header = dict(header)
+    try:
+        translations = rmapping.reference_to_dataset
+        for key in translations:
+            if key in header:
+                header[translations[key]] = header[key]
+    except AttributeError:
+        pass
+    return header
 
 # =============================================================================
 
-def expand_wildcards(instrument, header):
+def expand_wildcards(rmapping, header):
     """See hst/substitutions.py"""
     return dict(header)
-#    if not EXPANDERS:
-#        load_all()
-#    try:
-#        header = EXPANDERS[instrument].expand(header)
-#    except KeyError:
-#        log.warning("Unknown instrument", repr(instrument), " in expand_wildcards().")
-#    return header
+
+
+def condition_matching_header(rmapping, header):
+    """Normalize header values for .rmap reference insertion."""
+    return dict(header)   # NOOP for JWST,  may have to revisit
 
 # ============================================================================
 
@@ -302,7 +303,7 @@ class MissingDependencyError(Exception):
 def fits_to_parkeys(fits_header):
     """Map a FITS header onto rmap parkeys appropriate for JWST."""
     if MODEL is None:
-        raise MissingDependencyError("JWST data model is not installed.   Cannot fits_to_parkeys().   Install jwst_lib.")
+        raise MissingDependencyError("JWST data models are not installed.   Cannot fits_to_parkeys().")
     parkeys = {}
     for key, value in fits_header.items():
         key, value = str(key), str(value)
@@ -324,8 +325,35 @@ def fits_to_parkeys(fits_header):
 
 def get_env_prefix(instrument):
     """Return the environment variable prefix (IRAF prefix) for `instrument`."""
-    return ""
+    return "crds://"
 
+def locate_file(refname, mode=None):
+    """Given a valid reffilename in CDBS or CRDS format,  return a cache path for the file.
+    The aspect of this which is complicated is determining instrument and an instrument
+    specific sub-directory for it based on the filename alone,  not the file contents.
+    """
+    _path,  _observatory, instrument, _filekind, _serial, _ext = get_reference_properties(refname)
+    rootdir = locate_dir(instrument, mode)
+    return  os.path.join(rootdir, refname)
+
+def locate_dir(instrument, mode=None):
+    """Locate the instrument specific directory for a reference file."""
+    if mode is  None:
+        mode = config.get_crds_ref_subdir_mode(observatory="jwst")
+    else:
+        config.check_crds_ref_subdir_mode(mode)
+    crds_refpath = config.get_crds_refpath("jwst")
+    if mode == "instrument":   # use simple names inside CRDS cache.
+        rootdir = os.path.join(crds_refpath, instrument)
+        if not os.path.exists(rootdir):
+            utils.ensure_dir_exists(rootdir + "/locate_dir.fits")
+    elif mode == "flat":    # use original flat cache structure,  all instruments in same directory.
+        rootdir = crds_refpath
+    else:
+        raise ValueError("Unhandled reference file location mode " + repr(mode))
+    return rootdir
+
+# ============================================================================
 def load_all_type_constraints():
     """Load all the JWST type constraint files."""
     raise NotImplementedError("expected failure,  JWST type constraints not implemented yet.")

@@ -31,6 +31,7 @@ import pprint
 import glob
 import ast
 import traceback
+import uuid
 
 import crds.client as light_client
 from . import rmap, log, utils, config
@@ -160,6 +161,8 @@ def _initial_recommendations(
     
     warn_bad_context(observatory, final_context)
     warn_bad_references(observatory, bestrefs)
+    
+    update_config_info(observatory)
         
     return final_context, bestrefs
 
@@ -236,6 +239,7 @@ def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
     CRDS will only use the server for status and to transfer files.
     """
     log.verbose("Computing best references locally.")
+    parameters = utils.condition_header(parameters) # give the server the option *not* to condition.        
     # Make sure pmap_name is actually present in the local machine's cache.
     # First assume the context files are already here and try to load them.   
     # If that fails,  attempt to get them from the network, then load them.
@@ -302,10 +306,10 @@ def get_final_context(info, context):
     Returns   a .pmap name
     """
     env_context = config.get_crds_env_context()
-    if context and not context.endswith("-operational"):    # context parameter trumps all, <observatory>-operational is default
+    if context:  # context parameter trumps all, <observatory>-operational is default
         input_context = context
         log.verbose("Using reference file selection rules", srepr(input_context), "defined by caller.")
-        info.status = "getreferences() context parameter"
+        info.status = "context parameter"
     elif env_context:
         input_context = env_context
         log.verbose("Using reference file selection rules", srepr(input_context), 
@@ -326,7 +330,10 @@ def translate_date_based_context(info, context):
         return context
     else:
         if not info.connected:
-            raise crds.CrdsError("Specified CRDS context by date and CRDS server is not reachable.")
+            if context == info.observatory + "-operational":
+                return info["operational_context"]
+            else:
+                raise crds.CrdsError("Specified CRDS context by date '{}' and CRDS server is not reachable.".format(context))
         try:
             translated = light_client.get_context_by_date(context, observatory=info.observatory)
         except Exception, exc:
@@ -336,23 +343,25 @@ def translate_date_based_context(info, context):
         return translated
 
 def local_version_obsolete(server_version):
-    """Compare `server_version` to the minor version number of the locally 
-    installed CRDS client,  e.g. 1.2 vs. 1.1.
+    """Return True IFF major_version(server) > major_version(client).  Use to force client to call-up instead
+    of computing locally.
     """
-    server_version = minor_version(server_version)
-    client_version = minor_version(crds.__version__)
-    obsolete = client_version < server_version
-    log.verbose("CRDS client version=", srepr(client_version),
+    _server_version = major_version(server_version)
+    _client_version = major_version(crds.__version__)
+    obsolete = _client_version < _server_version
+    log.verbose("CRDS client version=", srepr(crds.__version__),
                 " server version=", srepr(server_version),
                 " client is ", srepr("obsolete" if obsolete else "up-to-date"),
                 sep="")
     return obsolete
 
-def minor_version(vers):
+def major_version(vers):
     """Strip the revision number off of `vers` and conver to float.
-     e.g. "1.1.7"  --> 1.1
-     """
-    return float(".".join(vers.split(".")[:2]))
+    
+    >>> major_version('1.2.7')
+    1.0
+    """
+    return float(".".join(vers.split(".")[0]))
  
 # ============================================================================
 
@@ -378,50 +387,75 @@ def get_config_info(observatory):
         info.status = "server"
         info.connected = True
         log.verbose("Connected to server at", repr(light_client.get_crds_server()))
+        if not config.writable_cache_or_verbose("Using cached configuration and default context."):
+            info = load_server_info(observatory)
+            info.status = "cache"
+            info.connected = True
     except light_client.CrdsError:
         log.verbose_warning("Couldn't contact CRDS server:", srepr(light_client.get_crds_server()))
         info = load_server_info(observatory)
-        info.connected = False
-    if info.connected:
-        cache_server_info(info, observatory)  # save locally
-    info.readonly = config.get_cache_readonly()
     return info
+
+def update_config_info(observatory):
+    """Write out any server update to the CRDS configuration information.
+    Skip the update if: not connected to server, readonly cache, write protected config files.
+    """
+    if config.writable_cache_or_verbose("skipping config update."):
+        info = get_config_info(observatory)
+        if info.connected:
+            log.verbose("Connected to server, updating CRDS cache config and operational context.")
+            cache_server_info(info, observatory)  # save locally
+        else:
+            log.verbose("Not connected to CRDS server,  skipping cache config update.")
 
 def cache_server_info(info, observatory):
     """Write down the server `info` dictionary to help configure off-line use."""
-    if config.get_cache_readonly():
-        log.verbose("Readonly cache, skipping cache config write.", verbosity=70)
-        return
-    path = config.get_crds_config_path(observatory)
-    try:
-        server_config = os.path.join(path, "server_config")
-        utils.ensure_dir_exists(server_config)
-        with open(server_config, "w+") as file_:
-            file_.write(pprint.pformat(info))
-    except Exception, exc:
-        log.verbose_warning("Couldn't save CRDS server info to local CRDS cache:", repr(exc))
-    try:
-        bad_files = os.path.join(path, "bad_files.txt")
-        utils.ensure_dir_exists(bad_files)
-        bad_files_lines = "\n".join(info.get("bad_files","").split()) + "\n"
-        with open(bad_files, "w+") as file_:
-            file_.write(bad_files_lines)
-    except Exception, exc:
-        log.verbose_warning("Couldn't save CRDS bad files list to local CRDS cache:", repr(exc))
-        
+    path = config.get_crds_cfgpath(observatory)
+
+    bad_files_lines = "\n".join(info.get("bad_files","").split()) + "\n"
+
+    server_config_path = os.path.join(path, "server_config")
+    cache_atomic_write(server_config_path, pprint.pformat(info), "SERVER INFO")
+
+    bad_files_path = os.path.join(path, "bad_files.txt")
+    cache_atomic_write(bad_files_path, bad_files_lines, "BAD FILES LIST")
+
+def cache_atomic_write(replace_path, contents, fail_warning):
+    """Write string `contents` to cache file `replace_path` as an atomic action,
+    issuing string `fail_warning` as a verbose exception warning if some aspect
+    fails.   This is intended to support multiple processes using the CRDS
+    cache in parallel,  as in parallel bestrefs in the pipeline.
+    
+    NOTE:  All writes to the cache configuration area should use this function
+    to avoid concurrency issues with parallel processing.   Potentially this should
+    be expanded to other non-config cache writes but is currently inappropriate
+    for large data volumes (G's) since they're required to be in memory.
+    """
+    if utils.is_writable(replace_path, no_exist=True):
+        try:
+            log.verbose("CACHE updating:", repr(replace_path))
+            utils.ensure_dir_exists(replace_path)
+            temp_path = os.path.join(os.path.dirname(replace_path), str(uuid.uuid4()))
+            with open(temp_path, "w+") as file_:
+                file_.write(contents)
+            os.rename(temp_path, replace_path)
+        except Exception, exc:
+            log.verbose_warning("CACHE Failed writing", repr(replace_path), ":", repr(exc))
+    else:
+        log.verbose("CACHE Skipped update of readonly", repr(replace_path))
+
 def load_server_info(observatory):
     """Return last connected server status to help configure off-line use."""
-    server_config = os.path.join(config.get_crds_config_path(observatory), "server_config")
+    server_config = os.path.join(config.get_crds_cfgpath(observatory), "server_config")
     try:
         with open(server_config) as file_:
             info = ConfigInfo(ast.literal_eval(file_.read()))
         info.status = "cache"
-        log.verbose_warning("Loading server context and version info from cache '%s'." % server_config, 
-                            "References may be sub-optimal.")
+        log.verbose_warning("Using cached CRDS reference assignment rules last updated on", repr(info.last_synced))
     except IOError:
-        log.verbose_warning("Couldn't load cached server info from '%s'." % server_config,
-                            "Using pre-installed CRDS context.  References may be sub-optimal." )
+        log.warning("CRDS server connection and cache load FAILED.  Using pre-installed TEST RULES; NOT FOR CALIBRATION USE." )
         info = get_installed_info(observatory)
+    info.connected = False
     return info
 
 def get_installed_info(observatory):
@@ -443,8 +477,8 @@ def get_installed_info(observatory):
         os.environ["CRDS_MAPPATH"] = crds.__path__[0] + "/cache/mappings"
         where = config.locate_mapping("*.pmap", observatory)
         pmap = os.path.basename(sorted(glob.glob(where))[-1])
-        log.warning("CRDS cache failure,  using pre-installed mappings at", repr(where),
-                    "and highest numbered pipeline context", repr(pmap), "as default. Bad file checking is disabled.")
+        log.warning("Using highest numbered pipeline context", repr(pmap), 
+                    "as default. Bad file checking is disabled.")
     except IndexError, exc:
         raise crds.CrdsError("Configuration or install error.  Can't find any .pmaps at " + 
                         repr(where) + " : " + str(exc))
@@ -463,7 +497,7 @@ def get_installed_info(observatory):
 # XXXX Careful with version string length here, FITS has a 68 char limit which degrades to CONTINUE records
 # XXXX which cause problems for other systems.
 def version_info():
-    """Return CRDS checkout URL and revision."""
+    """Return CRDS checkout URL and revision,  client side."""
     try:
         from . import svn_version
         lines = svn_version.__full_svn_info__.strip().split("\n")
