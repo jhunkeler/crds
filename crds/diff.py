@@ -128,7 +128,8 @@ def mapping_affected_modes(old_file, new_file, include_header_diffs=True):
             affected[mode] += 1
     return [ tup + (("DIFF_COUNT", str(affected[tup])),) for tup in sorted(affected) ]
     
-DEFAULT_EXCLUDED_PARAMETERS = ("DATE-OBS", "TIME-OBS", "META.OBSERVATION.DATE", "DIFFERENCE", "INSTRUME", "REFTYPE")
+DEFAULT_EXCLUDED_PARAMETERS = ("DATE-OBS", "TIME-OBS", "META.OBSERVATION.DATE", 
+                               "META_OBSERVATION_DATE", "DIFFERENCE", "INSTRUME", "REFTYPE")
 BORING_VARS = ["NAME", "DERIVED_FROM", "SHA1SUM", "ROW_KEYS"]  # XXX ROW_KEYS obsolete
 
 def affected_mode(diff, excluded_parameters=DEFAULT_EXCLUDED_PARAMETERS):
@@ -329,7 +330,7 @@ def text_difference(observatory, old_file, new_file):
         "Files " + repr(old_file) + " and " + repr(new_file) + " are of different types."
     _loc_old_file = config.check_path(rmap.locate_file(old_file, observatory))
     _loc_new_file = config.check_path(rmap.locate_file(new_file, observatory))
-    pysh.sh("diff -b -c ${_loc_old_file} ${_loc_new_file}")   # secure
+    pysh.sh("diff -b -c ${_loc_old_file} ${_loc_new_file}", raise_on_error=False)   # secure
 
 def difference(observatory, old_file, new_file, primitive_diffs=False, check_diffs=False, mapping_text_diffs=False,
                include_header_diffs=False, hide_boring_diffs=False):

@@ -112,7 +112,7 @@ def setval(filepath, key, value):
     """Set metadata `key` in file `filepath` to `value`."""
     ftype = get_filetype(filepath)
     if ftype == "fits":
-        if key.upper().startswith("META."):
+        if key.upper().startswith(("META.","META_")):
             return dm_setval(filepath, key, value)
         else:
             return pyfits.setval(filepath, key, value)
@@ -233,6 +233,10 @@ def sanitize_data_model_dict(d):
         if key.upper().startswith(fits_magx):
             cleaned[skey[len(fits_magx):]] = sval
         cleaned[skey] = sval
+    # Hack for backward incompatible model naming change.
+    if "META.INSTRUMENT.NAME" in cleaned:
+        if "META.INSTRUMENT.TYPE" not in cleaned:
+            cleaned["META.INSTRUMENT.TYPE"] = cleaned["META.INSTRUMENT.NAME"]
     return cleaned
 
 def get_fits_header(filepath, needed_keys=()):

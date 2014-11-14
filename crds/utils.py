@@ -1,5 +1,4 @@
-"""Generic utility routines used by a variety of modules.
-"""
+"""Generic utility routines used by a variety of modules."""
 import sys
 import os
 import os.path
@@ -281,6 +280,17 @@ def capture_output(func):
 
     return CapturedFunction()
 
+# ===================================================================
+
+def compare_dicts(dict1, dict2):
+    """Compare two dictionaries and return a dictionary of added, deleted, and replaced items."""
+    if not isinstance(dict1, dict) or not isinstance(dict2, dict):
+        return (dict1, dict2)
+    deleted = { key: dict1[key] for key in dict1 if key not in dict2 }
+    added = { key: dict2[key] for key in dict2 if key not in dict1 }
+    replaced = { key: compare_dicts(dict1[key], dict2[key]) for key in dict1 if key in dict2 and dict1[key] != dict2[key] }
+    return dict(deleted=deleted, added=added, replaced=replaced)        
+        
 # ===================================================================
 
 class TimingStats(object):
@@ -580,6 +590,47 @@ def condition_header(header, needed_keys=None):
     conditioned = { key:condition_value(header[key]) for key in needed_keys }
     return conditioned
 
+def _eval_keys(keys):
+    """Return the replacement mapping from rmap-visible parkeys to eval-able keys.
+
+    >>> _eval_keys(("META.INSTRUMENT.NAME",))
+    {'META.INSTRUMENT.NAME': 'META_INSTRUMENT_NAME'}
+
+    """
+    evalable_map = {}
+    for key in keys:
+        replacement = key.replace(".", "_")
+        if replacement != key:
+            evalable_map[key] = replacement
+    return evalable_map
+
+def condition_header_keys(header):
+    """Convert a matching parameter header into the form which supports eval(), ie.
+    JWST-style header keys.   Nominally for JWST data model style keys.
+
+    >>> condition_header_keys({"META.INSTRUMENT.NAME": "NIRISS"})
+    {'META.INSTRUMENT.NAME': 'NIRISS', 'META_INSTRUMENT_NAME': 'NIRISS'}
+
+    """
+    header = dict(header)
+    evalable_map = _eval_keys(header.keys())
+    if evalable_map:
+        header.update({ evalable_map[key] : header[key] for key in evalable_map })
+    return header
+
+def condition_source_code_keys(code, parkeys):
+    """Convert source code expressed in terms of parkeys into source code which works
+    with the evalable form of the parkey.   Nominally for JWST data model style keys.
+
+    >>> condition_source_code_keys('META.INSTRUMENT.NAME != "MIRI"', ('META.INSTRUMENT.NAME',))
+    'META_INSTRUMENT_NAME != "MIRI"'
+
+    """
+    evalable_map = _eval_keys(parkeys)
+    for key, replacement in evalable_map.items():
+        code = code.replace(key, replacement)
+    return code
+
 # ==============================================================================
 
 # Since this imports all observatory packages,  better to cache than put in global.
@@ -652,14 +703,13 @@ def file_to_instrument(filename):
     
 def header_to_instrument(header):
     """Given reference or dataset `header`, return the associated instrument."""
-    try:
-        instr = header["INSTRUME"]
-    except KeyError:
+    for instr_key in ["INSTRUME", "META.INSTRUMENT.NAME",  "META_INSTRUMENT_NAME", "INSTRUMENT"]:
         try:
-            instr = header["META.INSTRUMENT.NAME"]
+            return header[instr_key].upper()
         except KeyError:
-            instr = header["INSTRUMENT"]
-    return instr.upper()
+            pass
+    else:
+        raise KeyError("No instrument keyword defined in header.")
     
 def get_reference_paths(observatory):
     """Return the list of subdirectories involved with storing references of all instruments."""

@@ -142,11 +142,12 @@ def _initial_recommendations(
 
     """shared logic for getreferences() and getrecommendations()."""
 
-    if not fast:        
+    if not fast:
+        log.verbose("="*120)
         log.verbose(name + "() CRDS version: ", version_info())
         log.verbose(name + "() server:", api.get_crds_server())
         log.verbose(name + "() observatory:", observatory)
-        log.verbose(name + "() parameters:\n", log.PP(parameters))
+        log.verbose(name + "() parameters:\n", log.PP(parameters), verbosity=65)
         log.verbose(name + "() reftypes:", reftypes)
         log.verbose(name + "() context:", repr(context))
         log.verbose(name + "() ignore_cache:", ignore_cache)
@@ -253,7 +254,6 @@ def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
     CRDS will only use the server for status and to transfer files.
     """
     log.verbose("Computing best references locally.")
-    parameters = utils.condition_header(parameters) # give the server the option *not* to condition.        
     # Make sure pmap_name is actually present in the local machine's cache.
     # First assume the context files are already here and try to load them.   
     # If that fails,  attempt to get them from the network, then load them.
@@ -421,7 +421,7 @@ def update_config_info(observatory):
             log.verbose("Connected to server and computing locally, updating CRDS cache config and operational context.")
             cache_server_info(info, observatory)  # save locally
         else:
-            log.verbose("Not connected to CRDS server or operating in 'remote' mode,  skipping cache config update.")
+            log.verbose("Not connected to CRDS server or operating in 'remote' mode,  skipping cache config update.", verbosity=65)
 
 def cache_server_info(info, observatory):
     """Write down the server `info` dictionary to help configure off-line use."""

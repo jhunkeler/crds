@@ -172,6 +172,7 @@ LEGAL_NODES = set([
     'visit_BoolOp',
     'visit_BinOp',
     'visit_UnaryOp',
+    'visit_Not',
  ])
 
 CUSTOMIZED_NODES = set([
@@ -491,7 +492,7 @@ class Mapping(object):
         """Return only those items of `header` which are required to determine
         bestrefs.   Missing keys are set to 'UNDEFINED'.
         """
-        header = self.locate.fits_to_parkeys(header)
+        header = self.locate.fits_to_parkeys(header)   # reference vocab --> dataset vocab
         if isinstance(self, PipelineContext):
             instrument = self.get_instrument(header)
             mapping = self.get_imap(instrument)
@@ -836,6 +837,7 @@ class InstrumentContext(ContextMapping):
         if not include:
             include = self.selections
         for filekind in include:
+            log.verbose("-"*120, verbosity=55)
             filekind = filekind.lower()
             try:
                 refs[filekind] = self.get_best_ref(filekind, header)
@@ -845,6 +847,7 @@ class InstrumentContext(ContextMapping):
                 pass  
             except Exception, exc:
                 refs[filekind] = "NOT FOUND " + str(exc)
+        log.verbose("-"*120, verbosity=55)
         return refs
 
     def get_parkey_map(self):
@@ -1000,6 +1003,7 @@ class ReferenceMapping(Mapping):
         """Return (expr, compiled_expr) for some rmap header expression, generally a predicate which is evaluated
         in the context of the matching header to fine tune behavior.   Screen the expr for dangerous code.
         """
+        expr = utils.condition_source_code_keys(expr, self.get_required_parkeys())
         try:
             return expr, MAPPING_VALIDATOR.compile_and_check(expr, source=self.basename, mode="eval")
         except FormatError as exc:
@@ -1038,9 +1042,10 @@ class ReferenceMapping(Mapping):
         `header_in` selected by this ReferenceMapping.
         """
         header_in = dict(header_in)
-        log.verbose("Getting bestrefs for", self.basename, "parkeys", self.parkey, verbosity=55)
-        self.check_rmap_omit(header_in)     # Should bestref be omitted based on rmap_omit expr?
-        self.check_rmap_relevance(header_in)  # Should bestref be set N/A based on rmap_relevance expr?
+        log.verbose("Getting bestrefs:", self.basename, verbosity=55)
+        expr_header = utils.condition_header_keys(header_in)
+        self.check_rmap_omit(expr_header)     # Should bestref be omitted based on rmap_omit expr?
+        self.check_rmap_relevance(expr_header)  # Should bestref be set N/A based on rmap_relevance expr?
         # Some filekinds, .e.g. ACS biasfile, mutate the header
         header = self._precondition_header(self, header_in) # Execute type-specific plugin if applicable
         header = self.map_irrelevant_parkeys_to_na(header)  # Execute rmap parkey_relevance conditions
@@ -1200,7 +1205,7 @@ class ReferenceMapping(Mapping):
             source, compiled = self._rmap_relevance_expr
             relevant = eval(compiled, {}, header)   # secured
             log.verbose("Filekind ", repr(self.instrument), repr(self.filekind),
-                        "is relevant: ", relevant, repr(source), verbosity=55)
+                        "is relevant:", relevant, repr(source), verbosity=55)
         except Exception, exc:
             log.warning("Relevance check failed: " + str(exc))
         else:
@@ -1225,14 +1230,15 @@ class ReferenceMapping(Mapping):
         """Evaluate any relevance expression for each parkey, and if it's
         false,  then change the value to N/A.
         """
-        header2 = dict(header)
-        header2.update({parkey:"UNDEFINED" for parkey in self._required_parkeys if parkey not in header})
+        expr_header = dict(header)
+        expr_header.update({key:"UNDEFINED" for key in self._required_parkeys if key not in header})
+        expr_header = utils.condition_header_keys(expr_header)
         header = dict(header)  # copy
         for parkey in self._required_parkeys:  # Only add/overwrite irrelevant
             lparkey = parkey.lower()
             if lparkey in self._parkey_relevance_exprs:
                 source, compiled = self._parkey_relevance_exprs[lparkey]
-                relevant = eval(compiled, {}, header2)  # secured
+                relevant = eval(compiled, {}, expr_header)  # secured
                 log.verbose("Parkey", self.instrument, self.filekind, lparkey,
                             "is relevant:", relevant, repr(source), verbosity=55)
                 if not relevant:
@@ -1507,7 +1513,7 @@ def mapping_type(mapping):
         raise ValueError("Unknown mapping type for " + repr(Mapping))
 # ===================================================================
 
-def get_best_references(context_file, header, include=None, condition=False):
+def get_best_references(context_file, header, include=None, condition=True):
     """Compute the best references for `header` for the given CRDS
     `context_file`.   This is a local computation using local rmaps and
     CPU resources.   If `include` is None,  return results for all
@@ -1516,6 +1522,7 @@ def get_best_references(context_file, header, include=None, condition=False):
     """
     ctx = asmapping(context_file, cached=True)
     minheader = ctx.minimize_header(header)
+    log.verbose("Bestrefs header:\n", log.PP(minheader))
     if condition:
         minheader = utils.condition_header(minheader)
     return ctx.get_best_references(minheader, include=include)
