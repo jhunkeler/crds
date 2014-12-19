@@ -1,5 +1,15 @@
 # To avoid circular imports,  limit this file to inline definitions,  not imports
 
+from crds.hst import reftypes
+
+TYPES = reftypes.from_package_file(__file__)
+
+INSTRUMENTS = TYPES.instruments
+EXTENSIONS = TYPES.extensions
+TEXT_DESCR = TYPES.text_descr
+FILEKINDS = TYPES.filekinds
+
+"""
 INSTRUMENTS = ["acs","cos","nicmos","stis","wfc3","wfpc2"]
 
 EXTENSIONS = [
@@ -40,6 +50,7 @@ TEXT_DESCR = {
     'backtab': 'Background Model Table',
     'badttab': 'Bad Time Interval Table',
     'biasfile': 'Bias Frame',
+    'biacfile': 'CTE Bias Frame',
     'bpixtab': 'Data Quality (Bad Pixel) Initialization Table',
     'brftab': 'Baseline Reference Frame Table',
     'brsttab': 'Burst Parameters Table',
@@ -50,6 +61,7 @@ TEXT_DESCR = {
     'crrejtab': 'Cosmic Ray Rejection Parameter Table',
     'd2imfile': 'Column Correction File',
     'darkfile': 'Dark Frame',
+    'drkcfile': 'CTE Dark Current Frame',
     'deadtab': 'Deadtime Reference Table',
     'dfltfile': 'Delta Flat Field Image',
     'dgeofile': 'Geometric Distortion Correction File',
@@ -82,7 +94,7 @@ TEXT_DESCR = {
     'offtab': 'Inter-chip Offsets Table',
     'oscntab': 'Overscan Region Table',
     'pctab': 'Photometric Correction Table',
-    'pctetab': 'Cte Correction Table',
+    'pctetab': 'Pixel CTE Correction Table',
     'pedsbtab': 'pedsbtab',
     'pfltfile': 'Pixel To Pixel Flat Field Image',
     'phatab': 'Pulse Height Parameters Table',
@@ -97,6 +109,7 @@ TEXT_DESCR = {
     'sdctab': '2-d Spectrum Distortion Corrections',
     'sdstfile': 'Small Scale Distortion Image Files',
     'shadfile': 'Shutter Shading Correction Image',
+    'snkcfile': 'Sink Pixel Correction Image',
     'spottab': 'Spot Position Table',
     'sptrctab': '1-d Spectrum Trace Table',
     'spwcstab': 'Spectroscopic WCS Parameters Table',
@@ -116,4 +129,7 @@ TEXT_DESCR = {
 }
 
 FILEKINDS = sorted(TEXT_DESCR.keys())
+"""
+
+# from crds.hst.reftypes import INSTRUMENTS, EXTENSIONS, TEXT_DESCR, FILEKINDS
 
