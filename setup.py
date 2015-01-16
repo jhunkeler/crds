@@ -28,18 +28,21 @@ setup_pars = {
             ],
         'crds.hst': [
             '*.dat',
-            'cdbs.paths.gz',
             'tpns/*.tpn',
-            'tpns/*.rule',
-            'tpns/cdbscatalog.dat',
+            'specs/*.spec',
+            'specs/*.rmap',
             ],
         'crds.jwst': [
             '*.dat',
             'tpns/*.tpn',
+            'specs/*.spec',
+            'specs/*.rmap',
             ],
         'crds.tobs': [
             '*.dat',
             'tpns/*.tpn',
+            'specs/*.spec',
+            'specs/*.rmap',
             ],
         'crds' : [
             'cache/mappings/hst/*.*map',

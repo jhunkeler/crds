@@ -379,9 +379,10 @@ def invert_dict(dictionary):
     """
     inverse = {}
     for key, value in dictionary.items():
-        if value in inverse:
-            raise ValueError("Undefined inverse because of duplicate value " + \
-                             repr(value))
+        if value in inverse and inverse[value] != key:
+            raise ValueError("Undefined inverse because of duplicates for " +
+                             repr(value) + " of " + repr(key) + " vs. " +
+                             repr(inverse[value]))
         inverse[value] = key
     return inverse
     
@@ -505,8 +506,10 @@ def get_object(*args):
     pkgpath = ".".join(parts[:-1])
     cls = parts[-1]
     namespace = {}
-    exec "from " + pkgpath + " import " + cls in namespace, namespace
-    return namespace[cls]
+    import_cmd = "from " + pkgpath + " import " + cls
+    with log.augment_exception("Error importing", repr(import_cmd)):
+        exec import_cmd in namespace, namespace
+        return namespace[cls]
 
 # ==============================================================================
 
@@ -695,7 +698,7 @@ def instrument_to_locator(instrument):
 def file_to_instrument(filename):
     """Given reference or dataset `filename`,  return the associated instrument."""
     for (_obs, instr) in observatory_instrument_tuples():
-        if "_{}_".format(instr) in filename.lower() or "_{}.".format(instr) in filename.lower():
+        if "{}_".format(instr) in filename.lower() or "_{}".format(instr) in filename.lower():
             return instr.upper()
     from crds import data_file
     header = data_file.get_unconditioned_header(filename, needed_keys=["INSTRUME", "META.INSTRUMENT.NAME", "INSTRUMENT"])

@@ -64,7 +64,7 @@ from collections import namedtuple
 
 
 import crds
-from . import (log, utils, selectors, data_file, config)
+from . import (log, utils, selectors, data_file, config, substitutions)
 
 # XXX For backward compatability until refactored away.
 from .config import locate_file, locate_mapping, locate_reference
@@ -167,6 +167,10 @@ LEGAL_NODES = set([
     'visit_Eq',
     'visit_NotIn',
     'visit_NotEq',
+    'visit_Gt',
+    'visit_GtE',
+    'visit_Lt',
+    'visit_LtE',
     'visit_Compare',
     'visit_IfExp',
     'visit_BoolOp',
@@ -484,8 +488,7 @@ class Mapping(object):
         parkeys = set(self.parkey)
         if hasattr(self, "selections"):
             for selection in self.selections.values():
-                key = selection.get_required_parkeys()
-                parkeys = parkeys.union(set(key))
+                parkeys |= set(selection.get_required_parkeys())
         return sorted(parkeys)
 
     def minimize_header(self, header):
@@ -610,13 +613,10 @@ class Mapping(object):
             log.verbose("Skipping derivation checks for root mapping", repr(self.basename),
                       "derived_from =", repr(self.derived_from))
         elif os.path.exists(derived_path):
-            try:
+            with log.error_on_exception("Can't load parent mapping", repr(derived_path)):
                 derived_from = fetch_mapping(derived_path)
-            except Exception, exc:
-                log.error("Can't load parent mapping", repr(derived_path), ":", str(exc))
         else:
-            log.warning("Parent mapping for", repr(self.basename), "=", 
-                        repr(self.derived_from), "does not exist.")
+            log.warning("Parent mapping for", repr(self.basename), "=", repr(self.derived_from), "does not exist.")
         return derived_from
 
     def _check_type(self, expected_type):
@@ -821,12 +821,6 @@ class InstrumentContext(ContextMapping):
         except KeyError:
             raise crds.CrdsUnknownReftypeError("Unknown reference type " + repr(str(filekind)))
 
-    def get_best_ref(self, filekind, header):
-        """Returns the single reference file basename appropriate for `header`
-        corresponding to `filekind`.
-        """
-        return self.get_rmap(filekind).get_best_ref(header)
-
     def get_best_references(self, header, include=None):
         """Returns a map of best references { filekind : reffile_basename }
         appropriate for this `header`.   If `include` is None, include all
@@ -840,13 +834,11 @@ class InstrumentContext(ContextMapping):
             log.verbose("-"*120, verbosity=55)
             filekind = filekind.lower()
             try:
-                refs[filekind] = self.get_best_ref(filekind, header)
-            except IrrelevantReferenceTypeError:
-                refs[filekind] = "NOT FOUND n/a"
-            except OmitReferenceTypeError:
-                pass  
+                ref = self.get_rmap(filekind).get_best_ref(header)
             except Exception, exc:
-                refs[filekind] = "NOT FOUND " + str(exc)
+                ref = "NOT FOUND " + str(exc)
+            if ref is not None:
+                refs[filekind] = ref
         log.verbose("-"*120, verbosity=55)
         return refs
 
@@ -861,7 +853,7 @@ class InstrumentContext(ContextMapping):
             for parkey, choices in selection.get_parkey_map().items():
                 if parkey not in pkmap:
                     pkmap[parkey] = set()
-                pkmap[parkey] = pkmap[parkey].union(choices)
+                pkmap[parkey] |= choices
         for parkey, choices in pkmap.items():
             pkmap[parkey] = list(pkmap[parkey])
             if "CORR" not in parkey:
@@ -888,7 +880,7 @@ class InstrumentContext(ContextMapping):
             for key in rmap_pkmap:
                 if key not in pkmap:
                     pkmap[key] = set()
-                pkmap[key] = pkmap[key].union(set(rmap_pkmap[key]))
+                pkmap[key] |= set(rmap_pkmap[key])
         for key in self.get_parkey_map():
             if key not in pkmap:
                 pkmap[key] = []    # flag a need for an unconstrained input
@@ -1037,7 +1029,26 @@ class ReferenceMapping(Mapping):
         """Property, dictionary of valid values for each parameter loaded from .tpn files or equivalent."""
         return self.get_valid_values_map()
 
-    def get_best_ref(self, header_in):
+    def get_best_references(self, header, include=None):
+        """Shim so that .rmaps can be used for bestrefs in place of a .pmap or .imap for single type development."""
+        if include is not None:
+            for reftype in include:
+                if reftype != self.filekind:
+                    raise CrdsUnknownReftypeError(self.__class__.__name__, repr(self.basename), 
+                                                    "can only compute bestrefs for type", repr(self.filekind))
+        return { self.filekind : self.get_best_ref(header) }
+
+    def get_best_ref(self, header):
+        try:
+            return self._get_best_ref(header)
+        except IrrelevantReferenceTypeError:
+            return "NOT FOUND n/a"
+        except OmitReferenceTypeError:
+            return None
+        except Exception, exc:
+            return "NOT FOUND " + str(exc)
+
+    def _get_best_ref(self, header_in):
         """Return the single reference file basename appropriate for
         `header_in` selected by this ReferenceMapping.
         """
@@ -1296,7 +1307,7 @@ class ReferenceMapping(Mapping):
         terminal = os.path.basename(terminal)
         deleted_count = new.selector.delete(terminal)
         if deleted_count == 0:
-           raise crds.CrdsError("Terminal '%s' could not be found and deleted." % terminal)
+            raise crds.CrdsError("Terminal '%s' could not be found and deleted." % terminal)
         return new
 
     def get_matching_header(self, header):
@@ -1313,7 +1324,7 @@ class ReferenceMapping(Mapping):
         
         # Reference files specify things like ANY which must be expanded to 
         # glob patterns for matching with the reference file.
-        header = self.locate.expand_wildcards(self, header)
+        header = substitutions.expand_wildcards(self, header)
         
         # Translate header values to .rmap normalized form,  e.g. utils.condition_value()
         header = self.locate.condition_matching_header(self, header)

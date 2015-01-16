@@ -58,9 +58,9 @@ class Validator(object):
     def verbose(self, filename, value, *args, **keys):
         """Prefix log.verbose() with standard info about this Validator.  Unique message is in *args, **keys"""
         return log.verbose("File=" + repr(filename), 
-                           "Class=" + repr(self.__class__.__name__[:-len("Validator")]), 
+                           "class=" + repr(self.__class__.__name__[:-len("Validator")]), 
                            "keyword=" + repr(self.name), 
-                           "value =" + repr(value), 
+                           "value=" + repr(value), 
                            *args, **keys)
 
     def condition(self, value):
@@ -844,7 +844,7 @@ def mapping_closure(files):
             more_files = (more_files - set([rmap.locate_mapping(mapping.basename)])) | set([file_])
         else:
             more_files = set([file_])
-        closure_files = closure_files.union(more_files)
+        closure_files |= more_files
     return sorted(closure_files)
 
 # ============================================================================
@@ -886,53 +886,6 @@ def find_governing_rmap(context, reference):
     return governing_rmap
 
 # ============================================================================
-
-def find_old_reference(context, reffile):
-    """Returns the name of the old reference file(s) that the new reffile would replace in `context`,  or None.
-    """
-    with log.info_on_exception("Failed resolving prior reference for '{}' in '{}'".format(reffile, context)):
-        return _find_old_reference(context, reffile)
-    return None
-
-def _find_old_reference(context, reffile):
-    """Returns the name of the old reference file(s) that the new reffile would replace."""
-    
-    reference_mapping = find_governing_rmap(context, reffile)
-    
-    refname = os.path.basename(reffile)
-    if refname in reference_mapping.reference_names():
-        return refname
-
-    # Determine the corresponding reference by attempting to add reffile to the old context.
-    new_r = reference_mapping.insert_reference(reffile)
-    
-    # Examine the differences and treat the replaced file as the prior reference.
-    diffs = reference_mapping.difference(new_r)
-    match_refname = None
-    for diff_tup in diffs:
-        if diff.diff_action(diff_tup) == "replace":
-            match_refname, dummy = diff.diff_replace_old_new(diff_tup)
-            assert dummy == refname, "Bad replacement inserting '{}' into '{}'".format(reffile, reference_mapping.name)
-            break   # XXX it may be possible to have more than one corresponding prior reference
-    else:
-        log.info("No file corresponding to", repr(reffile), "in context", repr(reference_mapping.name))
-        return None
-    
-    # grab match_file from server and copy it to a local disk, if network
-    # connection is available and configured properly
-    # Note: this call works in both networked and non-networked modes of operation.
-    # Non-networked mode requires access to /grp/crds/[hst|jwst] or a copy of it.
-    try:
-        match_files = client.dump_references(reference_mapping.name, baserefs=[match_refname], ignore_cache=False)
-        match_file = match_files[match_refname]
-        if not os.path.exists(match_file):   # For server-less mode in debug environments w/o Central Store
-            raise IOError("Comparison reference " + repr(match_refname) + " is defined but does not exist.")
-        log.info("Comparing reference", repr(refname), "against", repr(os.path.basename(match_file)))
-    except Exception, exc:
-        log.warning("Failed to obtain reference comparison file", repr(match_refname), ":", str(exc))
-        match_file = None
-
-    return match_file
 
 def table_mode_dictionary(generic_name, filename, mode_keys, ext=1):
     """Returns ({ (mode_val,...) : (row_no, (entire_row_values, ...)) },  [col_name, ...] ) 
