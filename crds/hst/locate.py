@@ -43,7 +43,6 @@ get_row_keys_by_instrument = TYPES.get_row_keys_by_instrument
 get_item = TYPES.get_item
 
 from crds.hst.tpn import get_tpninfos, reference_name_to_tpn_text, reference_name_to_ld_tpn_text
-from crds.hst.substitutions import expand_wildcards
 
 # =======================================================================
 
@@ -302,13 +301,13 @@ def ref_properties_from_cdbs_path(filename):
     # First try to figure everything out by decoding filename. fast
     instrument = siname.WhichCDBSInstrument(os.path.basename(filename)).lower()
     if extension == ".fits":
-        ext = fields[1]
+        suffix = fields[1]
     else:
-        ext = GEIS_EXT_TO_SUFFIX[extension[1:3]]
+        suffix = GEIS_EXT_TO_SUFFIX[extension[1:3]]
     try:
-        filekind = TYPES.extension_to_filekind(instrument, ext)
+        filekind = TYPES.suffix_to_filekind[instrument][suffix]
     except KeyError:
-        assert False, "Couldn't map extension " + repr(ext) + " to filekind."
+        assert False, "Couldn't map extension/suffix " + repr(suffix) + " to filekind."
     return path, "hst", instrument, filekind, serial, extension
 
 INSTRUMENT_FIXERS = {
@@ -344,7 +343,7 @@ def ref_properties_from_header(filename):
     try:
         filekind = TYPES.filetype_to_filekind(instrument, filetype)
     except KeyError:
-        raise CrdsError("Invalid FILETYPE (or CDBSFILE) for '{}' of instrument '{}'." .format(filetype, instrument))
+        raise CrdsError("Invalid FILETYPE (or CDBSFILE) of '{}' for instrument '{}'." .format(filetype, instrument))
     return path, "hst", instrument, filekind, serial, ext
 
 # ============================================================================
@@ -438,14 +437,9 @@ __all__ = [
     
     "fits_to_parkeys",
     "reference_keys_to_dataset_keys",
-    "expand_wildcards",
     "condition_matching_header",
 ]
 
 for name in __all__:
     assert name in dir()
 
-# ============================================================================
-
-if __name__ == "__main__":
-    main()

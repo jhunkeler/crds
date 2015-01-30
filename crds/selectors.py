@@ -90,6 +90,7 @@ import sys
 import numbers
 from collections import namedtuple
 import ast
+import copy
 
 # import numpy as np
 
@@ -179,12 +180,18 @@ class Selector(object):
     def __init__(self, parameters, selections=None, rmap_header=None, merge_selections=None):
         assert isinstance(parameters, (list, tuple)), \
             "parameters should be a list or tuple of header keys"
+        self._rmap_header = rmap_header or {}
         self._parameters = tuple(parameters)
         if selections is not None:
             assert isinstance(selections, dict),  \
                 "selections should be a dictionary { key: choice, ... }."
             self._raw_selections = sorted([Selection(*s) for s in selections.items()])
-            self._selections = [Selection(*s) for s in self.condition_selections(selections)]
+            self._substitutions = dict(self._rmap_header.get("substitutions", {}))
+            if self._substitutions:
+                selects = self.do_substitutions(parameters, selections, self._substitutions)
+            else:
+                selects = selections
+            self._selections = [Selection(*s) for s in self.condition_selections(selects)]
         else:
             # This branch exists to efficiently implement the
             # UseAfter merge operation.   It's not really intended
@@ -194,9 +201,30 @@ class Selector(object):
                 "merge_selections should be a sorted item list,  not: " + repr(merge_selections)
             self._raw_selections = merge_selections  # XXX not really,  nominally unused XXXX
             self._selections = merge_selections
-        self._rmap_header = rmap_header or {}
         self._parkey_map = self.get_parkey_map()
     
+    def do_substitutions(self, parameters, selections, substitutions):
+        """Replace parkey values in `selections` which are specified
+        in mapping `substitutions` as {parkey : { old_value : new_value }}
+        """
+        selections = copy.deepcopy(selections)
+        for parkey in substitutions:
+            which = parameters.index(parkey)
+            for match in selections:
+                old_parvalue = match[which]
+                if old_parvalue in substitutions[parkey]:
+                    replacement = substitutions[parkey][old_parvalue]
+                    if isinstance(replacement, list):
+                        replacement = tuple(replacement)
+                    new_match = list(match)
+                    new_match[which] = replacement
+                    new_match = tuple(new_match)
+                    log.verbose("In", repr(self._rmap_header["name"]), "applying substitution", 
+                                (parkey, old_parvalue, replacement), "transforms",
+                                repr(match), "-->", repr(new_match), verbosity=60)
+                    selections[new_match] = selections.pop(match)
+        return selections
+
     def todict(self):
         """Return a 'pure data' dictionary representation of this selector and it's children
         suitable for conversion to json.
@@ -257,6 +285,14 @@ class Selector(object):
     def short_name(self):
         return self.__class__.__name__[:-len("Selector")]
 
+    def raw_keys(self):
+        """Return the list of keys as they appear in the rmap text,  prior to substitutions."""
+        return [s.key for s in self._raw_selections]
+
+    def raw_choices(self):
+        """Return the list of items which can be selected."""
+        return [s.choice for s in self._raw_selections]
+
     def keys(self):
         """Return the list of keys used to make selections."""
         return [s.key for s in self._selections]
@@ -266,8 +302,8 @@ class Selector(object):
         return [s.choice for s in self._selections]
 
     def choose(self, header):
-        """Given `header`,  operate on self.keys() to choose one of self.choices(). 
-        """
+        """Given `header`,  operate on self.keys() to choose one of self.choices()."""
+        self._check_defined(header)
         lookup_key = self._validate_header(header)  # may return header or a key
         exc = None
         for selection in self.get_selection(lookup_key):  # iterate over weighted selections, best match first.
@@ -315,8 +351,11 @@ class Selector(object):
                     raise ValidationError(
                         self.short_name + " key=" + repr(key) + 
                         " is wrong length for parameters " + repr(self._parameters))
-                field = key[i]
-                parmap[par] = parmap[par].union(set(field.split("|")))
+                if esoteric_key(key[i]):
+                    # parmap[par] |= set([key[i]])
+                    pass  # for the consistently esoteric,  this == empty list == no checking
+                else:
+                    parmap[par] |= set(key[i].split("|"))
         for par, val in parmap.items():
             parmap[par] = sorted(val)
         return parmap
@@ -355,23 +394,14 @@ class Selector(object):
         lines.append(indent*4*" " + "})")
         return "\n".join(lines)
     
-    def validate_selector(self, valid_values_map, trap_exceptions=False):
+    def validate_selector(self, valid_values_map):
         """Validate the parameters and keys of `self` against the legal
-        values spec'ed in `valid_values_map`.   If trap_exceptions is True
-        or 'selector',  issue an ERROR message and continue,  otherwise
-        re-raise the exception.
+        values spec'ed in `valid_values_map`.
         """
-        try:
-            self._validate_selector(valid_values_map, trap_exceptions)
-        except ValidationError, exc:
-            if trap_exceptions in [True, "selector"]:
-                log.error(self.short_name, ":", str(exc))
-            elif trap_exceptions == "debug":
-                raise
-            else:
-                raise ValidationError(str(exc))
+        with log.error_on_exception(self.short_name + repr(self._parameters)):
+            self._validate_selector(valid_values_map)
 
-    def _validate_selector(self, valid_values_map, trap_exceptions=False):
+    def _validate_selector(self, valid_values_map):
         """Iterate over this Selector's keys checking each field
         of each key against `valid_values_map`.
         
@@ -379,32 +409,33 @@ class Selector(object):
         
         Raise a ValidationError if there are any problems.
         """
-        for key in self.keys():
-            self._validate_key(key, valid_values_map)
-        for choice in self.choices():
-            if isinstance(choice, Selector):
-                choice.validate_selector(valid_values_map, trap_exceptions)
-            elif isinstance(choice, basestring):
-                pass
-            elif isinstance(choice, tuple):
-                for val in choice:
-                    if not isinstance(val, basestring): 
-                        raise ValidationError("Non-string tuple value for choice at " + repr(key))
-            elif isinstance(choice, dict):
-                for val in choice:
-                    if not isinstance(val, basestring):
-                        raise ValidationError("Non-string dictionary key for choice at " + repr(key))
-                for val in choice.values():
-                    if not isinstance(val, basestring):
-                        raise ValidationError("Non-string dictionary value for choice at " + repr(key))
-            else:
-                raise ValidationError
+        for selection in self._selections:
+            key, choice = selection.key, selection.choice
+            with log.augment_exception(repr(key)):
+                self._validate_key(key, valid_values_map)
+            with log.augment_exception(repr(key)):
+                if isinstance(choice, Selector):
+                    choice._validate_selector(valid_values_map)
+                elif isinstance(choice, basestring):
+                    pass
+                elif isinstance(choice, tuple):
+                    for val in choice:
+                        if not isinstance(val, basestring): 
+                            raise ValidationError("Non-string tuple value for choice at " + repr(key))
+                elif isinstance(choice, dict):
+                    for val in choice:
+                        if not isinstance(val, basestring):
+                            raise ValidationError("Non-string dictionary key for choice at " + repr(key))
+                    for val in choice.values():
+                        if not isinstance(val, basestring):
+                            raise ValidationError("Non-string dictionary value for choice at " + repr(key))
+                else:
+                    raise ValidationError
 
     def _validate_header(self, header):
         """Check self._parameters in `header` against the values found in the
         selector's keys.  Ignore nested selectors.
         """
-        self._check_defined(header)
         for name in self._parameters:
             value = header.get(name, "UNDEFINED")
             self._validate_value(name, value, self._parkey_map[name])
@@ -423,28 +454,39 @@ class Selector(object):
             
     def _validate_value(self, name, value, valid_list):
         """Verify that parameter `name` with `value` is in `valid_list` or
-        meets some other generic criteria for validity.   This is a generic
-        check against parameter constraints nominally from a TPN file.
+        meets some other generic criteria for validity.
+        
+        This is an overloaded method which is used to validate both runtime header values
+        and rmap match tuple values,  so it is run against two different kinds of valid lists,
+        valids which come from .rmaps,  and valids which come from .tpn files.   
+        
+        The .tpn's define what .rmaps and references *can* say,  but the .rmap defines what 
+        it *does* say.   The latter is more relevant at diagnosing runtime match failures,  
+        basically values like N/A or * are currently loopholes in rmap validation and bestrefs
+        checking.
+        
+        Note that the .tpn assumption applies primarily to HST, the valid value constraints
+        for JWST may (eventually) come from the data model schema instead.
         """
-        if value in valid_list:
+        if value in valid_list:   # typical |-glob valid_list membership
             return
-        if value in ["*","N/A"]:
+        if "*" in valid_list or "N/A" in valid_list or not valid_list:   # some TPNs are type-only, empty list
             return
-        if "*" in valid_list or "N/A" in valid_list:
+        if esoteric_key(value) or value in ["*", "N/A"]:   # exempt
             return
-        if value.replace(".0","") in valid_list:
+        if value.lower().startswith("between"):
+            _btw, value1, value2 = value.split()
+            self._validate_value(name, value1, valid_list)
+            self._validate_value(name, value2, valid_list)
             return
-        if not valid_list:  # some TPNs are type-only
-            return
-        if len(valid_list) == 1 and ":" in valid_list[0]:   # handle ranges
-            min, max = [float(x) for x in valid_list[0].split(":")]
+        if len(valid_list) == 1 and ":" in valid_list[0]:   # handle ranges in .tpns as n1:n2
+            min, max = [float(x) for x in valid_list[0].split(":")]  # normalize everything as float
             if min <= float(value) <= max:
                 return
             else:
                 raise ValidationError(
-                    " parameter=" + repr(name) + " value =" + 
-                    repr(value) + " is not in range [" + 
-                    str(min) + " .. " + str(max) + "]")     
+                    " parameter=" + repr(name) + " value =" +  repr(value) + " is not in range [" + 
+                    str(min) + " .. " + str(max) + "]")
         if name in self._substitutions and value in self._substitutions[name]:
             return
         raise ValidationError(
@@ -452,6 +494,7 @@ class Selector(object):
             " is not in " + repr(valid_list))
             
     def _validate_key(self, key, valid_values_map):
+        """Abstract method used to validate a selector key as part of validating rmaps."""
         raise NotImplementedError(
             self.__class__.__name__ + " hasn't defined _validate_key.")
         
@@ -506,22 +549,21 @@ class Selector(object):
     def delete(self, terminal):
         """Remove all instances of `terminal` from `self`."""
         deleted = 0
-        for i, choice in enumerate(self.choices()):
+        choices, raw_choices = self.choices(), self.raw_choices()
+        for i, choice in enumerate(choices):
+            raw_choice = raw_choices[i]
             if choice == terminal:
-                log.verbose("Deleting selection[%d] with key='%s' and terminal='%s'" % (i, self._raw_selections[i][1], terminal))
-                self._del_item(i, terminal)
+                log.verbose("Deleting selection[%d] with key='%s' and terminal='%s'" % (i, self._raw_selections[i][0], terminal))
+                assert self._selections[i][1]== terminal
+                assert self._raw_selections[i][1] == terminal
+                del self._selections[i]
+                del self._raw_selections[i]
                 deleted += 1
             elif isinstance(choice, Selector):
                 deleted += choice.delete(terminal)
+                raw_choice.delete(terminal)
         return deleted
     
-    def _del_item(self, i, terminal):
-        """Actually remove the `i`th selection of `self` which should have `terminal` as it's choice."""
-        assert self._selections[i][1]== terminal
-        assert self._raw_selections[i][1] == terminal
-        del self._selections[i]
-        del self._raw_selections[i]
-        
     def insert(self, header, value, valid_values_map):
         """Based on `header` recursively insert `value` into the Selector hierarchy,
         either adding it as a new choice or replacing the existing choice with 
@@ -659,7 +701,7 @@ class Selector(object):
                 for parkey in nested:
                     if parkey not in vmap:
                         vmap[parkey] = set()
-                    vmap[parkey] = vmap[parkey].union(nested[parkey])
+                    vmap[parkey] |= nested[parkey]
         return vmap
 
     def get_selector_value_map(self):
@@ -689,12 +731,12 @@ class Selector(object):
                     repr(self._parameters), ":", repr(new_selector._parameters))]
 
         differences = []
-        new_selector_keys = new_selector.keys()
-        self_keys = self.keys()
-        new_selector_map = dict_wo_dups(new_selector._selections)
+        new_selector_keys = new_selector.raw_keys()
+        self_keys = self.raw_keys()
+        new_selector_map = dict_wo_dups(new_selector._raw_selections)
         # Warning:  the message formats here are important to client code.
         # don't change without doing a survey. e.g. replaced blank1 with blank2.
-        for key, choice in self._selections:
+        for key, choice in self._raw_selections:
             pkey = self._diff_key(key)
             if key not in new_selector_keys:
                 if isinstance(choice, Selector):
@@ -732,7 +774,7 @@ class Selector(object):
         """
         msg = self._get_msg(path, pars)
         diffs = []        
-        for key, choice in self._selections:
+        for key, choice in self._raw_selections:
             pkey = self._diff_key(key)
             if isinstance(choice, Selector):
                 diffs.extend(choice._flat_diff(change, path + (pkey,), pars + (self._parameters,)))
@@ -1043,6 +1085,11 @@ class NaMatcher(Matcher):
         """Always match with "don't care" status."""
         return 0   
 
+def esoteric_key(key):
+    """Return True if `key` validation is a tautology or too complicated."""
+    key = key.upper()
+    return key.startswith(("{","(","#")) and key.endswith(("}",")","#")) or key.startswith("BETWEEN")
+
 def matcher(key):
     """Factory for different matchers based on key types.
     
@@ -1210,6 +1257,10 @@ class MatchSelector(Selector):
     """Matching selector does a modified dictionary lookup by directly matching
     the runtime (header) parameters to the selector keys.  
 
+Set error_on_exception() and augment_exception() behavior to reraise:
+
+    >>> old_debug = log.set_debug(True)
+
 The value 'N/A' is equivalent to "don't care" and does not add to the value
 of a match.   Literal matches or "*" increase confidence of a good match.
 
@@ -1288,17 +1339,16 @@ of uniform rmap structure for HST:
     ... })
     >>> m.choose({})
     '100'
+
+Restore original debug behavior:
+
+    >>> _jnk = log.set_debug(old_debug)
     
     """
     rmap_name = "Match"
     
     def __init__(self, parameters, selections, rmap_header={}):
-        self._substitutions = rmap_header.get("substitutions", {})
-        selects = self.do_substitutions(parameters, selections, self._substitutions)
-
-        super(MatchSelector, self).__init__(parameters, selects, rmap_header)  # largely overridden
-        self._raw_selections = sorted(selections.items())  # override __init__ using selects
-
+        super(MatchSelector, self).__init__(parameters, selections, rmap_header)
         self._match_selections = self.get_matcher_selections(dict_wo_dups(self._selections))
         self._value_map = self.get_value_map()
      
@@ -1326,25 +1376,6 @@ of uniform rmap structure for HST:
         else:
             elem = utils.condition_value(elem)
         return elem
-
-    def do_substitutions(self, parameters, selections, substitutions):
-        """Replace parkey values in `selections` which are specified
-        in mapping `substitutions` as {parkey : { old_value : new_value }}
-        """
-        for parkey in substitutions:
-            which = parameters.index(parkey)
-            for match in selections:
-                old_parvalue = match[which]
-                if old_parvalue in substitutions[parkey]:
-                    replacement = substitutions[parkey][old_parvalue]
-                    if isinstance(replacement, list):
-                        replacement = tuple(replacement)
-                    new_match = list(match)
-                    new_match[which] = replacement
-                    new_match = tuple(new_match)
-                    selections[new_match] = selections.pop(match)
-        return selections
-
 
     def get_matcher_selections(self, mappings):
         """Expand the selections from the spec file to include a tuple
@@ -1455,8 +1486,8 @@ of uniform rmap structure for HST:
         """
         log.verbose("Merging equivalent selectors", equivalent_selectors, verbosity=60)
         combined = equivalent_selectors[0]
-        for next in equivalent_selectors[1:]:
-            combined = combined.merge(next)
+        for esel in equivalent_selectors[1:]:
+            combined = combined.merge(esel)
         log.verbose("Merge result:\n", log.Deferred(combined.format), verbosity=70)
         return combined
 
@@ -1479,9 +1510,9 @@ of uniform rmap structure for HST:
                         vmap[fitsvar].add(regex_case)
         return vmap
 
-    def _validate_selector(self, valid_values_map, trap_exceptions=False):
+    def _validate_selector(self, valid_values_map):
         self._check_valid_values(valid_values_map)
-        Selector._validate_selector(self, valid_values_map, trap_exceptions)
+        Selector._validate_selector(self, valid_values_map)
             
     def _check_valid_values(self, valid_values_map):
         """Issue warnings for parkeys which aren't covered by valid_values_map."""
@@ -1503,7 +1534,7 @@ of uniform rmap structure for HST:
         for i, name in enumerate(self._parameters):
             if name not in valid_values_map:
                 continue
-            for value in key[i].split("|"):
+            for value in str(key[i]).split("|"):
                 self._validate_value(name, value, valid_values_map[name])
         for other in self.keys():
             if key != other and match_superset(other, key) and \
@@ -1518,6 +1549,14 @@ class UseAfterSelector(Selector):
     """A UseAfter selector chooses the greatest time which is less than
     the "date" condition and returns the corresponding item.
 
+
+Enable debugging which causes trapped exceptions to raise rather than issue ERROR.
+
+    >>> from crds import log
+    >>> old_debug = log.set_debug(True)
+
+Construct a test UseAfterSelector
+
     >>> u = UseAfterSelector(("DATE-OBS", "TIME-OBS"), {
     ...        '2003-09-26 01:28:00':'nal1503ij_bia.fits',
     ...        '2004-02-14 00:00:00':'o3913216j_bia.fits',
@@ -1527,7 +1566,6 @@ class UseAfterSelector(Selector):
     ...        '2004-07-14 16:52:00':'o9f15549j_bia.fits',
     ...        '2004-07-30 00:18:00':'o9t1553tj_bia.fits',
     ... })
-
 
 Exact match
 
@@ -1551,8 +1589,8 @@ Earlier than all entries
     ...
     UseAfterError: No selection with time < '2000-07-02 08:08:59'
     
-UseAfter dates should look like YYYY-MM-DD HH:MM:SS or:
-    
+UseAfter dates should look like YYYY-MM-DD HH:MM:SS or:    
+
     >>> u = UseAfterSelector(("DATE-OBS", "TIME-OBS"), {
     ...        '2003-09-26 foo 01:28:00':'nal1503ij_bia.fits',
     ... })
@@ -1605,7 +1643,12 @@ A more subtle error in the date or time should still be detected:
 Alternate date/time formats are accepted as header parameters.
     
     >>> choice = u.choose({"DATE-OBS":"2003/12/20", "TIME-OBS":"01:28"})
-    """    
+
+Restore debug configuration.
+
+    >>> _jnk = log.set_debug(old_debug)
+
+    """
     def get_selection(self, date):
         log.verbose("Matching date", date, " ", verbosity=60)
         yield self.bsearch(date, self._selections)
@@ -1640,21 +1683,18 @@ Alternate date/time formats are accepted as header parameters.
         
         Return lookup date.
         """
-        self._check_defined(header)
         date = self._raw_date(header)
         return self._validate_datetime(self._parameters, date)
         
     def _raw_date(self, header):
-        """Combine the values of self.parameters from `header` into a single
-        raw date separated by spaces.
-        """
+        """Combine the values of self.parameters from `header` into a single raw date separated by spaces."""
         date = ""
         for par in self._parameters:
             date += header[par] + " "
         return date.strip()
 
     def match_item(self, key):
-        """Account for the slightly weird UseAfter syntax."""
+        """Account for succinct UseAfter syntax hack,  space joined date + time is really two parameters for HST."""
         if len(self._parameters) == 1:
             return ((self._parameters[0], key),)
         else:
@@ -1811,7 +1851,6 @@ Effective_wavelength doesn't have to be covered by valid_values_map:
         self._validate_number(parname, key)
         
     def _validate_header(self, header):
-        self._check_defined(header)
         parname = self._parameters[0]
         return self._validate_number(parname, header[parname])
 
@@ -1910,7 +1949,6 @@ class BracketSelector(Selector):
         self._validate_number(name, value)
 
     def _validate_header(self, header):
-        self._check_defined(header)
         parname = self._parameters[0]
         return self._validate_number(parname, header[parname])
     
@@ -2147,7 +2185,6 @@ class SelectVersionSelector(Selector):
             self._validate_number(name, value)
     
     def _validate_header(self, header):
-        self._check_defined(header)
         parname = self._parameters[0]
         self._validate_value(parname, header[parname], [])
         return header[parname]

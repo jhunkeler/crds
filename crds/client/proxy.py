@@ -7,6 +7,7 @@ import urllib2 as urllib
 import uuid
 import json
 import time
+import os
 
 if sys.version_info < (3, 0, 0):
     import HTMLParser as parser_mod
@@ -18,8 +19,8 @@ from crds import log, config
 
 class CrdsError(Exception):
     """Baseclass for all client exceptions."""
-    def __call__(*args):
-        return super(CrdsError, self).__call__(" ".join(args))
+    def __init__(self, *args, **keys):
+        return super(CrdsError, self).__init__(" ".join(args), **keys)
 
 class ServiceError(CrdsError):
     """The service call failed for some reason."""
@@ -37,6 +38,10 @@ def apply_with_retries(f, *pars, **keys):
             time.sleep(delay)
     else:
         raise exc
+
+def program_id():
+    """Return a nominal identifier for this program."""
+    return os.path.basename(os.path.splitext(sys.argv[0])[0])
         
 class CheckingProxy(object):
     """CheckingProxy converts calls to undefined methods into JSON RPC service 
@@ -71,7 +76,8 @@ class CheckingProxy(object):
         jsonrpc_params = {"jsonrpc": self.__version,
                           "method": self.__service_name,
                           'params': params,
-                          'id': str(uuid.uuid1())}
+                          'id': program_id() + "-" + str(uuid.uuid1()) 
+                          }
         
         parameters = json.dumps(jsonrpc_params)
         

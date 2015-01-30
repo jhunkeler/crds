@@ -171,7 +171,7 @@ def exception_trap_logger(func):
     def func_on_exception(*args, **keys):
         """func_on_exception is a context manager which issues a func() message if any statement
         in a with-block generates an exception.   The exception is suppressed.
-    
+        
         >> with warn_on_exception("As expected, it failed."):
         ...    print("do it.")
         do it.
@@ -185,14 +185,44 @@ def exception_trap_logger(func):
         try:
             yield
         except Exception,  exc:
-            func(*args + (":", str(exc)), **keys)
+            keys["end"] = ""
+            msg = format(*args + (":", str(exc)), **keys)
+            reraise = func(msg)
+            if CRDS_DEBUG:
+                # In python-2, distinction between raise and "raise something".  raise doesn't
+                # wreck the traceback,  raising a new improved exception does.
+                raise  
+            elif reraise:
+                # Augmented,  the traceback is trashed from here down but the message is better when caught higher up.
+                raise exc.__class__(msg)
+            else:
+                pass # snuff the exception,  func() probably issued a log message.
     return func_on_exception
+
+# =======================================================================================================
+
+CRDS_DEBUG = False
+
+def set_debug(flag):
+    """Set the debug by-pass mode flag for log.error_on_exception() exception trap."""
+    global CRDS_DEBUG
+    old_flag = CRDS_DEBUG
+    if flag is not None:
+        CRDS_DEBUG = flag
+    return old_flag
+    
+def _reraise(*args, **keys):
+    """Signal to exception_trap_logger to unconditionally reraise the exception,  probably augmented."""
+    return True
+
+# =======================================================================================================
 
 info_on_exception = exception_trap_logger(info)
 debug_on_exception = exception_trap_logger(debug)
 verbose_on_exception = exception_trap_logger(verbose)
 warn_on_exception = exception_trap_logger(warning)
 error_on_exception = exception_trap_logger(error)
+augment_exception = exception_trap_logger(_reraise)
 
 # ===========================================================================
 

@@ -64,7 +64,7 @@ from collections import namedtuple
 
 
 import crds
-from . import (log, utils, selectors, data_file, config)
+from . import (log, utils, selectors, data_file, config, substitutions)
 
 # XXX For backward compatability until refactored away.
 from .config import locate_file, locate_mapping, locate_reference
@@ -90,8 +90,6 @@ Filemap  = namedtuple("Filemap","date,file,comment")
 
 class MappingError(crds.CrdsError):
     """Exception in load_rmap."""
-    def __init__(self, *args):
-        super(MappingError, self).__init__(" ".join([str(x) for x in args]))
 
 class FormatError(MappingError):
     "Something wrong with context or rmap file format."
@@ -167,6 +165,10 @@ LEGAL_NODES = set([
     'visit_Eq',
     'visit_NotIn',
     'visit_NotEq',
+    'visit_Gt',
+    'visit_GtE',
+    'visit_Lt',
+    'visit_LtE',
     'visit_Compare',
     'visit_IfExp',
     'visit_BoolOp',
@@ -364,11 +366,9 @@ class Mapping(object):
         """Given a mapping at `filepath`,  validate it and return a fully
         instantiated (header, selector) tuple.
         """
-        try:
+        with log.augment_exception("Can't load file " + where):
             code = MAPPING_VALIDATOR.compile_and_check(text)
             header, selector = cls._interpret(code)
-        except Exception, exc:
-            raise MappingError("Can't load file " + where + " : " + str(exc))
         return LowerCaseDict(header), selector
 
     @classmethod
@@ -484,8 +484,7 @@ class Mapping(object):
         parkeys = set(self.parkey)
         if hasattr(self, "selections"):
             for selection in self.selections.values():
-                key = selection.get_required_parkeys()
-                parkeys = parkeys.union(set(key))
+                parkeys |= set(selection.get_required_parkeys())
         return sorted(parkeys)
 
     def minimize_header(self, header):
@@ -514,7 +513,7 @@ class Mapping(object):
         header = data_file.get_conditioned_header(dataset, original_name=original_name)
         return self.minimize_header(header)
 
-    def validate_mapping(self,  trap_exceptions=False):
+    def validate_mapping(self):
         """Validate `self` only implementing any checks to be performed by
         crds.certify.   ContextMappings are mostly validated at load time.
         Stick extra checks for context mappings here.
@@ -610,13 +609,10 @@ class Mapping(object):
             log.verbose("Skipping derivation checks for root mapping", repr(self.basename),
                       "derived_from =", repr(self.derived_from))
         elif os.path.exists(derived_path):
-            try:
+            with log.error_on_exception("Can't load parent mapping", repr(derived_path)):
                 derived_from = fetch_mapping(derived_path)
-            except Exception, exc:
-                log.error("Can't load parent mapping", repr(derived_path), ":", str(exc))
         else:
-            log.warning("Parent mapping for", repr(self.basename), "=", 
-                        repr(self.derived_from), "does not exist.")
+            log.warning("Parent mapping for", repr(self.basename), "=", repr(self.derived_from), "does not exist.")
         return derived_from
 
     def _check_type(self, expected_type):
@@ -853,7 +849,7 @@ class InstrumentContext(ContextMapping):
             for parkey, choices in selection.get_parkey_map().items():
                 if parkey not in pkmap:
                     pkmap[parkey] = set()
-                pkmap[parkey] = pkmap[parkey].union(choices)
+                pkmap[parkey] |= choices
         for parkey, choices in pkmap.items():
             pkmap[parkey] = list(pkmap[parkey])
             if "CORR" not in parkey:
@@ -880,7 +876,7 @@ class InstrumentContext(ContextMapping):
             for key in rmap_pkmap:
                 if key not in pkmap:
                     pkmap[key] = set()
-                pkmap[key] = pkmap[key].union(set(rmap_pkmap[key]))
+                pkmap[key] |= set(rmap_pkmap[key])
         for key in self.get_parkey_map():
             if key not in pkmap:
                 pkmap[key] = []    # flag a need for an unconstrained input
@@ -1170,21 +1166,14 @@ class ReferenceMapping(Mapping):
                 valid_values[info.name] = values
         return valid_values
 
-    def validate_mapping(self, trap_exceptions=False):
+    def validate_mapping(self):
         """Validate the contents of this rmap against the TPN for this
         filekind / reftype.   Each field of each Match tuple must have a value
         OK'ed by the TPN.  UseAfter dates must be correctly formatted.
         """
         log.verbose("Validating", repr(self.basename))
-        try:
-            self.selector.validate_selector(self.tpn_valid_values, trap_exceptions)
-        except Exception, exc:
-            if trap_exceptions == mapping_type(self):
-                log.error("invalid mapping:", self.instrument, self.filekind, ":", str(exc))
-            elif trap_exceptions in ["debug", "none", None, False]:
-                raise
-            else:
-                raise ValidationError(repr(self) + " : " + str(exc))
+        with log.augment_exception("Invalid mapping:", self.instrument, self.filekind):
+            self.selector.validate_selector(self.tpn_valid_values)
 
     def file_matches(self, filename):
         """Return a list of the match tuples which refer to `filename`."""
@@ -1324,7 +1313,7 @@ class ReferenceMapping(Mapping):
         
         # Reference files specify things like ANY which must be expanded to 
         # glob patterns for matching with the reference file.
-        header = self.locate.expand_wildcards(self, header)
+        header = substitutions.expand_wildcards(self, header)
         
         # Translate header values to .rmap normalized form,  e.g. utils.condition_value()
         header = self.locate.condition_matching_header(self, header)
