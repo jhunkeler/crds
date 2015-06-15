@@ -22,6 +22,9 @@ To sync best references and rules for specific dataset ids:
   % python -m crds.sync --contexts hst_0001.pmap hst_0002.pmap --dataset-ids J6M915030 --fetch-references
 
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import sys
 import os
 import os.path
@@ -274,7 +277,7 @@ class SyncScript(cmdline.ContextsScript):
         heavy_client.update_config_info(self.observatory)
         self.report_stats()
         log.standard_status()
-
+        return log.errors()
     # ------------------------------------------------------------------------------------------
     
     @property
@@ -305,11 +308,11 @@ class SyncScript(cmdline.ContextsScript):
             already_have = set(rmap.list_references("*", self.observatory))
             fetched = [ x for x in sorted(set(references)-set(already_have)) if not x.startswith("NOT FOUND") ]
             if fetched:
-                log.info("Would fetch references:", repr(fetched))
+                log.info("READONLY CACHE would fetch references:", repr(fetched))
                 with log.info_on_exception("Reference size information not available."):
                     info_map = api.get_file_info_map(self.observatory, fetched, fields=["size"])
                     total_bytes = api.get_total_bytes(info_map)
-                    log.info("Would download", len(fetched), "references totaling",  
+                    log.info("READONLY CACHE would download", len(fetched), "references totaling",  
                              utils.human_format_number(total_bytes).strip(), "bytes.")
         else:
             self.dump_files(self.contexts[0], references)
@@ -349,7 +352,8 @@ class SyncScript(cmdline.ContextsScript):
         for context in self.contexts:
             if self.args.dataset_ids:
                 if len(self.args.dataset_ids) == 1 and self.args.dataset_ids[0].startswith("@"):
-                    self.args.dataset_ids = open(self.args.dataset_ids[0][1:]).read().splitlines()
+                    with open(self.args.dataset_ids[0][1:]) as pfile:
+                        self.args.dataset_ids = pfile.read().splitlines()
                 with log.error_on_exception("Failed to get matching parameters for", self.args.dataset_ids):
                     id_headers = api.get_dataset_headers_by_id(context, self.args.dataset_ids)
             for dataset in self.args.dataset_files or self.args.dataset_ids:
@@ -387,7 +391,7 @@ class SyncScript(cmdline.ContextsScript):
             log.verbose("Downloading verification info for", len(basenames), "files.", verbosity=10)
             infos = api.get_file_info_map(observatory=self.observatory, files=basenames, 
                                          fields=["size","rejected","blacklisted","state","sha1sum"])
-        except Exception, exc:
+        except Exception as exc:
             log.error("Failed getting file info.  CACHE VERIFICATION FAILED.  Exception: ", repr(str(exc)))
             return
         bytes_so_far = 0
@@ -497,4 +501,4 @@ class SyncScript(cmdline.ContextsScript):
 # ==============================================================================================================
 
 if __name__ == "__main__":
-    SyncScript()()
+    sys.exit(SyncScript()())

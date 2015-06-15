@@ -2,12 +2,22 @@
 remote service calls to the CRDS server to obtain mapping or reference files and
 cache them locally.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+
+import sys
 import os
 import os.path
 import base64
-import urllib2
 import re
 import zlib
+from crds import python23
+
+if sys.version_info < (3,0,0):
+    from urllib2 import urlopen
+else:
+    from urllib.request import urlopen
 
 from .proxy import CheckingProxy
 
@@ -17,6 +27,7 @@ from crds import utils, log, config
 from crds.client import proxy
 
 from crds.exceptions import *
+from crds.python23 import *
 
 # ==============================================================================
 
@@ -181,8 +192,8 @@ def _get_file_info_map(observatory, files, fields):
 def get_total_bytes(info_map):
     """Return the total byte count of file info map `info_map`."""
     try:
-        return sum([int(info_map[name]["size"]) for name in info_map if "NOT FOUND" not in info_map[name]])
-    except Exception, exc:
+        return sum([long(info_map[name]["size"]) for name in info_map if "NOT FOUND" not in info_map[name]])
+    except Exception as exc:
         log.error("Error computing total byte count: ", str(exc))
         return -1
 
@@ -192,6 +203,7 @@ def get_sqlite_db(observatory):
     encoded_compressed_data = S.get_sqlite_db(observatory)
     data = zlib.decompress(base64.b64decode(encoded_compressed_data))
     path = config.get_sqlite3_db_path(observatory)
+    utils.ensure_dir_exists(path)
     with open(path, "wb+") as db_out:
         db_out.write(data)
     return path
@@ -218,7 +230,7 @@ def get_best_references(pipeline_context, header, reftypes=None):
     """
     try:
         bestrefs = S.get_best_references(pipeline_context, dict(header), reftypes)
-    except Exception, exc:
+    except Exception as exc:
         raise CrdsLookupError(str(exc))
     # Due to limitations of jsonrpc,  exception handling is kludged in here.
     for filetype, refname in bestrefs.items():
@@ -239,7 +251,7 @@ def get_best_references_by_ids(context, dataset_ids, reftypes=None):
     """
     try:
         bestrefs = S.get_best_references_by_ids(context, dataset_ids, reftypes)
-    except Exception, exc:
+    except Exception as exc:
         raise CrdsLookupError(str(exc))
     return bestrefs
 
@@ -253,7 +265,7 @@ def get_best_references_by_header_map(context, header_map, reftypes=None):
     """
     try:
         bestrefs_map = S.get_best_references_by_header_map(context, header_map, reftypes)
-    except Exception, exc:
+    except Exception as exc:
         raise CrdsLookupError(str(exc))
     return bestrefs_map
 
@@ -290,7 +302,7 @@ def get_server_info():
         info["reference_url"] = info.pop("reference_url")["unchecked"]
         info["mapping_url"] = info.pop("mapping_url")["unchecked"]
         return info
-    except ServiceError, exc:
+    except ServiceError as exc:
         raise CrdsNetworkError("network connection failed: " + srepr(get_crds_server()) + " : " + str(exc))
 
 get_cached_server_info = get_server_info
@@ -333,7 +345,7 @@ def get_dataset_headers_by_instrument(context, instrument, datasets_since=None):
     max_ids_per_rpc = get_server_info().get("max_headers_per_rpc", 5000)
     try:
         ids = get_dataset_ids(context, instrument, datasets_since)
-    except Exception, exc:
+    except Exception as exc:
         log.verbose_warning("get_dataset_ids failed.  ignoring datasets_since = ", repr(datasets_since))
         ids = get_dataset_ids(context, instrument)        
     headers = {}
@@ -481,7 +493,7 @@ class FileCacher(object):
                 try:
                     if "NOT FOUND" in self.info_map[name]:
                         raise CrdsDownloadError("file is not known to CRDS server.")
-                    bytes, path = int(self.info_map[name]["size"]), localpaths[name]
+                    bytes, path = long(self.info_map[name]["size"]), localpaths[name]
                     log.info(file_progress("Fetching", name, path, bytes, bytes_so_far, total_bytes, nth_file, total_files))
                     self.download(name, path)
                     bytes_so_far += os.stat(path).st_size
@@ -571,7 +583,7 @@ class FileCacher(object):
         """Yield the data returned from `filename` of `pipeline_context` in manageable chunks."""
         url = self.get_url(filename)
         try:
-            infile = urllib2.urlopen(url)
+            infile = urlopen(url)
             chunk = 0
             stats = utils.TimingStats()
             stats.increment("bytes", config.CRDS_DATA_CHUNK_SIZE)
@@ -679,7 +691,7 @@ def dump_files(pipeline_context, files, ignore_cache=False, raise_exceptions=Tru
             pipeline_context, baserefs=references, ignore_cache=ignore_cache, raise_exceptions=raise_exceptions, api=2)
     else:
         r_paths, r_downloads, r_bytes = {}, 0, 0
-    return dict(m_paths.items()+r_paths.items()), m_downloads + r_downloads, m_bytes + r_bytes
+    return dict(list(m_paths.items())+list(r_paths.items())), m_downloads + r_downloads, m_bytes + r_bytes
     
 def cache_references(pipeline_context, bestrefs, ignore_cache=False):
     """Given a pipeline `pipeline_context` and `bestrefs` mapping,  obtain the
@@ -695,7 +707,7 @@ def cache_references(pipeline_context, bestrefs, ignore_cache=False):
             wanted.extend(list(refname))
         elif isinstance(refname, dict):
             wanted.extend(refname.values())
-        elif isinstance(refname, basestring):
+        elif isinstance(refname, python23.string_types):
             if "NOT FOUND" in refname:
                 if "n/a" in refname.lower():
                     log.verbose("Reference type", repr(filetype), 
@@ -715,7 +727,7 @@ def cache_references(pipeline_context, bestrefs, ignore_cache=False):
             refs[str(filetype)] = tuple([str(localrefs[name]) for name in refname])
         elif isinstance(refname, dict):
             refs[str(filetype)] = { name : str(localrefs[name]) for name in refname }
-        elif isinstance(refname, basestring):
+        elif isinstance(refname, python23.string_types):
             if "NOT FOUND" in refname:
                 refs[str(filetype)] = str(refname)
             else:

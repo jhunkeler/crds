@@ -16,6 +16,8 @@ reference or mapping file.
  'hst_cos_flatfile_0002.rmap']
 """
 from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 
 import sys
 import os.path
@@ -26,7 +28,7 @@ from crds.client import api
 def _clean_file_lines(files):
     """Return simple filenames from paths in `files`, ignoring error messages."""
     files = [os.path.basename(f.strip()) for f in files]
-    return  [f for f in files if config.FILE_RE.match(f)]
+    return  [f for f in files if config.FILE_RE.match(str(f))]
 
 def findall_rmaps_using_reference(filename, observatory="hst"):
     """Return the basename of all reference mappings which mention `filename`."""
@@ -117,7 +119,7 @@ Prints out the mappings which refer to the specified mappings or references.
 Prints out the datasets which historically used a particular reference as defined by DADSOPS.
 
 IMPORTANT:  
-   1. You must specify references on which to operate with --files.
+   1. You must specify references or rules on which to operate with --files.
    2. You must set CRDS_PATH and CRDS_SERVER_URL to give crds.uses access to CRDS mappings and databases.
 """
 
@@ -162,7 +164,7 @@ vb41934lj_bia.fits JA7P21A6Q
         self.add_argument("--files", nargs="+", 
             help="References for which to dump using mappings or datasets.")        
         self.add_argument("-d", "--print-datasets", action="store_true", dest="print_datasets",
-            help="Print the ids of datasets last historically using a reference.")
+            help="Print the ids of datasets last historically using a reference according to the archive database. (slow)")
         self.add_argument("-i", "--include-used", action="store_true", dest="include_used",
             help="Include the used file in the output as the first column.")
 
@@ -178,6 +180,7 @@ vb41934lj_bia.fits JA7P21A6Q
             self.print_datasets_using_references()
         else:
             self.print_mappings_using_files()
+        return log.errors()
             
     def locate_file(self, file_):
         """Just use basenames for identifying file references."""
@@ -207,4 +210,4 @@ def test():
     return doctest.testmod(uses)
 
 if __name__ == "__main__":
-    UsesScript()()
+    sys.exit(UsesScript()())

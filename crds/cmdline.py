@@ -3,12 +3,15 @@
 MAYBE integrate rc, environment, and command line parameters.
 """
 from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 
 import sys
 import os
 import argparse
 import pdb
-import cProfile, pstats, StringIO
+import cProfile, pstats
+import io
 import re
 from collections import Counter
 
@@ -16,6 +19,7 @@ from argparse import RawTextHelpFormatter
 
 from crds import rmap, log, data_file, heavy_client, config, utils
 from crds.client import api
+from crds import python23
 
 # =============================================================================
 
@@ -107,7 +111,7 @@ class Script(object):
     def __init__(self, argv=None, parser_pars=None, reset_log=True):
         self.stats = utils.TimingStats()
         self._already_reported_stats = False
-        if isinstance(argv, basestring):
+        if isinstance(argv, python23.string_types):
             argv = argv.split()
         elif argv is None:
             argv = sys.argv
@@ -138,10 +142,11 @@ class Script(object):
         calls self.main() which does the real work of the script.   _main() defines the full
         call tree of code which is run inside the profiler or debugger.
         """
-        self.contexts = self.determine_contexts()
-        result = self.main()
-        self.report_stats()  # here if not called already
-        return result
+        with log.error_on_exception("Failed"):
+            self.contexts = self.determine_contexts()
+            result = self.main()
+            self.report_stats()  # here if not called already
+            return result
     
     @property
     def locator(self):
@@ -255,7 +260,7 @@ class Script(object):
         try:
             if not self.server_info.connected:
                 raise RuntimeError("Required server connection unavailable.")
-        except Exception, exc:
+        except Exception as exc:
             self.fatal_error("Failed connecting to CRDS server at CRDS_SERVER_URL =", 
                              repr(api.get_crds_server()), "::", str(exc))
     
@@ -346,7 +351,8 @@ class Script(object):
             return config.locate_file(filename2, self.observatory)
         else:
             return os.path.abspath(filename2)
-
+    
+    @data_file.hijack_warnings
     def __call__(self):
         """Run the script's main() according to command line parameters."""
         try:
@@ -379,7 +385,7 @@ class Script(object):
         prof.enable()
         function()
         prof.disable()
-        stats_str = StringIO.StringIO()
+        stats_str = io.BytesIO()
         prof_stats = pstats.Stats(prof, stream=stats_str).sort_stats(sort_by)
         prof_stats.print_stats(top_n)
         print(stats_str.getvalue())
@@ -406,8 +412,10 @@ class Script(object):
         """Resolve context spec `context` into a .pmap, .imap, or .rmap filename,  interpreting
         date based specifications against the CRDS server operational context history.
         """
+        if isinstance(context, str) and context.lower() == "none":
+            return None
         if config.is_date_based_mapping_spec(context):
-            if re.match(config.OBSERVATORY_RE_STR + r"-operational", context):
+            if re.match(config.OBSERVATORY_RE_STR + r"-operational$", context):
                 final_context = self.server_info.operational_context
             else:
                 _mode, final_context = heavy_client.get_processing_mode(self.observatory, context)
@@ -455,8 +463,10 @@ class Script(object):
             
     def sync_files(self, files, context=None, ignore_cache=None):
         """Like dump_files(),  but dumps recursive closure of any mappings rather than just the listed mapping."""
-        mappings = [ filename for filename in files if config.is_mapping(filename) ]
-        references = [filename for filename in files if not config.is_mapping(filename) ]
+        mappings = [ os.path.basename(filename)
+                     for filename in files if config.is_mapping(filename) ]
+        references = [os.path.basename(filename)
+                      for filename in files if not config.is_mapping(filename) ]
         if mappings:
             self.dump_mappings(mappings, ignore_cache)
         if references:
@@ -584,7 +594,7 @@ class ContextsScript(Script):
                     if rmin <= serial <= rmax:
                         contexts.append(context)
         else:
-            contexts = [self.resolve_context(self.observatory + "-operational")]
+            contexts = [self.resolve_context(config.get_crds_env_context() or self.observatory + "-operational")]
         log.verbose("Determined contexts: ", contexts, verbosity=55)
         return sorted(contexts)
 

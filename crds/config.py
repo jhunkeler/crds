@@ -1,6 +1,9 @@
 """This module is the interface to CRDS configuration information.  Predominantly
 it is used to define CRDS file cache paths and file location functions.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 
 import os
 import os.path
@@ -8,6 +11,7 @@ import re
 import glob
 
 from crds import log
+from crds import python23
 
 # ===========================================================================
 
@@ -97,7 +101,7 @@ class ConfigItem(object):
     
     def set(self, value):
         """Set the value of the control item,  for the sake of this runtime session only."""
-        if self.lower and isinstance(value, basestring):
+        if self.lower and isinstance(value, python23.string_types):
             value = value.lower()
         self.check_value(value)
         os.environ[self.env_var] = str(value)
@@ -114,23 +118,23 @@ class BooleanConfigItem(ConfigItem):
 
     >>> BOOL = BooleanConfigItem("CRDS_BOOL_ITEM", False, "Test boolean config item")
     >>> if BOOL:
-    ...    print "True"
+    ...    print("True")
     ... else:
-    ...    print "False"
+    ...    print("False")
     False
 
     >>> os.environ["CRDS_BOOL_ITEM"] = "True"
     >>> if BOOL:
-    ...    print "True"
+    ...    print("True")
     ... else:
-    ...    print "False"
+    ...    print("False")
     True
 
     >>> BOOL.set("True")
     >>> if BOOL:
-    ...    print "True"
+    ...    print("True")
     ... else:
-    ...    print "False"
+    ...    print("False")
     True
 
     """
@@ -147,6 +151,16 @@ class BooleanConfigItem(ConfigItem):
     def __nonzero__(self):
         """Support using this boolean config item be used as a conditional expression."""
         return self.get()
+
+    __bool__ = __nonzero__
+
+# ===========================================================================
+
+FITS_IGNORE_MISSING_END = BooleanConfigItem("CRDS_FITS_IGNORE_MISSING_END", False,
+    "When True, ignore missing END records in the FITS primary header.  Otherwise fail.")
+
+FITS_VERIFY_CHECKSUM = BooleanConfigItem("CRDS_FITS_VERIFY_CHECKSUM", True,
+    "When True, verify that FITS header CHECKSUM and DATASUM values are correct.  Otherwise fail.")
 
 # ===========================================================================
 
@@ -289,16 +303,17 @@ def get_sqlite3_db_path(observatory):
 
 CRDS_SUBDIR_TAG_FILE = "ref_cache_subdir_mode"
 CRDS_REF_SUBDIR_MODES = ["instrument", "flat", "legacy"]
-_CRDS_REF_SUBDIR_MODE = None
+CRDS_REF_SUBDIR_MODE = "None"  # does not make cache consistent with env,  test only!!
 
 def get_crds_ref_subdir_mode(observatory):
     """Return the mode value defining how reference files are located."""
-    if _CRDS_REF_SUBDIR_MODE is not None:
-        mode = _CRDS_REF_SUBDIR_MODE
+    if CRDS_REF_SUBDIR_MODE is not "None":
+        mode = CRDS_REF_SUBDIR_MODE
     else:
         mode_path = os.path.join(get_crds_cfgpath(observatory),  CRDS_SUBDIR_TAG_FILE)
         try:
-            mode = open(mode_path).read().strip()
+            with open(mode_path) as pfile:
+                mode = pfile.read().strip()
             # log.verbose("Determined cache format from", repr(mode_path), "as", repr(mode))
         except IOError:
             if len(glob.glob(os.path.join(get_crds_refpath(observatory), "*"))) > 20:
@@ -314,9 +329,9 @@ def get_crds_ref_subdir_mode(observatory):
 
 def set_crds_ref_subdir_mode(mode, observatory):
     """Set the reference file location subdirectory `mode`."""
-    global _CRDS_REF_SUBDIR_MODE
+    global CRDS_REF_SUBDIR_MODE
     check_crds_ref_subdir_mode(mode)
-    _CRDS_REF_SUBDIR_MODE = mode
+    CRDS_REF_SUBDIR_MODE = mode
     mode_path = os.path.join(get_crds_cfgpath(observatory), CRDS_SUBDIR_TAG_FILE)
     if writable_cache_or_verbose("skipping subdir mode write."):
         from crds import heavy_client as hv   #  yeah,  kinda gross
@@ -360,24 +375,15 @@ def get_crds_env_context():
     >>> get_crds_env_context()
     Traceback (most recent call last):
     ...
-    AssertionError: If set, CRDS_CONTEXT should specify a pipeline mapping,  e.g. 'jwst.pmap', not 'jwst_miri_0022.imap'
+    AssertionError: Only set CRDS_CONTEXT to a literal or symbolic context (.pmap), e.g. jwst_0042.pmap,  jwst-2014-10-15T00:15:21, jwst-operational,  not 'jwst_miri_0022.imap'
    
-    >>> os.environ["CRDS_CONTEXT"] = "/nowhere/to/be/found/jwst_0042.pmap"    
-    >>> get_crds_env_context()
-    Traceback (most recent call last):
-    ...
-    AssertionError: Can't find pipeline mapping specified by CRDS_CONTEXT = '/nowhere/to/be/found/jwst_0042.pmap' at '/nowhere/to/be/found/jwst_0042.pmap'
-
     >>> del os.environ["CRDS_CONTEXT"]
     >>> get_crds_env_context()
     """
     context = os.environ.get("CRDS_CONTEXT", None)
-    if context is not None:
-        where = locate_mapping(context)
-        assert context.endswith(".pmap"), \
-            "If set, CRDS_CONTEXT should specify a pipeline mapping,  e.g. 'jwst.pmap', not " + repr(context)
-        assert os.path.exists(where), \
-            "Can't find pipeline mapping specified by CRDS_CONTEXT = " + repr(context) + " at " + repr(where)
+    if context:
+        assert is_context_spec(context), \
+            "Only set CRDS_CONTEXT to a literal or symbolic context (.pmap), e.g. jwst_0042.pmap,  jwst-2014-10-15T00:15:21, jwst-operational,  not " + repr(context)
     return context
 
 CRDS_IGNORE_MAPPING_CHECKSUM = BooleanConfigItem("CRDS_IGNORE_MAPPING_CHECKSUM", False,
@@ -680,14 +686,18 @@ CONTEXT_DATETIME_RE = re.compile(complete_re(CONTEXT_DATETIME_RE_STR))
 
 # e.g.  hst, hst-acs, hst-acs-darkfile
 CONTEXT_OBS_INSTR_KIND_RE_STR = r"[a-z]{1,8}(\-[a-z0-9]{1,32}(\-[a-z0-9]{1,32})?)?" 
+CONTEXT_OBS_RE_STR = r"[a-z]{1,8}" 
 
 # e.g.   2040-02-22T12:01:30.4567,  hst-2040-02-22T12:01:30.4567, hst-acs-2040-02-22T12:01:30.4567, ...
 CONTEXT_RE_STR = r"(?P<context>" + CONTEXT_OBS_INSTR_KIND_RE_STR + r"\-)?((?P<date>" + CONTEXT_DATETIME_RE_STR + r"|edit|operational))"
 CONTEXT_RE = re.compile(complete_re(CONTEXT_RE_STR))
 
+PIPELINE_CONTEXT_RE_STR = r"(?P<context>" + CONTEXT_OBS_RE_STR + r"\-)?((?P<date>" + CONTEXT_DATETIME_RE_STR + r"|edit|operational))"
+PIPELINE_CONTEXT_RE = re.compile(complete_re(PIPELINE_CONTEXT_RE_STR))
+
 def is_mapping(mapping):
     """Return True IFF `mapping` has an extension indicating a CRDS mapping file."""
-    return isinstance(mapping, basestring) and mapping.endswith((".pmap", ".imap", ".rmap"))
+    return isinstance(mapping, python23.string_types) and mapping.endswith((".pmap", ".imap", ".rmap"))
 
 def is_mapping_spec(mapping):
     """Return True IFF `mapping` is a mapping name *or* a date based mapping specification.
@@ -726,7 +736,38 @@ def is_mapping_spec(mapping):
     >>> is_mapping_spec("hst-foo")
     False
     """
-    return is_mapping(mapping) or (isinstance(mapping, basestring) and bool(CONTEXT_RE.match(mapping)))
+    return is_mapping(mapping) or (isinstance(mapping, python23.string_types) and bool(CONTEXT_RE.match(mapping)))
+
+def is_context(mapping):
+    """Return True IFF `mapping` has an extension indicating a CRDS CONTEXT, i.e. .pmap."""
+    return isinstance(mapping, python23.string_types) and mapping.endswith((".pmap",))
+
+def is_context_spec(mapping):
+    """Return True IFF `mapping` is a mapping name *or* a date based mapping specification.
+    
+    Date-based specifications can be interpreted by the CRDS server with respect to the operational
+    context history to determine the default operational context which was in use at that date.
+    This function verifies syntax only,  not the existence of corresponding context.
+    
+    >>> is_context_spec("hst_0042.pmap")
+    True
+    
+    >>> is_context_spec("hst.pmap")
+    True
+    
+    >>> is_context_spec("foo.pmap")
+    True
+    
+    >>> is_context_spec("foo")
+    False
+    
+    >>> is_context_spec("hst-2040-01-29T12:00:00")
+    True
+
+    >>> is_context_spec("hst-acs-2040-01-29T12:00:00")
+    False
+    """
+    return is_context(mapping) or (isinstance(mapping, python23.string_types) and bool(PIPELINE_CONTEXT_RE.match(mapping)))
 
 def is_date_based_mapping_spec(mapping):
     """Return True IFF `mapping` is a date based specification (not a filename).
@@ -785,6 +826,47 @@ def mapping_to_filekind(context_file):
     'biasfile'
     """
     return os.path.basename(context_file).split("_")[2].split(".")[0]
+
+# -------------------------------------------------------------------------------------
+
+def get_crds_state(clear_existing=False, clear_server_url=False):
+    """Capture the current CRDS configuration and return it as a dictionary.
+    Intended for customizing state during self-tests and restoring during teardown.
+    
+    if `clear_existing` is True,  the CRDS environment settings are cleared and
+    defaults are used.
+
+    if `clear_server_url` is not True,  the CRDS_SERVER_URL is not changed by 
+    `clear_existing` above.  So by default,  CRDS_SERVER_URL is immune to `clear_existing`.
+    """
+    env = { key : val for key, val in os.environ.items() if key.startswith("CRDS_") }
+    env["CRDS_REF_SUBDIR_MODE"] = CRDS_REF_SUBDIR_MODE
+    if clear_existing:
+        clear_crds_state(clear_server_url)
+    return env
+
+def set_crds_state(old_state):
+    """Restore the configuration of CRDS returned by get_crds_state()."""
+    global CRDS_REF_SUBDIR_MODE
+    clear_crds_state()
+    for key, val in old_state.items():
+        os.environ[key] = val
+    CRDS_REF_SUBDIR_MODE = old_state["CRDS_REF_SUBDIR_MODE"]
+
+def clear_crds_state(clear_server_url=False):
+    """Wipe out the existing configuration variable state of CRDS.
+
+    if `clear_server_url` is not True,  the CRDS server is not changed by 
+    `clear_existing` above.  So,  by default,  CRDS_SERVER_URL is immune to 
+    `clear_existing`.
+    """
+    for var in list(os.environ.keys()):
+        if var.startswith("CRDS_") and (var != "CRDS_SERVER_URL" or clear_server_url):
+            os.environ.pop(var)
+    CRDS_REF_SUBDIR_MODE = None
+
+
+# -------------------------------------------------------------------------------------
 
 def test():
     """Run doctests on crds.config module."""

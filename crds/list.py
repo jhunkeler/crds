@@ -3,7 +3,11 @@ mapping files associated with the specified contexts by consulting the CRDS
 server.   More generally it's for printing out information on CRDS files.
 """
 from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+
 import os.path
+import sys
 
 import crds
 from crds import cmdline, rmap, log, config, heavy_client
@@ -98,7 +102,8 @@ class ListScript(cmdline.ContextsScript):
             path = os.path.abspath(name)
             print("File: ", repr(path))
             print("#"*120)
-            print(open(path).read())
+            with open(path) as pfile:
+                print(pfile.read())
             
     def list_references(self):
         """Consult the server and print the names of all references associated with
@@ -142,12 +147,14 @@ class ListScript(cmdline.ContextsScript):
         real_paths = config.get_crds_actual_paths(self.observatory)
         server = self.server_info
         current_server_url = api.get_crds_server()
-        mode = config.get_crds_ref_subdir_mode(self.observatory)
+        cache_subdir_mode = config.get_crds_ref_subdir_mode(self.observatory)
+        pyinfo = _get_python_info()
         _print_dict("CRDS Environment", info)
         _print_dict("CRDS Client Config", { 
                 "server_url" : current_server_url, 
-                "cache_subdir_mode": mode,
+                "cache_subdir_mode": cache_subdir_mode,
                 "readonly_cache": self.readonly_cache,
+                "effective_context": heavy_client.get_processing_mode(self.observatory)[1],
                 })
         _print_dict("CRDS Actual Paths", real_paths)
         _print_dict("CRDS Server Info", server, 
@@ -157,6 +164,18 @@ class ListScript(cmdline.ContextsScript):
                 "crds" : repr(crds),
                 "version": heavy_client.version_info() 
                 })
+        _print_dict("Python Environment", pyinfo)
+
+def _get_python_info():
+    """Collect and return information about the Python environment"""
+    pyinfo = {
+        "Python Version" : ".".join(str(num) for num in sys.version_info),
+        "Python Executable": sys.executable,
+        }
+    pypath = os.environ.get("PYTHON_PATH", None)
+    if pypath:
+        pyinfo["PYTHON_PATH"] = pypath
+    return pyinfo
     
 def _print_dict(title, dictionary, selected = None):
     """Print out dictionary `d` with a one line `title`."""
@@ -174,4 +193,4 @@ def _print_list(files):
         print(filename)
 
 if __name__ == "__main__":
-    ListScript()()
+    sys.exit(ListScript()())

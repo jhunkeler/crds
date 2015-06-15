@@ -26,6 +26,9 @@ server cannot be contacted.
 7. The ability to fall back to pre-installed contexts if no context is defined
 through the network, parameter, or environment variable mechanisms.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import os
 import pprint
 import glob
@@ -36,6 +39,7 @@ import uuid
 from . import rmap, log, utils, config
 from crds.client import api
 from crds.exceptions import *
+from crds import python23
 
 __all__ = ["getreferences", "getrecommendations"]
 
@@ -165,6 +169,8 @@ def _initial_recommendations(
 
     mode, final_context = get_processing_mode(observatory, context)
 
+    log.verbose("Final effective context is", repr(final_context))
+
     if mode == "local":
         bestrefs = local_bestrefs(
             parameters, reftypes=reftypes, context=final_context, ignore_cache=ignore_cache)
@@ -243,14 +249,14 @@ def check_observatory(observatory):
 def check_parameters(header):
     """Make sure dict-like `header` is a mapping from strings to simple types."""
     for key in header:
-        assert isinstance(key, basestring), \
+        assert isinstance(key, python23.string_types), \
             "Non-string key " + repr(key) + " in parameters."
         try:
             header[key]
-        except Exception, exc:
+        except Exception as exc:
             raise ValueError("Can't fetch mapping key " + repr(key) + 
                              " from parameters: " + repr(str(exc)))
-        assert isinstance(header[key], (basestring, float, int, bool)), \
+        assert isinstance(header[key], (python23.string_types, float, int, bool)), \
             "Parameter " + repr(key) + " isn't a string, float, int, or bool."
     
 def check_reftypes(reftypes):
@@ -259,7 +265,7 @@ def check_reftypes(reftypes):
         "reftypes must be a list or tuple of strings, or sub-class of those."
     if reftypes is not None:
         for reftype in reftypes:
-            assert isinstance(reftype, basestring), \
+            assert isinstance(reftype, python23.string_types), \
                 "each reftype must be a string, .e.g. biasfile or darkfile."
                 
 def check_context(context):
@@ -286,11 +292,11 @@ def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
             raise IOError("explicitly ignoring cache.")
         # Finally do the best refs computation using pmap methods from local code.
         return rmap.get_best_references(context, parameters, reftypes)
-    except IOError, exc:
+    except IOError as exc:
         log.verbose("Caching mapping files for context", srepr(context))
         try:
             api.dump_mappings(context, ignore_cache=ignore_cache)
-        except CrdsError, exc:
+        except CrdsError as exc:
             traceback.print_exc()
             raise CrdsNetworkError("Failed caching mapping files: " + str(exc))
         return rmap.get_best_references(context, parameters, reftypes)
@@ -353,7 +359,7 @@ def translate_date_based_context(info, context):
                 raise CrdsError("Specified CRDS context by date '{}' and CRDS server is not reachable.".format(context))
         try:
             translated = api.get_context_by_date(context, observatory=info.observatory)
-        except Exception, exc:
+        except Exception as exc:
             log.error("Failed to translate date based context", repr(context), ":", str(exc))
             raise
         log.verbose("Date based context spec", repr(context), "translates to", repr(translated) + ".", verbosity=80)
@@ -478,7 +484,7 @@ def cache_atomic_write(replace_path, contents, fail_warning):
             with open(temp_path, "w+") as file_:
                 file_.write(contents)
             os.rename(temp_path, replace_path)
-        except Exception, exc:
+        except Exception as exc:
             log.verbose_warning("CACHE Failed writing", repr(replace_path), 
                                 ":", fail_warning, ":", repr(exc))
     else:
@@ -519,7 +525,7 @@ def get_installed_info(observatory):
         pmap = os.path.basename(sorted(glob.glob(where))[-1])
         log.warning("Using highest numbered pipeline context", repr(pmap), 
                     "as default. Bad file checking is disabled.")
-    except IndexError, exc:
+    except IndexError as exc:
         raise CrdsError("Configuration or install error.  Can't find any .pmaps at " + 
                         repr(where) + " : " + str(exc))
     return ConfigInfo(

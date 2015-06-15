@@ -1,11 +1,16 @@
 """This module manages the automatic generation of new context files based on
 a list of new rmaps and a baseline context.
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import os.path
+import sys
 import shutil
 import re
+import glob
 
-from crds import (rmap, utils, log, cmdline, refactor)
+from crds import (rmap, utils, log, cmdline, refactor, config)
 
 # =============================================================================
 
@@ -18,7 +23,7 @@ def get_update_map(old_pipeline, updated_rmaps):
     """
     pctx = rmap.get_cached_mapping(old_pipeline)
     updates = {}
-    for update in updated_rmaps:
+    for update in sorted(updated_rmaps):
         instrument, _filekind = utils.get_file_properties(pctx.observatory, update)
         imap_name = pctx.get_imap(instrument).filename
         if imap_name not in updates:
@@ -38,10 +43,10 @@ def generate_new_contexts(old_pipeline, updates, new_names):
     new_names --   { old_pmap : new_pmap, old_imaps : new_imaps }
     """
     new_names = dict(new_names)
-    for imap_name in updates:
+    for imap_name in sorted(updates):
         hack_in_new_maps(imap_name, new_names[imap_name], updates[imap_name])
     new_pipeline = new_names.pop(old_pipeline)
-    new_imaps = new_names.values()
+    new_imaps = list(new_names.values())
     hack_in_new_maps(old_pipeline, new_pipeline, new_imaps)
     return [new_pipeline] + new_imaps
     
@@ -50,13 +55,13 @@ def hack_in_new_maps(old, new, updated_maps):
     installs each map of `updated_maps` in place of it's predecessor.
     """
     copy_mapping(old, new)  
-    for mapping in updated_maps:
+    for mapping in sorted(updated_maps):
         key, replaced = insert_mapping(new, mapping)
         if replaced:
-            log.info("Replaced", repr(replaced), "with", repr(mapping), "for", repr(key), "in", repr(new))
+            log.info("Replaced", repr(replaced), "with", repr(mapping), "for", repr(key), "in", repr(old), "producing", repr(new))
         else:
-            log.info("Added", repr(mapping), "for", repr(key), "in", repr(new))
-            
+            log.info("Added", repr(mapping), "for", repr(key), "in", repr(old), "producing", repr(new))
+
 def insert_mapping(context, mapping):
     """Replace the filename in file `context` with the same generic name
     as `mapping` with `mapping`.  Re-write `context` in place.
@@ -102,7 +107,7 @@ def generate_fake_names(old_pipeline, updates):
     """
     new_names = {}
     new_names[old_pipeline] = fake_name(old_pipeline)
-    for old_imap in updates:
+    for old_imap in sorted(updates):
         new_names[old_imap] = fake_name(old_imap)
     return new_names
 
@@ -111,14 +116,21 @@ def fake_name(old_map):
     create a new mapping name of the same series.   This name is fake in the
     sense that it is local to a developer's machine.
     """
-    match = re.search(r"_(\d+)\.[pir]map", old_map)
-    if match:
-        serial = int(match.group(1)) + 1
-        new_map = re.sub(r"_(\d+)(\.[pir]map)", r"_%04d\2" % serial, old_map)
-    elif re.match(r"\w+\.[pir]map", old_map):   
-        # if no serial,  start off existing sequence as 0
+    if re.search(r"_\d+", old_map):
+        map_glob = re.sub(r"_\d+(\..map)", r"_*\1", old_map)
+        same_maps = sorted(glob.glob(config.locate_mapping(map_glob)))
+        if same_maps:
+            last_map = same_maps[-1]
+            match = re.search(r"_(\d+)\..map", last_map)
+            serial = int(match.group(1), 10) + 1
+            new_map = re.sub(r"_(\d+)(\.[pir]map)", r"_%04d\2" % serial, old_map)
+        else:
+            new_map = old_map
+    elif re.search(r"\w+[^\d]+\..map", old_map):   
+        # if no serial,  start off existing sequence as 0001
         parts = os.path.splitext(old_map)
-        new_map = fake_name(parts[0] + "_0000" + parts[1])
+        new_map = parts[0] + "_0001" + parts[1]
+        new_map = fake_name(new_map)
     else:
         raise ValueError("Unrecognized mapping filename " + repr(old_map))
     if os.path.exists(rmap.locate_mapping(new_map)):
@@ -126,14 +138,14 @@ def fake_name(old_map):
         return fake_name(new_map)   
     else:
         if not new_map.startswith("./"):
-            new_map = "./" + new_map
+            new_map = "./" + os.path.basename(new_map)
         return new_map
 
 def update_header_names(name_map):
     """Update the .name and .derived_from fields in mapping new_path.header
     to reflect derivation from old_path and name new_path.
     """
-    for old_path, new_path in name_map.items():
+    for old_path, new_path in sorted(name_map.items()):
         old_base, new_base = os.path.basename(old_path), os.path.basename(new_path)
         refactor.update_derivation(new_path, old_base)
         log.info("Adjusting name", repr(new_base), "derived_from", repr(old_base), 
@@ -156,6 +168,7 @@ fake names and are for local test purposes only,  not formal distribution.
     def main(self):
         name_map = new_context(self.args.old_pmap, self.args.new_rmap)
         update_header_names(name_map)
+        return log.errors()
 
 if __name__ == "__main__":
-    NewContextScript()()
+    sys.exit(NewContextScript()())

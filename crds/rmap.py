@@ -51,17 +51,16 @@ Active instrument references are also broken down by filetype:
 >>> len(r.reference_names())  > 500
 True
 """
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import sys
-import os
 import os.path
-import re
 import glob
-import copy
 import json
 import ast
 
 from collections import namedtuple
-
 
 import crds
 from . import (log, utils, selectors, data_file, config, substitutions)
@@ -71,6 +70,7 @@ from .config import locate_file, locate_mapping, locate_reference
 from .config import mapping_exists, is_mapping
 
 from crds.exceptions import *
+from crds import python23
 
 # ===================================================================
 
@@ -83,17 +83,17 @@ Filemap  = namedtuple("Filemap","date,file,comment")
 class AstDumper(ast.NodeVisitor):
     """Debug class for dumping out rmap ASTs."""
     def visit(self, node):
-        print ast.dump(node), "\n"
+        print(ast.dump(node), "\n")
         ast.NodeVisitor.visit(self, node)
 
     def dump(self, node):
-        print ast.dump(node), "\n"
+        print(ast.dump(node), "\n")
         self.generic_visit(node)
 
     visit_Assign = dump
     visit_Call = dump
 
-ILLEGAL_NODES = set([
+ILLEGAL_NODES = {
     "visit_FunctionDef",
     "visit_ClassDef", 
     "visit_Return", 
@@ -126,9 +126,9 @@ ILLEGAL_NODES = set([
     "visit_Repr",
     "visit_AugLoad",
     "visit_AugStore",
-    ])
+    }
 
-LEGAL_NODES = set([
+LEGAL_NODES = {
     'visit_Module',
     'visit_Name',
     'visit_Str',
@@ -155,14 +155,16 @@ LEGAL_NODES = set([
     'visit_BinOp',
     'visit_UnaryOp',
     'visit_Not',
- ])
+    'visit_NameConstant',
+    'visit_USub',
+ }
 
-CUSTOMIZED_NODES = set([
+CUSTOMIZED_NODES = {
     'visit_Call',
     'visit_Assign',
     'visit_Illegal',
     'visit_Unknown',
-])
+}
 
 ALL_CATEGORIZED_NODES = set.union(ILLEGAL_NODES, LEGAL_NODES, CUSTOMIZED_NODES)
 
@@ -264,7 +266,7 @@ class LowerCaseDict(dict):
         val = super(LowerCaseDict, self).__getitem__(key)
         # Return string values as lower case,  but exclude literal expressions surrounded by ()
         # for case-sensitive HST rmap relevance expressions.
-        if isinstance(val, basestring) and not (val.startswith("(") and val.endswith(")")):
+        if isinstance(val, python23.string_types) and not (val.startswith("(") and val.endswith(")")):
             val = val.lower()
         return val
     
@@ -275,17 +277,93 @@ class LowerCaseDict(dict):
             return default
     
     def __repr__(self):
-        return self.__class__.__name__ + "(%s)" % super(LowerCaseDict, self).__repr__()
+        return self.__class__.__name__ + "(%s)" % repr({key: self.header[key] for key in self.header }) #super(LowerCaseDict, self).__repr__()
+
+# ===================================================================
+
+class FileSelectionsDict(dict):
+    """Manages selections for higher level mappings like .pmaps and .imaps.
+
+    Provides helper methods which exlude or highlight special selection values
+    like N/A or OMIT to support recursive loading or processing.   Special
+    values,  since they do not designate nested files, terminate any recursion
+    """
+    na_values_set = { "N/A", "TEMP_N/A", "n/a", "temp_n/a"}
+    omit_values_set = { "OMIT", "TEMP_OMIT", "omit", "temp_n/a"}
+    special_values_set = na_values_set | omit_values_set
+
+    @classmethod
+    def is_na_value(cls, value):
+        return isinstance(value, str) and value in cls.na_values_set
+    
+    @classmethod
+    def is_omit_value(cls, value):
+        return isinstance(value, str) and value in cls.omit_values_set
+
+    @classmethod
+    def is_special_value(cls, value):
+        return isinstance(value, str) and value in cls.special_values_set
+        
+    def normal_keys(self):
+        """Each of these keys has a corresponding value which IS NOT special.
+        
+        >>> FileSelectionsDict({"this" : "OMIT", "that":"something.imap"}).normal_keys()
+        ['that']
+        """
+        return sorted([key for key in self.keys() if self[key] not in self.special_values_set])
+
+    def special_keys(self):
+        """Each of these keys has a corresponding values which IS special.
+        
+        >>> FileSelectionsDict({"this" : "OMIT", "that":"something.imap"}).special_keys()
+        ['this']
+        """
+        return sorted([key for key in self.keys() if self[key] in self.special_values_set])
+
+    def normal_values(self):
+        """Normal values exclude the special values like N/A but can include exotic values like tuples or dicsts.
+        
+        >>> FileSelectionsDict({"this" : "N/A", "that":"something.imap"}).normal_values()
+        ['something.imap']
+        """
+        return [ self[key] for key in self.normal_keys() ]
+
+    def special_values(self):
+        """These are values which must be trapped and reformatted in the Mapping classes.
+        
+        >>> FileSelectionsDict({"this" : "N/A", "that":"something.imap"}).special_values()
+        ['N/A']
+        """
+        return [ self[key] for key in self.special_keys() ]
+
+    def normal_items(self):
+        """
+        >>> list(FileSelectionsDict({"this" : "N/A", "that":"something.imap"}).normal_items())
+        [('that', 'something.imap')]
+        """
+        return [ (key, self[key]) for key in self.normal_keys() ]
+
+    def special_items(self):
+        """
+        >>> list(FileSelectionsDict({"this" : "N/A", "that":"something.imap"}).special_items())
+        [('this', 'N/A')]
+        """
+        return [ (key, self[key]) for key in self.special_keys() ]
+
+# ===================================================================
 
 class Mapping(object):
     """Mapping is the abstract baseclass for PipelineContext,
     InstrumentContext, and ReferenceMapping.
     """
     required_attrs = []
+    
+    # no precursor file if derived_from contains any of these.
+    null_derivation_substrings = ("generated", "cloning", "by hand")
 
     def __init__(self, filename, header, selector, **keys):
         self.filename = filename
-        self.header = LowerCaseDict(header)
+        self.header = LowerCaseDict(header)   # consistent lower case values
         self.selector = selector
         self.comment = keys.pop("comment", None)
         for name in self.required_attrs:
@@ -322,7 +400,8 @@ class Mapping(object):
     @classmethod
     def from_file(cls, basename, *args, **keys):
         """Load a mapping file `basename` and do syntax and basic validation."""
-        text = open(config.locate_mapping(basename)).read()
+        with  open(config.locate_mapping(basename)) as pfile:
+            text = pfile.read()
         return cls.from_string(text, basename, *args, **keys)
 
     @classmethod
@@ -334,7 +413,7 @@ class Mapping(object):
         ignore = keys.get("ignore_checksum", False) or config.get_ignore_checksum()
         try:
             mapping._check_hash(text)
-        except ChecksumError, exc:
+        except ChecksumError as exc:
             if ignore == "warn":
                 log.warning("Checksum error", ":", str(exc))
             elif ignore:
@@ -360,7 +439,7 @@ class Mapping(object):
         """
         namespace = {}
         namespace.update(selectors.SELECTORS)
-        exec code in namespace
+        exec(code, namespace)
         header = LowerCaseDict(namespace["header"])
         selector = namespace["selector"]
         comment = namespace.get("comment", None)
@@ -472,7 +551,7 @@ class Mapping(object):
         """Determine the set of parkeys required for this mapping and all the mappings selected by it."""
         parkeys = set(self.parkey)
         if hasattr(self, "selections"):
-            for selection in self.selections.values():
+            for selection in self.selections.normal_values():
                 parkeys |= set(selection.get_required_parkeys())
         return sorted(parkeys)
 
@@ -509,36 +588,91 @@ class Mapping(object):
         """
         log.verbose("Validating", repr(self.basename))
 
-    def difference(self, new_mapping, path=(), pars=(), include_header_diffs=False):
+    def difference(self, new_mapping, path=(), pars=(), include_header_diffs=False, recurse_added_deleted=False):
         """Compare `self` with `new_mapping` and return a list of difference
         tuples,  prefixing each tuple with context `path`.
         """
         new_mapping = asmapping(new_mapping, cache="readonly")
         differences = self.difference_header(new_mapping, path=path, pars=pars) if include_header_diffs else []
-        for key in self.selections:
-            if key not in new_mapping.selections:
+        for key in self.selections:  # Check for deleted or replaced keys in self / old mapping.
+            if key not in new_mapping.selections:   # deletions from self
                 diff = selectors.DiffTuple(
-                    * path + ((self.filename, new_mapping.filename), (key,), "deleted " + repr(self.selections[key].filename)),
+                    * path + ((self.filename, new_mapping.filename), (key,), 
+                    "deleted " + repr(self._value_name(key))),
                     parameter_names = pars + (self.diff_name, self.parkey, "DIFFERENCE",))
+                if recurse_added_deleted and self._is_normal_value(key):
+                    # Get tuples for all implicitly deleted nested files.
+                    nested_diffs = self.selections[key].diff_files("deleted", 
+                        path = path + ((self.filename,),), pars = pars + (self.diff_name,),)
+                else: # either no recursion or key is special and cannot be recursed.
+                    nested_diffs = []
+            elif self._value_name(key) != new_mapping._value_name(key):   # replacements in self
+                diff = selectors.DiffTuple(
+                    * (path + ((self.filename, new_mapping.filename), (key,), 
+                    "replaced " + repr(self._value_name(key)) + " with " + repr(new_mapping._value_name(key)))),
+                    parameter_names = pars + (self.diff_name, self.parkey, "DIFFERENCE",))
+                if self._is_normal_value(key) and new_mapping._is_normal_value(key):   # mapping replacements
+                    # recursion needed if both selections are mappings.
+                    nested_diffs = self.selections[key].difference( new_mapping.selections[key],  
+                        path = path + ((self.filename, new_mapping.filename,), ), pars = pars + (self.diff_name,), 
+                        include_header_diffs=include_header_diffs, recurse_added_deleted=recurse_added_deleted)
+                elif recurse_added_deleted:  # include added/deleted cases from normal mapping replacing special, vice versa
+                    if self._is_normal_value(key):  # new_mapping is special
+                        nested_diffs = self.selections[key].diff_files("deleted", 
+                            path = path + ((self.filename,),), pars = pars + (self.diff_name,),)
+                    elif new_mapping._is_normal_value(key):   # self is special
+                        nested_diffs = new_mapping.selections[key].diff_files("added", 
+                            path = path + ((self.filename,),), pars = pars + (self.diff_name,),)
+                    else:  # recurse but both special,  handled by basic diff above.
+                        nested_diffs = []
+                else:  # No recursion,  handled by basic diff above.
+                    nested_diffs = []
+            else:  # values are the same,  no diff or nested diffs.
+                diff = None
+                nested_diffs = []
+            if diff:
                 differences.append(diff)
-            else:
-                diffs = self.selections[key].difference( new_mapping.selections[key],  
-                    path = path + ((self.filename, new_mapping.filename,), ), 
-                    pars = pars + (self.diff_name,), include_header_diffs=include_header_diffs)
-                differences.extend(diffs)
-                if diffs:
-                    diff = selectors.DiffTuple(
-                        * (path + ((self.filename, new_mapping.filename), (key,), 
-                                  "replaced " + repr(self.selections[key].filename) + " with " + repr(new_mapping.selections[key].filename))),
-                        parameter_names = pars + (self.diff_name, self.parkey, "DIFFERENCE",))
-                    differences.append(diff)
+            differences.extend(nested_diffs)
         for key in new_mapping.selections:
-            if key not in self.selections:
+            if key not in self.selections:      # Additions to self
                 diff = selectors.DiffTuple(
-                    * path + ((self.filename, new_mapping.filename), (key,), "added " + repr(new_mapping.selections[key].filename)),
+                    * path + ((self.filename, new_mapping.filename), (key,), 
+                    "added " + repr(new_mapping._value_name(key))),
                     parameter_names = pars + (self.diff_name, self.parkey, "DIFFERENCE",))
                 differences.append(diff)
+                if recurse_added_deleted and new_mapping._is_normal_value(key):
+                    # Get tuples for all implicitly added nested files.
+                    nested_adds = new_mapping.selections[key].diff_files("added", 
+                        path = path + ((self.filename,),), pars = pars + (self.diff_name,),)
+                    differences.extend(nested_adds)
+            else: # replacement case already handled in first for-loop,  not needed in reverse.
+                pass 
         return sorted(differences)
+    
+    def diff_files(self, added_deleted, path=(), pars=()):
+        """Return the list of diff tuples for all nested changed files in a higher level addition
+        or deletion.   added_deleted should be "added" or "deleted"
+        """
+        diffs = []
+        for key, selection in self.selections.items():
+            if self._is_normal_value(key):
+                diffs.extend(selection.diff_files(added_deleted, path + (key,), pars + (self.diff_name,)))
+            else:
+                delete_special = selectors.DiffTuple(
+                        * (path + ((self.filename,), (key,), 
+                        added_deleted + " " + repr(self._value_name(key)))),
+                        parameter_names = pars + (self.diff_name, self.parkey, "DIFFERENCE",))
+                diffs.append(delete_special)
+        return diffs
+
+    def _is_normal_value(self, key):
+        """Return True IFF the value of selection `key` is not special, i.e. N/A or OMIT."""
+        return not FileSelectionsDict.is_special_value(self.selections[key])
+    
+    def _value_name(self, key):
+        """Return either a special value,  or the filename of the loaded mapping."""
+        value = self.selections[key]
+        return value if FileSelectionsDict.is_special_value(value) else value.filename
     
     def difference_header(self, other, path=(), pars=()):
         """Compare `self` with `other` and return a list of difference
@@ -576,33 +710,38 @@ class Mapping(object):
     
     def reference_names(self):
         """Returns set(ref_file_name...)"""
-        return sorted({ reference for selector in self.selections.values() for reference in selector.reference_names() })
+        return sorted({ reference for selector in self.selections.normal_values() for reference in selector.reference_names() })
 
     def reference_name_map(self):
         """Returns { filekind : set( ref_file_name... ) }"""
-        return { filekind:selector.reference_names() for (filekind, selector) in self.selections.items() }
+        name_map = { filekind:selector.reference_names() for (filekind, selector) in self.selections.normal_items() }
+        name_map.update(self.selections.special_items())
+        return name_map
 
     def mapping_names(self):
         """Returns a list of mapping files associated with this Mapping"""
-        return sorted([self.basename] + [name for selector in self.selections.values() for name in selector.mapping_names()])
+        return sorted([self.basename] + [name for selector in self.selections.normal_values() for name in selector.mapping_names()])
  
     def file_matches(self, filename):
         """Return the "extended match tuples" which can be followed to arrive at `filename`."""
-        return sorted([match for value in self.selections.values() for match in value.file_matches(filename)])
+        return sorted([match for value in self.selections.normal_values() for match in value.file_matches(filename)])
     
     def get_derived_from(self):
         """Return the Mapping object `self` was derived from, or None."""
-        derived_from = None
+        for substring in self.null_derivation_substrings:
+            if substring in self.derived_from:
+                log.info("Skipping derivation checks for root mapping", repr(self.basename),
+                         "derived_from =", repr(self.derived_from))
+                return None
         derived_path = locate_mapping(self.derived_from)
-        if "generated" in self.derived_from or "cloning" in self.derived_from:
-            log.verbose("Skipping derivation checks for root mapping", repr(self.basename),
-                      "derived_from =", repr(self.derived_from))
-        elif os.path.exists(derived_path):
+        if os.path.exists(derived_path):
             with log.error_on_exception("Can't load parent mapping", repr(derived_path)):
                 derived_from = fetch_mapping(derived_path)
+                return derived_from
+            return None
         else:
             log.warning("Parent mapping for", repr(self.basename), "=", repr(self.derived_from), "does not exist.")
-        return derived_from
+            return None
 
     def _check_type(self, expected_type):
         """Verify that this mapping has `expected_type` as the value of header 'mapping'."""
@@ -622,11 +761,13 @@ class Mapping(object):
         levels of the hierarchy starting with this one.   If recursive is zero,  only
         return the filename and header of the next levels down,  not the contents.
         """
+        selections = sorted([ (key, val.todict(recursive-1) if recursive-1 else (val.basename, val.header)) 
+                        for (key,val) in self.selections.normal_items()])
+        selections.update(self.selections.special_items())
         return {
-                "header" : copy.copy(self.header),
+                "header" : { key: self.header[key] for key in self.header },
                 "parameters" : tuple(self.parkey),
-                "selections" : sorted([ (key, val.todict(recursive-1) if recursive-1 else (val.basename, val.header)) 
-                                       for key,val in self.selections.items() ])
+                "selections" : selections,
                 }
         
     def tojson(self, recursive=10):
@@ -639,23 +780,6 @@ class Mapping(object):
         """
         return self.instrument.upper()
 
-    def apply(self, func, *args, **kargs):
-        """Apply a function recursively to this mapping and
-        all child mappings.
-        """
-
-        # Do the function on this object.
-        results = func(self, *args, **kargs)
-
-        # Now for each submapping, do the same
-        if hasattr(self, 'selections'):
-            for name, context in self.selections.items():
-                if isinstance(context, Mapping):
-                    results.extend(context.apply(func, *args, **kargs))
-
-        # that's all folks
-        return results
-    
     def locate_file(self, filename):
         """Return the full path (in cache or absolute) of `filename` as determined by the current environment."""
         return locate_file(filename, self.observatory)
@@ -691,13 +815,16 @@ class PipelineContext(ContextMapping):
     def __init__(self, filename, header, selector, **keys):
         super(PipelineContext, self).__init__(filename, header, selector, **keys)
         self.observatory = self.header["observatory"]
-        self.selections = {}
+        self.selections = FileSelectionsDict()
         self._check_type("pipeline")
         for instrument, imapname in selector.items():
             instrument = instrument.lower()
-            self.selections[instrument] = ictx = _load(imapname, **keys)
-            self._check_nested("observatory", self.observatory, ictx)
-            self._check_nested("instrument", instrument, ictx)
+            if self.selections.is_special_value(imapname):
+                self.selections[instrument] = imapname
+            else:
+                self.selections[instrument] = ictx = _load(imapname, **keys)
+                self._check_nested("observatory", self.observatory, ictx)
+                self._check_nested("instrument", instrument, ictx)
         self.instrument_key = self.parkey[0].upper()   # e.g. INSTRUME
 
     def get_best_references(self, header, include=None):
@@ -717,6 +844,8 @@ class PipelineContext(ContextMapping):
         instrument = instrument_hacks.get(instrument.lower(), instrument.lower())
         try:
             return self.selections[instrument]
+        except (IrrelevantReferenceTypeError, OmitReferenceTypeError):
+            raise
         except KeyError:
             raise CrdsUnknownInstrumentError("Unknown instrument " + repr(instrument) +
                                   " for context " + repr(self.basename))
@@ -727,7 +856,7 @@ class PipelineContext(ContextMapping):
         `dataset`s instrument.   Not all are necessarily appropriate for
         the current mode.  `dataset` can be a filename or a header dictionary.
         """
-        if isinstance(dataset, basestring):
+        if isinstance(dataset, python23.string_types):
             instrument = data_file.getval(dataset,  self.instrument_key)
         elif isinstance(dataset, dict):
             instrument = self.get_instrument(dataset)
@@ -774,7 +903,7 @@ class PipelineContext(ContextMapping):
             { instrument : [ matching_parkey_name, ... ], }
         """
         return { instrument : list(self.parkey) + self.selections[instrument].get_required_parkeys() 
-                 for instrument in self.selections }
+                 for instrument in self.selections.normal_keys() }
         
 # ===================================================================
 
@@ -789,22 +918,29 @@ class InstrumentContext(ContextMapping):
         super(InstrumentContext, self).__init__(filename, header, selector)
         self.observatory = self.header["observatory"]
         self.instrument = self.header["instrument"]
-        self.selections = {}
+        self.selections = FileSelectionsDict()
         self._check_type("instrument")
         for filekind, rmap_name in selector.items():
             filekind = filekind.lower()
-            self.selections[filekind] = refmap = _load(rmap_name, **keys)
-            self._check_nested("observatory", self.observatory, refmap)
-            self._check_nested("instrument", self.instrument, refmap)
-            self._check_nested("filekind", filekind, refmap)
+            if self.selections.is_special_value(rmap_name):
+                self.selections[filekind] = rmap_name
+            else:
+                self.selections[filekind] = refmap = _load(rmap_name, **keys)
+                self._check_nested("observatory", self.observatory, refmap)
+                self._check_nested("instrument", self.instrument, refmap)
+                self._check_nested("filekind", filekind, refmap)
         self._filekinds = [key.upper() for key in self.selections.keys()]
 
     def get_rmap(self, filekind):
         """Given `filekind`,  return the corresponding ReferenceMapping."""
-        try:
-            return self.selections[filekind.lower()]
-        except KeyError:
-            raise crds.CrdsUnknownReftypeError("Unknown reference type " + repr(str(filekind)))
+        filekind = str(filekind).lower()
+        if filekind not in self.selections:
+            raise crds.CrdsUnknownReftypeError("Unknown reference type", repr(filekind))
+        if FileSelectionsDict.is_na_value(self.selections[filekind]):
+            raise IrrelevantReferenceTypeError("Type", repr(filekind), "is N/A for", repr(self.instrument))
+        if  FileSelectionsDict.is_omit_value(self.selections[filekind]):
+            raise OmitReferenceTypeError("Type", repr(filekind), "is OMITTED for", repr(self.instrument))
+        return self.selections[filekind]
 
     def get_best_references(self, header, include=None):
         """Returns a map of best references { filekind : reffile_basename }
@@ -814,13 +950,18 @@ class InstrumentContext(ContextMapping):
         """
         refs = {}
         if not include:
-            include = self.selections
+            include = self.selections.keys()
         for filekind in include:
             log.verbose("-"*120, verbosity=55)
             filekind = filekind.lower()
+            ref = None
             try:
                 ref = self.get_rmap(filekind).get_best_ref(header)
-            except Exception, exc:
+            except IrrelevantReferenceTypeError:
+                ref = "NOT FOUND n/a"
+            except OmitReferenceTypeError:
+                ref = None
+            except Exception as exc:
                 ref = "NOT FOUND " + str(exc)
             if ref is not None:
                 refs[filekind] = ref
@@ -834,7 +975,7 @@ class InstrumentContext(ContextMapping):
         Return { parkey : [legal values...], ... }
         """
         pkmap = {}
-        for selection in self.selections.values():
+        for selection in self.selections.normal_values():
             for parkey, choices in selection.get_parkey_map().items():
                 if parkey not in pkmap:
                     pkmap[parkey] = set()
@@ -860,7 +1001,7 @@ class InstrumentContext(ContextMapping):
         lists of valid values.
         """
         pkmap = {}
-        for selection in self.selections.values():
+        for selection in self.selections.normal_values():
             rmap_pkmap = selection.get_valid_values_map(condition)
             for key in rmap_pkmap:
                 if key not in pkmap:
@@ -870,7 +1011,7 @@ class InstrumentContext(ContextMapping):
             if key not in pkmap:
                 pkmap[key] = []    # flag a need for an unconstrained input
         if remove_special:
-            specials = set(["ANY","N/A"])
+            specials = {"ANY","N/A"}
             for key in pkmap:  # remove specials like ANY or N/A
                 if pkmap[key]:
                     pkmap[key] = pkmap[key] - specials
@@ -1001,22 +1142,30 @@ class ReferenceMapping(Mapping):
 
     def get_best_references(self, header, include=None):
         """Shim so that .rmaps can be used for bestrefs in place of a .pmap or .imap for single type development."""
-        if include is not None:
-            for reftype in include:
-                if reftype != self.filekind:
-                    raise CrdsUnknownReftypeError(self.__class__.__name__, repr(self.basename), 
-                                                    "can only compute bestrefs for type", repr(self.filekind))
-        return { self.filekind : self.get_best_ref(header) }
+        if include is not None and self.filekind not in include:
+            raise CrdsUnknownReftypeError(self.__class__.__name__, repr(self.basename), 
+                                          "can only compute bestrefs for type", repr(self.filekind), "not", include)
+        bestref = self.get_best_ref(header)
+        if bestref is not None:
+            return { self.filekind : self.get_best_ref(header) }
+        else:
+            return {}
 
     def get_best_ref(self, header):
+        """Return a single best reference value associated with this .rmap and `header`.  Map exceptions
+        from nested methods onto simple "NOT FOUND..." strings which are exempted from reference downloads.
+        """
         try:
             return self._get_best_ref(header)
         except IrrelevantReferenceTypeError:
             return "NOT FOUND n/a"
         except OmitReferenceTypeError:
             return None
-        except Exception, exc:
-            return "NOT FOUND " + str(exc)
+        except Exception as exc:
+            if log.get_exception_trap():
+                return "NOT FOUND " + str(exc)
+            else:
+                raise
 
     def _get_best_ref(self, header_in):
         """Return the single reference file basename appropriate for
@@ -1031,25 +1180,21 @@ class ReferenceMapping(Mapping):
         header = self._precondition_header(self, header_in) # Execute type-specific plugin if applicable
         header = self.map_irrelevant_parkeys_to_na(header)  # Execute rmap parkey_relevance conditions
         try:
+            attempt = 1
             bestref = self.selector.choose(header)
-            log.verbose("Found bestref", repr(self.instrument), repr(self.filekind), "=",
-                        repr(bestref), verbosity=55)
-            return bestref
-        except Exception, exc:
+        except Exception as exc:
             log.verbose("First selection failed:", str(exc), verbosity=55)
             header = self._fallback_header(self, header_in) # Execute type-specific plugin if applicable
             try:
                 if header:
+                    attempt = 1
                     header = self.minimize_header(header)
                     log.verbose("Fallback lookup on", repr(header), verbosity=55)
                     header = self.map_irrelevant_parkeys_to_na(header) # Execute rmap parkey_relevance conditions
                     bestref = self.selector.choose(header)
-                    log.verbose("Found bestref_fallback", repr(self.instrument), repr(self.filekind), "=",
-                                repr(bestref), verbosity=55)
-                    return bestref
                 else:
                     raise
-            except Exception, exc:
+            except Exception as exc:
                 log.verbose("Fallback selection failed:", str(exc), verbosity=55)
                 if self._reffile_required in ["YES", "NONE"]:
                     log.verbose("No match found and reference is required:",  str(exc), verbosity=55)
@@ -1057,7 +1202,17 @@ class ReferenceMapping(Mapping):
                 else:
                     log.verbose("No match found but reference is not required:",  str(exc), verbosity=55)
                     raise IrrelevantReferenceTypeError("No match found and reference type is not required.")
+        log.verbose("Found bestref", repr(self.instrument), repr(self.filekind), "=", repr(bestref), 
+                    "on attempt", attempt, verbosity=55)
+        if FileSelectionsDict.is_na_value(bestref):
+            raise IrrelevantReferenceTypeError("Rules define this type as Not Applicable for these observation parameters.")                
+        if FileSelectionsDict.is_omit_value(bestref):
+            raise OmitReferenceTypeError("Rules define this type to be Omitted for these observation parameters.")
+        return bestref
 
+    def _handle_special_values(self, bestref, attempt):
+        """Screen out special return values N/A and OMIT and raise appropriate exceptions."""
+    
     def reference_names(self):
         """Return the list of reference file basenames associated with this
         ReferenceMapping.
@@ -1132,9 +1287,10 @@ class ReferenceMapping(Mapping):
                     try:
                         limits = [int(float(x)) for x in limits]
                     except Exception:
-                        sys.exc_clear()
+                        pass
+                        # sys.exc_clear()
                     else:
-                        values = range(limits[0], limits[1]+1)
+                        values = list(range(limits[0], limits[1]+1))
                 if condition:
                     values = tuple([utils.condition_value(val) for val in values])
                 valid_values[info.name] = values
@@ -1156,10 +1312,9 @@ class ReferenceMapping(Mapping):
                   ("filekind", self.filekind),),)
         return sorted(self.selector.file_matches(filename, sofar))
 
-    def difference(self, other, path=(), pars=(), include_header_diffs=False):
-        """Return the list of difference tuples between `self` and `other`,
-        prefixing each tuple with context `path`.   Elements of `path` are
-        named by correspnding elements of `pars`.
+    def difference(self, other, path=(), pars=(), include_header_diffs=False, recurse_added_deleted=False):
+        """Return the list of difference tuples between `self` and `other`, prefixing each tuple with context `path`.
+        Elements of `path` are named by correspnding elements of `pars`.
         """
         other = asmapping(other, cache="readonly")
         header_diffs = self.difference_header(other, path=path, pars=pars) if include_header_diffs else []
@@ -1172,6 +1327,17 @@ class ReferenceMapping(Mapping):
             diff.filekind = self.filekind
         return diffs
 
+    def diff_files(self, added_deleted, path=(), pars=()):
+        """Return the list of diff tuples for all nested changed files in a higher level addition
+        or deletion.   added_deleted should be "added" or "deleted"
+        """
+        body_diffs = self.selector.flat_diff(added_deleted + " terminal",
+                path = path + ((self.filename,)), pars = pars + (self.diff_name,))
+        for diff in body_diffs:
+            diff.instrument = self.instrument
+            diff.filekind = self.filekind
+        return body_diffs
+
     def check_rmap_relevance(self, header):
         """Raise an exception if this rmap's relevance expression evaluated in the context of `header` returns False.
         """
@@ -1180,7 +1346,7 @@ class ReferenceMapping(Mapping):
             relevant = eval(compiled, {}, header)   # secured
             log.verbose("Filekind ", repr(self.instrument), repr(self.filekind),
                         "is relevant:", relevant, repr(source), verbosity=55)
-        except Exception, exc:
+        except Exception as exc:
             log.warning("Relevance check failed: " + str(exc))
         else:
             if not relevant:
@@ -1194,7 +1360,7 @@ class ReferenceMapping(Mapping):
             omit = eval(compiled, {}, header)   # secured
             log.verbose("Filekind ", repr(self.instrument), repr(self.filekind),
                         "should be omitted: ", omit, repr(source), verbosity=55)
-        except Exception, exc:
+        except Exception as exc:
             log.warning("Keyword omit check failed: " + str(exc))
         else:
             if omit:
@@ -1316,7 +1482,7 @@ class ReferenceMapping(Mapping):
         """
         nested = self.selector.todict_flat()
         return {
-                "header" : copy.copy(self.header),
+                "header" : { key : self.header[key] for key in self.header },
                 "text_descr" : self.obs_package.TEXT_DESCR[self.filekind],
                 "parameters" : tuple(nested["parameters"]),
                 "selections" : nested["selections"]
@@ -1412,7 +1578,7 @@ def asmapping(filename_or_mapping, cached=False, **keys):
     """
     if isinstance(filename_or_mapping, Mapping):
         return filename_or_mapping
-    elif isinstance(filename_or_mapping, basestring):
+    elif isinstance(filename_or_mapping, python23.string_types):
         if cached in [False, "uncached"]:
             return load_mapping(filename_or_mapping, **keys)
         elif cached in [True, "cached"]:
@@ -1474,7 +1640,7 @@ def mapping_type(mapping):
     >>> mapping_type(get_cached_mapping('hst_acs_darkfile.rmap'))
     'rmap'
     """
-    if isinstance(mapping, (str, unicode)):
+    if isinstance(mapping, python23.string_types):
         if config.is_mapping(mapping):
             return os.path.splitext(mapping)[1][1:]
         else:
@@ -1511,4 +1677,4 @@ def test():
     return doctest.testmod(rmap)
 
 if __name__ == "__main__":
-    print test()
+    print(test())

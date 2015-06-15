@@ -1,8 +1,97 @@
 """Some simple console message functions w/counting features for
 errors, warnings, and info.  Also error exception raising and
 tracebacks.
+
+>>> from crds import log
+>>> log.set_test_mode()
+
+>>> log.warning("this is a test warning.")
+CRDS  : WARNING  this is a test warning.
+
+>>> log.error("this is a test error.")
+CRDS  : ERROR    this is a test error.
+
+>>> log.error("this is another test error.")
+CRDS  : ERROR    this is another test error.
+
+>>> log.info("this is just informative.")
+CRDS  : INFO     this is just informative.
+
+>>> log.errors()
+2
+
+>>> log.status()
+(2, 1, 1)
+
+>>> log.standard_status()
+CRDS  : INFO     2 errors
+CRDS  : INFO     1 warnings
+CRDS  : INFO     1 infos
+
+By default verbose messages are not emitted:
+
+>>> log.verbose("this is a test verbose message.")
+
+Calling set_verbose() turns on default verbosity=50:
+
+>>> old_verbose = log.set_verbose()
+
+>>> log.verbose("this is a test verbose message.")
+CRDS  : DEBUG    this is a test verbose message.
+
+No output is expected since default verbosity=50:
+
+>>> log.verbose("this is a test suppressed verbose 60 message.", verbosity=60)
+
+Output should now occur since verbosity=60:
+
+>>> log.set_verbose(60)
+50
+>>> log.verbose("this is a test verbose 60 message.", verbosity=60)
+CRDS  : DEBUG    this is a test verbose 60 message.
+
+A number of context managers are defined for succinctly mapping nested
+exceptions onto CRDS messages or adding information:
+
+>>> with log.error_on_exception("Something bad happened and we trapped it"):
+...     raise ValueError("some value was bad.")
+CRDS  : ERROR    Something bad happened and we trapped it : some value was bad.
+
+>>> with log.augment_exception("A tad more parent info"):
+...     raise ValueError("some vague deeply nested exception.")
+Traceback (most recent call last):
+...
+ValueError: A tad more parent info : some vague deeply nested exception.
+
+When the exception trap mode is set to False,  the exception context managers
+let the exceptions pass through unmodified:
+
+>>> old_trap = set_exception_trap(False)
+
+>>> with log.error_on_exception("Something bad happened and we trapped it"):
+...     raise ValueError("some value was bad.")
+Traceback (most recent call last):
+...
+ValueError: some value was bad.
+
+>>> with log.augment_exception("A tad more parent info"):
+...     raise ValueError("some vague deeply nested exception.")
+Traceback (most recent call last):
+...
+ValueError: some vague deeply nested exception.
+
+Command line tools control the exception trap flag using --debug-traps,  this is
+useful for debugging anomalies during type (or tool) development.   The key points
+about the exception trap flag are that (a) traps are passed through and (b) exceptions
+are carefully reraised so the original traceback is not destroyed.
+
+>>> _ = log.set_verbose(old_verbose)
+>>> _ = log.set_exception_trap(old_trap)
+
 """
 from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 
 import sys
 import os
@@ -10,7 +99,6 @@ import optparse
 import logging
 import pprint
 import contextlib
-
 
 DEFAULT_VERBOSITY_LEVEL = 50
 
@@ -66,7 +154,7 @@ class CrdsLogger(object):
 
     def warn(self, *args, **keys):
         self.warnings += 1
-        self.logger.warn(self.eformat(*args, **keys))
+        self.logger.warning(self.eformat(*args, **keys))
         
     def debug(self, *args, **keys):
         self.logger.debug(self.eformat(*args, **keys))
@@ -117,7 +205,8 @@ class CrdsLogger(object):
 
     def remove_console_handler(self):
         if self.console is not None:
-            self.console = self.remove_stream_handler(self.console)
+            self.remove_stream_handler(self.console)
+            self.console = None
 
     def add_stream_handler(self, filelike, level=logging.DEBUG):
         handler = logging.StreamHandler(filelike)
@@ -130,7 +219,7 @@ class CrdsLogger(object):
     def remove_stream_handler(self, handler):
         self.handlers.remove(handler)
         self.logger.removeHandler(handler)
-    
+
 THE_LOGGER = CrdsLogger("CRDS")
 
 info = THE_LOGGER.info
@@ -153,6 +242,10 @@ format = THE_LOGGER.format
 def errors():
     """Return the global count of errors."""
     return THE_LOGGER.errors
+
+def warnings():
+    """Return the global count of errors."""
+    return THE_LOGGER.warnings
 
 def set_test_mode():
     """Route log messages to standard output for testing with doctest."""
@@ -203,7 +296,7 @@ def exception_trap_logger(func):
         """
         try:
             yield
-        except Exception,  exc:
+        except Exception as  exc:
             reraise = func(*args + (":", str(exc)), **keys)
             if CRDS_EXCEPTION_TRAP == False:
                 # In python-2, distinction between raise and "raise something".  raise doesn't
@@ -302,3 +395,11 @@ def format_parameter_list(parameters):
     items = sorted(dict(parameters).items())
     return " ".join(["=".join([key, repr(str(value))]) for (key,value) in items])
     
+def test():
+    from crds import log
+    import doctest
+    return doctest.testmod(log)
+
+if __name__ == "__main__":
+    print(test())
+
