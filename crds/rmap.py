@@ -281,7 +281,9 @@ class LowerCaseDict(dict):
             return default
     
     def __repr__(self):
-        return self.__class__.__name__ + "(%s)" % repr({key: self.header[key] for key in self.header }) #super(LowerCaseDict, self).__repr__()
+        """>>> LowerCaseDict([("this","THAT"), ("another", "(ESCAPED)")])
+        """
+        return self.__class__.__name__ + "(%s)" % repr({key: self[key] for key in self }) #super(LowerCaseDict, self).__repr__()
 
 class Mapping(object):
     """Mapping is the abstract baseclass for PipelineContext,
