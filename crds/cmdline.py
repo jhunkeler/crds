@@ -19,7 +19,7 @@ from argparse import RawTextHelpFormatter
 
 from crds import rmap, log, data_file, heavy_client, config, utils
 from crds.client import api
-import six
+from crds import python23
 
 # =============================================================================
 
@@ -111,7 +111,7 @@ class Script(object):
     def __init__(self, argv=None, parser_pars=None, reset_log=True):
         self.stats = utils.TimingStats()
         self._already_reported_stats = False
-        if isinstance(argv, six.string_types):
+        if isinstance(argv, python23.string_types):
             argv = argv.split()
         elif argv is None:
             argv = sys.argv
@@ -142,10 +142,11 @@ class Script(object):
         calls self.main() which does the real work of the script.   _main() defines the full
         call tree of code which is run inside the profiler or debugger.
         """
-        self.contexts = self.determine_contexts()
-        result = self.main()
-        self.report_stats()  # here if not called already
-        return result
+        with log.error_on_exception("Failed"):
+            self.contexts = self.determine_contexts()
+            result = self.main()
+            self.report_stats()  # here if not called already
+            return result
     
     @property
     def locator(self):
@@ -414,7 +415,7 @@ class Script(object):
         if isinstance(context, str) and context.lower() == "none":
             return None
         if config.is_date_based_mapping_spec(context):
-            if re.match(config.OBSERVATORY_RE_STR + r"-operational", context):
+            if re.match(config.OBSERVATORY_RE_STR + r"-operational$", context):
                 final_context = self.server_info.operational_context
             else:
                 _mode, final_context = heavy_client.get_processing_mode(self.observatory, context)
@@ -593,7 +594,7 @@ class ContextsScript(Script):
                     if rmin <= serial <= rmax:
                         contexts.append(context)
         else:
-            contexts = [self.resolve_context(self.observatory + "-operational")]
+            contexts = [self.resolve_context(config.get_crds_env_context() or self.observatory + "-operational")]
         log.verbose("Determined contexts: ", contexts, verbosity=55)
         return sorted(contexts)
 

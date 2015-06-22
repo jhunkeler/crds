@@ -3,7 +3,7 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 import sys
-import os
+import os   # False pylint warning unused import,  verify before removing.
 import os.path
 import stat
 import re
@@ -17,7 +17,7 @@ import ast
 # from crds import data_file,  import deferred until required
 
 from crds import log, config, pysh, ALL_OBSERVATORIES, INSTRUMENT_KEYWORDS
-from crds.python3 import *
+from crds.python23 import *
 
 # ===================================================================
 

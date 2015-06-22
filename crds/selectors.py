@@ -102,7 +102,7 @@ import crds
 from crds import log, utils
 
 from crds.exceptions import *
-import six
+from crds import python23
 
 # ==============================================================================
 
@@ -317,7 +317,7 @@ class Selector(object):
                 flat.extend([key + row for row in nested["selections"]])
             else:
                 subpars = ["REFERENCE"]
-                if isinstance(key, six.string_types):  # Fix non-tuple keys
+                if isinstance(key, python23.string_types):  # Fix non-tuple keys
                     key = (key,)
                 flat.extend([key + (val,)])
         pars = list(self.todict_parameters()) + subpars
@@ -438,7 +438,7 @@ class Selector(object):
         for choice in self.choices():
             if isinstance(choice, Selector):
                 new_files = choice.reference_names()
-            elif isinstance(choice, six.string_types):
+            elif isinstance(choice, python23.string_types):
                 new_files = [choice]
             elif isinstance(choice, tuple):
                 new_files = list(choice)
@@ -485,20 +485,20 @@ class Selector(object):
             with log.augment_exception(repr(key)):
                 if isinstance(choice, Selector):
                     choice._validate_selector(valid_values_map)
-                elif isinstance(choice, six.string_types):
+                elif isinstance(choice, python23.string_types):
                     pass
                 elif isinstance(choice, tuple):
                     for val in choice:
-                        if not isinstance(val, six.string_types): 
+                        if not isinstance(val, python23.string_types): 
                             raise ValidationError("Non-string tuple value for choice " + repr(choice) + 
                                                   " at " + repr(key))
                 elif isinstance(choice, dict):
                     for val in choice:
-                        if not isinstance(val, six.string_types):
+                        if not isinstance(val, python23.string_types):
                             raise ValidationError("Non-string dictionary key for choice " + repr(choice) +  
                                                   " at " + repr(key))
                     for val in choice.values():
-                        if not isinstance(val, six.string_types):
+                        if not isinstance(val, python23.string_types):
                             raise ValidationError("Non-string dictionary value for choice " + repr(choice)  + 
                                                   " at " + repr(key))
                 else:
@@ -812,7 +812,7 @@ class Selector(object):
             pkey = self._diff_key(key)
             if key not in new_selector_keys:
                 if isinstance(choice, Selector):
-                    differences.extend(choice._flat_diff("deleted {} rule for".format(self.short_name), 
+                    differences.extend(choice.flat_diff("deleted {} rule for".format(self.short_name), 
                                                          path + (pkey,), pars + (self._parameters,)))
                 elif top_selector:
                     differences.append(msg(key, "deleted {} rule for".format(self.short_name), repr(choice)))
@@ -832,7 +832,7 @@ class Selector(object):
                 new_selector_choice = new_selector_map[key]
                 if isinstance(new_selector_choice, Selector):
                     differences.extend(
-                        new_selector_choice._flat_diff("added {} rule for".format(self.short_name), 
+                        new_selector_choice.flat_diff("added {} rule for".format(self.short_name), 
                                                        path + (pkey,), pars + (self._parameters,)))
                 elif top_selector:
                     differences.append(msg(key, "added {} rule for".format(self.short_name), repr(new_selector_choice)))
@@ -840,17 +840,17 @@ class Selector(object):
                     differences.append(msg(key, "added terminal", repr(new_selector_choice)))
         return differences
     
-    def _flat_diff(self, change, path, pars):
+    def flat_diff(self, change, path, pars):
         """Return `change` messages relative to `path` for all of `self`s selections
         as a simple flat list of one change tuple per nested choice.
         """
-        msg = self._get_msg(path, pars)
         diffs = []        
         for key, choice in self._raw_selections:
             pkey = self._diff_key(key)
             if isinstance(choice, Selector):
-                diffs.extend(choice._flat_diff(change, path + (pkey,), pars + (self._parameters,)))
+                diffs.extend(choice.flat_diff(change, path + (pkey,), pars + (self._parameters,)))
             else:
+                msg = self._get_msg(path, pars)
                 diffs.append(msg(key, change, repr(choice)))
         return diffs
     
@@ -896,7 +896,7 @@ class DiffTuple(tuple):
         pars2 = []
         vals2 = []
         for i, par in enumerate(self.parameter_names):
-            if isinstance(par, six.string_types):
+            if isinstance(par, python23.string_types):
                 pars2.append(par)
                 vals2.append(self[i])
             else:
@@ -1675,7 +1675,7 @@ Restore original debug behavior:
         values in `valid_values_map`.   Note that each `key` is 
         nominally a tuple with values for multiple parkeys.
         """
-        if isinstance(key, (six.string_types, int, float)):
+        if isinstance(key, (python23.string_types, int, float)):
             key = (key,)
         if len(key) != len(self._parameters):
             raise ValidationError("wrong length for parameter list " + 
