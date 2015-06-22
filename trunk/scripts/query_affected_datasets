@@ -1,0 +1,7 @@
+#! /usr/bin/env python
+#-*-python-*-
+
+from crds.query_affected import QueryAffectedDatasetsScript
+            
+if __name__ == "__main__":
+    QueryAffectedDatasetsScript()()

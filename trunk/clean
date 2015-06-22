@@ -1,0 +1,24 @@
+#! /bin/csh
+
+cd `dirname $0`
+
+if ( "$*" == "" ) then
+    set dirs="crds"
+else
+    set dirs="$*"
+endif 
+
+if (-e ../CRDS_server) then
+    set dirs="$dirs ../CRDS_server/sources"
+endif
+
+foreach pat ('*.orig' '*.pyc' 'build')
+	find ${dirs} -name "${pat}" | xargs rm -rf
+end
+
+rm -rf dist MANIFEST
+rm -rf build
+svn status | grep crds/cache | cut -d '?' -f2 | xargs rm -rf
+svn status | grep __pycache__ | xargs rm -rf
+svn status | grep '\.bak' | xargs rm -rf
+
