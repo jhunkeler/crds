@@ -69,7 +69,7 @@ from . import (log, utils, selectors, data_file, config, substitutions)
 from .config import locate_file, locate_mapping, locate_reference
 from .config import mapping_exists, is_mapping
 
-from crds.exceptions import *
+from crds import exceptions as crexc
 from crds import python23
 
 # ===================================================================
@@ -201,14 +201,14 @@ class MappingValidator(ast.NodeVisitor):
         return rval
 
     def assert_(self, node, flag, message):
-        """Raise an appropriate FormatError exception based on `node`
+        """Raise an appropriate MappingFormatError exception based on `node`
         and `message` if `flag` is False.
         """
         if not flag:
             if hasattr(node, "lineno"):
-                raise FormatError(message + " at line " + str(node.lineno))
+                raise crexc.MappingFormatError(message + " at line " + str(node.lineno))
             else:
-                raise FormatError(message)
+                raise crexc.MappingFormatError(message)
 
     def visit_Illegal(self, node):
         """Handle explicitly forbidden node types."""
@@ -278,10 +278,10 @@ class LowerCaseDict(dict):
     
     def __repr__(self):
         """
-        >>> LowerCaseDict([("this","THAT"), ("another", "(ESCAPED)")])
+        >> LowerCaseDict([("this","THAT"), ("another", "(ESCAPED)")])
         LowerCaseDict({'this': 'that', 'another': '(ESCAPED)'})
         """
-        return self.__class__.__name__ + "({})".format(repr({key: self[key] for key in self }))
+        return self.__class__.__name__ + "({})".format(repr({ key: self[key] for key in self }))
 
 # ===================================================================
 
@@ -295,6 +295,11 @@ class FileSelectionsDict(dict):
     na_values_set = { "N/A", "TEMP_N/A", "n/a", "temp_n/a"}
     omit_values_set = { "OMIT", "TEMP_OMIT", "omit", "temp_n/a"}
     special_values_set = na_values_set | omit_values_set
+
+    test_descr = {
+        "N/A" : "Not Applicable",
+        "TEMP_N/A" : "Temporarily Not Applicable",
+        }
 
     @classmethod
     def is_na_value(cls, value):
@@ -372,7 +377,7 @@ class Mapping(object):
         self.comment = keys.pop("comment", None)
         for name in self.required_attrs:
             if name not in self.header:
-                raise MissingHeaderKeyError(
+                raise crexc.MissingHeaderKeyError(
                     "Required header key " + repr(name) + " is missing.")
         self.extra_keys = tuple(self.header.get("extra_keys", ()))
 
@@ -417,7 +422,7 @@ class Mapping(object):
         ignore = keys.get("ignore_checksum", False) or config.get_ignore_checksum()
         try:
             mapping._check_hash(text)
-        except ChecksumError as exc:
+        except crexc.ChecksumError as exc:
             if ignore == "warn":
                 log.warning("Checksum error", ":", str(exc))
             elif ignore:
@@ -452,7 +457,7 @@ class Mapping(object):
         elif isinstance(selector, dict):
             return header, selector, comment
         else:
-            raise FormatError("selector must be a dict or a Selector.")
+            raise crexc.MappingFormatError("selector must be a dict or a Selector.")
 
     def missing_references(self):
         """Get the references mentioned by the closure of this mapping but not in the cache."""
@@ -535,9 +540,9 @@ class Mapping(object):
         """
         old = self.header.get("sha1sum", None)
         if old is None:
-            raise ChecksumError("sha1sum is missing in " + repr(self.basename))
+            raise crexc.ChecksumError("sha1sum is missing in " + repr(self.basename))
         if self._get_checksum(text) != self.header["sha1sum"]:
-            raise ChecksumError("sha1sum mismatch in " + repr(self.basename))
+            raise crexc.ChecksumError("sha1sum mismatch in " + repr(self.basename))
 
     def _get_checksum(self, text):
         """Compute the rmap checksum over the original file contents.  Skip over the sha1sum line."""
@@ -765,16 +770,20 @@ class Mapping(object):
         levels of the hierarchy starting with this one.   If recursive is zero,  only
         return the filename and header of the next levels down,  not the contents.
         """
+        # dict required here for subsequent update.
         selections = dict([(key, val.todict(recursive-1)) if recursive-1 
-                           else (val.basename, val.header)
-                           for (key,val) in self.selections.normal_items()])
-        selections.update(dict(self.selections.special_items()))
+                            else (val.basename, val.header)
+                            for (key,val) in self.selections.normal_items()])
+        selections.update(dict([(key, {"name": val, "text_descr": self.obs_package.TEXT_DESCR[key]}) 
+                                for (key,val) in self.selections.special_items()]))
+        # selections.items() critical below for prior interface,  web context display
         return {
                 "header" : { key: self.header[key] for key in self.header },
+                "name" : self.header["name"],
                 "parameters" : tuple(self.parkey),
-                "selections" : selections,
+                "selections" : list(sorted(selections.items())),
                 }
-        
+
     def tojson(self, recursive=10):
         """Return a JSON representation of this mapping and it's children."""
         return json.dumps(self.todict(recursive=recursive))
@@ -841,6 +850,35 @@ class PipelineContext(ContextMapping):
         imap = self.get_imap(instrument)
         return imap.get_best_references(header, include)
 
+    def get_old_references(self, header, include=None):
+        """Return the old references defined in keyword map `header` using this
+        context to define the types to return when `include` is None.
+
+        >>> p = get_cached_mapping("hst.pmap")
+
+        >>> h = {'CENTERA1': '513.0', 'CENTERA2': '513.0', 'PHOTCORR': 'UNDEFINED', 'FLSHCORR': 'UNDEFINED', 'MEMBER_NAME': 'I9ZF01DZQ', 'MEMBER_TYPE': 'EXP-DTH', 'SUBTYPE': 'FULLIMAG', 'OSCNTAB': 'Q911321MI_OSC.FITS', 'MEANEXP': '0.0', 'PFLTFILE': 'UC72113PI_PFL.FITS', 'CHINJECT': 'NONE', 'CCDCHIP': '0.0', 'EXPSTART': '2009-12-07 16:10:34.380000', 'FLATCORR': 'UNDEFINED', 'CRTHRESH': '0.0', 'CRRADIUS': '0.0', 'ASN_ID': 'I9ZF01010', 'INSTRUME': 'WFC3', 'SUBARRAY': 'F', 'CCDAMP': 'ABCD', 'CCDOFSTA': 'UNDEFINED', 'APERTURE': 'IR', 'SIZAXIS2': '1024.0', 'SIZAXIS1': '1024.0', 'FLSHFILE': 'N/A', 'BINAXIS1': '1.0', 'BINAXIS2': '1.0', 'CCDTAB': 'T2C16200I_CCD.FITS', 'IDCTAB': 'W3M18525I_IDC.FITS', 'SKYSUB': 'UNDEFINED', 'CCDOFSTB': 'UNDEFINED', 'CCDOFSTC': 'UNDEFINED', 'CCDOFSTD': 'UNDEFINED', 'DQICORR': 'UNDEFINED', 'FLASHCUR': 'UNDEFINED', 'DATA_SET': 'I9ZF01010', 'CRSIGMAS': 'UNDEFINED', 'DARKCORR': 'UNDEFINED', 'SAMP_SEQ': 'STEP200', 'SCALENSE': '0.0', 'DRIZCORR': 'UNDEFINED', 'INITGUES': 'UNDEFINED', 'IMPHTTAB': 'WBJ1825RI_IMP.FITS', 'SHADCORR': 'UNDEFINED', 'DATA_SET_EXP': 'I9ZF01DZQ', 'CRMASK': 'F', 'MDRIZTAB': 'UBI1853PI_MDZ.FITS', 'OBSMODE': 'MULTIACCUM', 'NLINFILE': 'U1K1727MI_LIN.FITS', 'ATODCORR': 'UNDEFINED', 'BADINPDQ': '0.0', 'SHUTRPOS': 'UNDEFINED', 'DATE-OBS': '2009-12-07', 'ATODTAB': 'N/A', 'TIME-OBS': '16:10:34.380000', 'DARKFILE': 'XAG19298I_DRK.FITS', 'FILTER': 'F110W', 'BPIXTAB': 'Y711519RI_BPX.FITS', 'CCDGAIN': '2.5', 'DETECTOR': 'IR', 'BIASFILE': 'N/A', 'CRSPLIT': 'UNDEFINED', 'CRREJTAB': 'U6A1748RI_CRR.FITS', 'BIASCORR': 'UNDEFINED'}
+
+        >>> import pprint
+        >>> pprint.pprint(p.get_old_references(h))
+        {'ATODTAB': 'N/A',
+         'BIASFILE': 'N/A',
+         'BPIXTAB': 'Y711519RI_BPX.FITS',
+         'CCDTAB': 'T2C16200I_CCD.FITS',
+         'CRREJTAB': 'U6A1748RI_CRR.FITS',
+         'DARKFILE': 'XAG19298I_DRK.FITS',
+         'FLSHFILE': 'N/A',
+         'IDCTAB': 'W3M18525I_IDC.FITS',
+         'IMPHTTAB': 'WBJ1825RI_IMP.FITS',
+         'MDRIZTAB': 'UBI1853PI_MDZ.FITS',
+         'NLINFILE': 'U1K1727MI_LIN.FITS',
+         'OSCNTAB': 'Q911321MI_OSC.FITS',
+         'PFLTFILE': 'UC72113PI_PFL.FITS'}
+        """
+        header = dict(header)   # make a copy
+        instrument = self.get_instrument(header)
+        imap = self.get_imap(instrument)
+        return imap.get_old_references(header, include)
+
     def get_imap(self, instrument):
         """Return the InstrumentMapping corresponding to `instrument`."""
         instrument_hacks = {
@@ -849,10 +887,10 @@ class PipelineContext(ContextMapping):
         instrument = instrument_hacks.get(instrument.lower(), instrument.lower())
         try:
             return self.selections[instrument]
-        except (IrrelevantReferenceTypeError, OmitReferenceTypeError):
+        except (crexc.IrrelevantReferenceTypeError, crexc.OmitReferenceTypeError):
             raise
         except KeyError:
-            raise CrdsUnknownInstrumentError("Unknown instrument " + repr(instrument) +
+            raise crexc.CrdsUnknownInstrumentError("Unknown instrument " + repr(instrument) +
                                   " for context " + repr(self.basename))
 
     def get_filekinds(self, dataset):
@@ -880,7 +918,7 @@ class PipelineContext(ContextMapping):
                 try: # This hack makes FITS headers work prior to back-mapping to data model names.
                     instr = header["INSTRUME"]
                 except KeyError:
-                    raise CrdsError("Missing '%s' keyword in header" % self.instrument_key)
+                    raise crexc.CrdsError("Missing '%s' keyword in header" % self.instrument_key)
         return instr.upper()
 
     def get_item_key(self, filename):
@@ -940,11 +978,11 @@ class InstrumentContext(ContextMapping):
         """Given `filekind`,  return the corresponding ReferenceMapping."""
         filekind = str(filekind).lower()
         if filekind not in self.selections:
-            raise crds.CrdsUnknownReftypeError("Unknown reference type", repr(filekind))
+            raise crexc.CrdsUnknownReftypeError("Unknown reference type", repr(filekind))
         if FileSelectionsDict.is_na_value(self.selections[filekind]):
-            raise IrrelevantReferenceTypeError("Type", repr(filekind), "is N/A for", repr(self.instrument))
+            raise crexc.IrrelevantReferenceTypeError("Type", repr(filekind), "is N/A for", repr(self.instrument))
         if  FileSelectionsDict.is_omit_value(self.selections[filekind]):
-            raise OmitReferenceTypeError("Type", repr(filekind), "is OMITTED for", repr(self.instrument))
+            raise crexc.OmitReferenceTypeError("Type", repr(filekind), "is OMITTED for", repr(self.instrument))
         return self.selections[filekind]
 
     def get_best_references(self, header, include=None):
@@ -962,15 +1000,35 @@ class InstrumentContext(ContextMapping):
             ref = None
             try:
                 ref = self.get_rmap(filekind).get_best_ref(header)
-            except IrrelevantReferenceTypeError:
+            except crexc.IrrelevantReferenceTypeError:
                 ref = "NOT FOUND n/a"
-            except OmitReferenceTypeError:
+            except crexc.OmitReferenceTypeError:
                 ref = None
             except Exception as exc:
                 ref = "NOT FOUND " + str(exc)
             if ref is not None:
                 refs[filekind] = ref
         log.verbose("-"*120, verbosity=55)
+        return refs
+
+    def get_old_references(self, header, include=None):
+        """Returns a map of old references which were recorded in `header`,
+        returning only those types listed in `include` or all types if
+        `include` is None.
+        """
+        refs = {}
+        if not include:
+            include = self.selections.keys()
+        include = [ key.upper() for key in include ]
+        header = { key.upper() : val.strip() for (key, val) in header.items() }
+        for filekind in include:
+            try:
+                ref = header[filekind]
+                if ref == "NOT FOUND n/a":
+                    ref = "N/A"
+                refs[filekind] = ref
+            except KeyError:
+                refs[filekind] = "UNDEFINED"
         return refs
 
     def get_parkey_map(self):
@@ -1114,8 +1172,8 @@ class ReferenceMapping(Mapping):
         expr = utils.condition_source_code_keys(expr, self.get_required_parkeys())
         try:
             return expr, MAPPING_VALIDATOR.compile_and_check(expr, source=self.basename, mode="eval")
-        except FormatError as exc:
-            raise MappingError("Can't load file " + repr(self.basename) + " : " + str(exc))
+        except crexc.MappingFormatError as exc:
+            raise crexc.MappingFormatError("Can't load file " + repr(self.basename) + " : " + str(exc))
 
     def get_hook(self, name, default):
         """Return plugin hook function generically named `name` or `default` if `name` is not defined in
@@ -1148,7 +1206,7 @@ class ReferenceMapping(Mapping):
     def get_best_references(self, header, include=None):
         """Shim so that .rmaps can be used for bestrefs in place of a .pmap or .imap for single type development."""
         if include is not None and self.filekind not in include:
-            raise CrdsUnknownReftypeError(self.__class__.__name__, repr(self.basename), 
+            raise crexc.CrdsUnknownReftypeError(self.__class__.__name__, repr(self.basename), 
                                           "can only compute bestrefs for type", repr(self.filekind), "not", include)
         bestref = self.get_best_ref(header)
         if bestref is not None:
@@ -1162,9 +1220,9 @@ class ReferenceMapping(Mapping):
         """
         try:
             return self._get_best_ref(header)
-        except IrrelevantReferenceTypeError:
+        except crexc.IrrelevantReferenceTypeError:
             return "NOT FOUND n/a"
-        except OmitReferenceTypeError:
+        except crexc.OmitReferenceTypeError:
             return None
         except Exception as exc:
             if log.get_exception_trap():
@@ -1206,23 +1264,20 @@ class ReferenceMapping(Mapping):
                     raise
                 else:
                     log.verbose("No match found but reference is not required:",  str(exc), verbosity=55)
-                    raise IrrelevantReferenceTypeError("No match found and reference type is not required.")
+                    raise crexc.IrrelevantReferenceTypeError("No match found and reference type is not required.")
         log.verbose("Found bestref", repr(self.instrument), repr(self.filekind), "=", repr(bestref), 
                     "on attempt", attempt, verbosity=55)
         if FileSelectionsDict.is_na_value(bestref):
-            raise IrrelevantReferenceTypeError("Rules define this type as Not Applicable for these observation parameters.")                
+            raise crexc.IrrelevantReferenceTypeError("Rules define this type as Not Applicable for these observation parameters.")                
         if FileSelectionsDict.is_omit_value(bestref):
-            raise OmitReferenceTypeError("Rules define this type to be Omitted for these observation parameters.")
+            raise crexc.OmitReferenceTypeError("Rules define this type to be Omitted for these observation parameters.")
         return bestref
 
-    def _handle_special_values(self, bestref, attempt):
-        """Screen out special return values N/A and OMIT and raise appropriate exceptions."""
-    
     def reference_names(self):
         """Return the list of reference file basenames associated with this
         ReferenceMapping.
         """
-        return self.selector.reference_names()
+        return [name for name in self.selector.reference_names() if not is_special_value(name)]
 
     def mapping_names(self):
         """Return name of this ReferenceMapping as degenerate list of 1 item."""
@@ -1311,7 +1366,7 @@ class ReferenceMapping(Mapping):
             for case in self.parkey:
                 for par in case:
                     if par.upper() not in self.reference_to_dataset.values():
-                        raise InconsistentParkeyError("Inconsistent parkey and reference_to_dataset header items:", 
+                        raise crexc.InconsistentParkeyError("Inconsistent parkey and reference_to_dataset header items:", 
                                                       repr(par), "in", repr(self.reference_to_dataset))
         with log.augment_exception("Invalid mapping:", self.instrument, self.filekind):
             self.selector.validate_selector(self.tpn_valid_values)
@@ -1361,7 +1416,7 @@ class ReferenceMapping(Mapping):
             log.warning("Relevance check failed: " + str(exc))
         else:
             if not relevant:
-                raise IrrelevantReferenceTypeError(
+                raise crexc.IrrelevantReferenceTypeError(
                     "Rmap does not apply to the given parameter set based on rmap_relevance expression.")
                 
     def check_rmap_omit(self, header):
@@ -1375,7 +1430,7 @@ class ReferenceMapping(Mapping):
             log.warning("Keyword omit check failed: " + str(exc))
         else:
             if omit:
-                raise OmitReferenceTypeError("rmap_omit expression indicates this type should be omitted.")
+                raise crexc.OmitReferenceTypeError("rmap_omit expression indicates this type should be omitted.")
 
     def map_irrelevant_parkeys_to_na(self, header):
         """Evaluate any relevance expression for each parkey, and if it's
@@ -1449,7 +1504,7 @@ class ReferenceMapping(Mapping):
         terminal = os.path.basename(terminal)
         deleted_count = new.selector.delete(terminal)
         if deleted_count == 0:
-            raise CrdsError("Terminal '%s' could not be found and deleted." % terminal)
+            raise crexc.CrdsError("Terminal '%s' could not be found and deleted." % terminal)
         return new
 
     def get_matching_header(self, header):
@@ -1664,6 +1719,20 @@ def mapping_type(mapping):
         return "rmap"
     else:
         raise ValueError("Unknown mapping type for " + repr(Mapping))
+# ===================================================================
+
+def is_special_value(filename):
+    """Return True IFF `filename` is one of the special values which
+    does not correspond to a file, e.g. N/A.
+    
+    >>> is_special_value("foo.fits")
+    False
+
+    >>> is_special_value("N/A")
+    True
+    """
+    return FileSelectionsDict.is_special_value(str(filename))
+
 # ===================================================================
 
 def get_best_references(context_file, header, include=None, condition=True):
