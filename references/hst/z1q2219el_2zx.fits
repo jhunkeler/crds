@@ -1,0 +1,87 @@
+SIMPLE  =                    T /Primary Header created by MWRFITS v1.12         BITPIX  =                   32 /                                                NAXIS   =                    0 /                                                EXTEND  =                    T /File may contain extensions                     IRAF-TLM= '2015-01-26T14:27:44' /Time of last modification                      DATE    = '2015-01-26T14:27:44' /Creation UTC (CCCC-MM-DD) date of FITS header  FILENAME= 'z1q2219el_2zx.fits'                                                  FILETYPE= 'TWO-ZONE SPECTRAL EXTRACTION PARAMETERS TABLE' /                     VCALCOS = '3.0     '           /                                                USEAFTER= 'May 11 2009 00:00:00' /                                              OBSTYPE = 'SPECTROSCOPIC'      /                                                TELESCOP= 'HST     '           /                                                INSTRUME= 'COS     '           /                                                DETECTOR= 'FUV     '           /                                                COSCOORD= 'USER    '           /                                                GIT_TAG = '2zx_2015Jan26_fuv'  /                                                DESCRIP = 'Two-zone extraction parameters for modes at LP3--------------------' PEDIGREE= 'INFLIGHT 22/09/2014 27/09/2014' /                                    LIFE_ADJ=                    3 /                                                COMMENT = 'Reference file was created by Sean Lockwood'                         HISTORY                                                                         HISTORY 2015 Jan 26:                                                            HISTORY Based on data from Prop 13932 [LCAL3].                                  HISTORY Values were derived from the corresponding LP3 1dx table                HISTORY (2015jan26_1dx.fits), with the SLOPE removed from the B_SPEC            HISTORY values, and the BHEIGHT set as the floor of the minimum of              HISTORY B_HGT1 & B_HGT2.                                                        HISTORY BOA entries were copied from PSA.                                       HISTORY                                                                         HISTORY Final values are from Julia Duval in the file                           HISTORY 2zx_lp3_parameters.dat and written by 2zxtable.pro in the               HISTORY COS/REF_FILES GIT repository.                                           HISTORY 2015jan26_2zx.fits renamed to z1q2219el_2zx.fits on Jan 26 2015         END                                                                                                                                                                                                                                             XTENSION= 'BINTABLE'           /Binary table written by MWRFITS v1.12           BITPIX  =                    8 /Required value                                  NAXIS   =                    2 /Required value                                  NAXIS1  =                  100 /Number of bytes per row                         NAXIS2  =                   50 /Number of rows                                  PCOUNT  =                    0 /Normally 0 (no varying arrays)                  GCOUNT  =                    1 /Required value                                  TFIELDS =                   16 /Number of columns in table                      TUNIT3  = 'angstrom'           /                                                TUNIT5  = 'pixel   '           /                                                TUNIT6  = 'pixel   '           /                                                TUNIT7  = 'pixel   '           /                                                TUNIT8  = 'pixel   '           /                                                TUNIT9  = 'pixel   '           /                                                TUNIT10 = 'pixel   '           /                                                TUNIT11 = 'fraction'           /                                                TUNIT12 = 'fraction'           /                                                TUNIT13 = 'fraction'           /                                                TUNIT14 = 'fraction'           /                                                TUNIT15 = 'pixel   '           /                                                TFORM1  = '4A      '           /                                                TFORM2  = '5A      '           /                                                TFORM3  = 'J       '           /                                                TFORM4  = '3A      '           /                                                TFORM5  = 'D       '           /                                                TFORM6  = 'D       '           /                                                TFORM7  = 'D       '           /                                                TFORM8  = 'J       '           /                                                TFORM9  = 'J       '           /                                                TFORM10 = 'J       '           /                                                TFORM11 = 'D       '           /                                                TFORM12 = 'D       '           /                                                TFORM13 = 'D       '           /                                                TFORM14 = 'D       '           /                                                TFORM15 = 'D       '           /                                                TFORM16 = '8A      '           /                                                TTYPE1  = 'SEGMENT '           /                                                TTYPE2  = 'OPT_ELEM'           /                                                TTYPE3  = 'CENWAVE '           /                                                TTYPE4  = 'APERTURE'           /                                                TTYPE5  = 'B_SPEC  '           /                                                TTYPE6  = 'B_BKG1  '           /                                                TTYPE7  = 'B_BKG2  '           /                                                TTYPE8  = 'HEIGHT  '           /                                                TTYPE9  = 'BHEIGHT '           /                                                TTYPE10 = 'BWIDTH  '           /                                                TTYPE11 = 'LOWER_OUTER'        /                                                TTYPE12 = 'UPPER_OUTER'        /                                                TTYPE13 = 'LOWER_INNER'        /                                                TTYPE14 = 'UPPER_INNER'        /                                                TTYPE15 = 'YERRMAX '           /                                                TTYPE16 = 'PEDIGREE'           /                                                END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             FUVAG130M  ∆PSA@|c◊
+=p§@yöè\(ı√@Ç≈GÆz·   1   !   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  ∆BOA@|c◊
+=p§@yöè\(ı√@Ç≈GÆz·   1   !   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  PSA@|l(ı¬è\@yÙ(ı¬è\@Çé·GÆ{   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  BOA@|l(ı¬è\@yÙ(ı¬è\@Çé·GÆ{   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  PSA@|bè\(ı√@yÍè\(ı√@Çâ
+=p£◊   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  BOA@|bè\(ı√@yÍè\(ı√@Çâ
+=p£◊   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  PSA@|P     @yÿ     @ÇÅ∏QÎÖ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  BOA@|P     @yÿ     @ÇÅ∏QÎÖ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  &PSA@|M¬è\(ˆ@y’¬è\(ˆ@ÇÄz·GÆ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  &BOA@|M¬è\(ˆ@y’¬è\(ˆ@ÇÄz·GÆ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  /PSA@|<(ı¬è\@yƒ(ı¬è\@Çzfffff   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG130M  /BOA@|<(ı¬è\@yƒ(ı¬è\@Çzfffff   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  )PSA@{˙è\(ı√@yïÎÖ∏R@ÇNè\(ı√   #       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  )BOA@{˙è\(ı√@yïÎÖ∏R@ÇNè\(ı√   #       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  5PSA@|Ö∏QÏ@yú(ı¬è\@ÇTz·GÆ   #       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  5BOA@|Ö∏QÏ@yú(ı¬è\@ÇTz·GÆ   #       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  @PSA@|∏QÎÖ@yú(ı¬è\@ÇR        #       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  @BOA@|∏QÎÖ@yú(ı¬è\@ÇR        #       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  KPSA@|z·GÆ@yûz·GÆ@ÇPQÎÖ∏   #       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  KBOA@|z·GÆ@yûz·GÆ@ÇPQÎÖ∏   #       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  WPSA@{Òôôôôö@yî(ı¬è\@ÇG◊
+=p§   #      d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG160M  WBOA@{Òôôôôö@yî(ı¬è\@ÇG◊
+=p§   #      d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG140L  QPSA@|Úz·GÆ@y·p£◊
+=@ÇÚfffff   3       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG140L  QBOA@|Úz·GÆ@y·p£◊
+=@ÇÚfffff   3       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG140L   PSA@}
+·GÆ{@y˘∏QÎÖ@Éè\(ı√   1       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVAG140L   BOA@}
+·GÆ{@y˘∏QÎÖ@Éè\(ı√   1       d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  ∆PSA@Ä◊
+=p§@|ÔÆz·H@Ñ≥¬è\(ˆ   1   3   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  ∆BOA@Ä◊
+=p§@|ÔÆz·H@Ñ≥¬è\(ˆ   1   3   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  PSA@Äp£◊
+=@}æ·GÆ{@Ñq∏QÎÖ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  BOA@Äp£◊
+=@}æ·GÆ{@Ñq∏QÎÖ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  PSA@ÄÎÖ∏R@}≥◊
+=p§@ÑoGÆz·   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  BOA@ÄÎÖ∏R@}≥◊
+=p§@ÑoGÆz·   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  PSA@Ä·GÆ{@}°¬è\(ˆ@Ñi◊
+=p§   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  BOA@Ä·GÆ{@}°¬è\(ˆ@Ñi◊
+=p§   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  &PSA@Ä
+∏QÎÖ@}ùp£◊
+=@ÑiÖ∏QÏ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  &BOA@Ä
+∏QÎÖ@}ùp£◊
+=@ÑiÖ∏QÏ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  /PSA@Ä(ı¬è\@}åQÎÖ∏@Ñf        #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG130M  /BOA@Ä(ı¬è\@}åQÎÖ∏@Ñf        #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  )PSA@¨£◊
+=q@}4£◊
+=q@Ñ/p£◊
+=   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  )BOA@¨£◊
+=q@}4£◊
+=q@Ñ/p£◊
+=   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  5PSA@∑
+=p£◊@}?
+=p£◊@Ñ6(ı¬è\   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  5BOA@∑
+=p£◊@}?
+=p£◊@Ñ6(ı¬è\   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  @PSA@Æ=p£◊
+@}6=p£◊
+@Ñ1Æz·H   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  @BOA@Æ=p£◊
+@}6=p£◊
+@Ñ1Æz·H   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  KPSA@Æz·GÆ@}6z·GÆ@Ñ2        #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  KBOA@Æz·GÆ@}6z·GÆ@Ñ2        #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  WPSA@ôGÆz·@}!GÆz·@Ñ&∏QÎÖ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG160M  WBOA@ôGÆz·@}!GÆz·@Ñ&∏QÎÖ   #   #   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG140L   PSA@ÄNÃÃÃÃÕ@}ôôôôö@Éè\(ı√   1   1   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHTFUVBG140L   BOA@ÄNÃÃÃÃÕ@}ôôôôö@Éè\(ı√   1   1   d?tz·GÆ{?Ô◊
+=p£◊?πôôôôôö?ÏÃÃÃÃÃÕ@$      INFLIGHT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
