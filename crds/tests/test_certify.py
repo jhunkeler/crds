@@ -155,6 +155,8 @@ def certify_recursive():
 
 def certify_table_comparison_context():
     """
+    >>> old_state = test_config.setup()
+
     >>> TestCertifyScript("crds.certify y951738kl_hv.fits --comparison-context hst_0294.pmap")()
     CRDS  : INFO     ########################################
     CRDS  : INFO     Certifying '/grp/crds/cache/references/hst/y951738kl_hv.fits' (1/1) as 'FITS' relative to context 'hst_0294.pmap'
@@ -181,6 +183,8 @@ def certify_table_comparison_context():
     CRDS  : INFO     15 warnings
     CRDS  : INFO     6 infos
     0
+
+    >>> test_config.cleanup(old_state)
     """
 
 def certify_table_comparison_reference():
@@ -398,9 +402,8 @@ def main():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCertify)
     unittest.TextTestRunner().run(suite)
 
-    import doctest
-    from crds.tests import test_certify
-    return doctest.testmod(test_certify)
+    from crds.tests import test_certify, tstmod
+    return tstmod(test_certify)
 
 if __name__ == "__main__":
     print(main())

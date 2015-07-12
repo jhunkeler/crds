@@ -18,7 +18,7 @@ from nose.tools import assert_raises, assert_true
 
 # ==================================================================================
 
-def test_getreferences_rmap_na():
+def dt_getreferences_rmap_na():
     """
     >>> old_state = test_config.setup(cache=None, url="https://jwst-crds-dev.stsci.edu")
     >>> os.environ["CRDS_MAPPATH_SINGLE"] = tests.TEST_DATA
@@ -30,7 +30,7 @@ def test_getreferences_rmap_na():
     >>> test_config.cleanup(old_state)
     """
 
-def test_getreferences_rmap_omit():
+def dt_getreferences_rmap_omit():
     """
     >>> old_state = test_config.setup(cache=None, url="https://jwst-crds-dev.stsci.edu")
     >>> os.environ["CRDS_MAPPATH_SINGLE"] = tests.TEST_DATA
@@ -42,7 +42,7 @@ def test_getreferences_rmap_omit():
     >>> test_config.cleanup(old_state)
     """
 
-def test_getreferences_imap_na():
+def dt_getreferences_imap_na():
     """
     >>> old_state = test_config.setup(cache=None, url="https://jwst-crds-dev.stsci.edu")
     >>> os.environ["CRDS_MAPPATH_SINGLE"] = tests.TEST_DATA
@@ -54,7 +54,7 @@ def test_getreferences_imap_na():
     >>> test_config.cleanup(old_state)
     """
 
-def test_getreferences_imap_omit():
+def dt_getreferences_imap_omit():
     """
     >>> old_state = test_config.setup(cache=None, url="https://jwst-crds-dev.stsci.edu")
     >>> os.environ["CRDS_MAPPATH_SINGLE"] = tests.TEST_DATA
@@ -88,11 +88,12 @@ class TestHeavyClient(CRDSTestCase):
 
 def tst():
     """Run module tests,  for now just doctests only."""
-    from crds.tests import test_heavy_client
-    import unittest, doctest
+    import unittest
     suite = unittest.TestLoader().loadTestsFromTestCase(TestHeavyClient)
     unittest.TextTestRunner().run(suite)
-    return doctest.testmod(test_heavy_client)
+
+    from crds.tests import test_heavy_client, tstmod
+    return tstmod(test_heavy_client)
 
 if __name__ == "__main__":
     print(tst())
