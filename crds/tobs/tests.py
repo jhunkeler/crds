@@ -9,20 +9,15 @@ import os
 import unittest
 
 from crds import rmap, log
-from crds import tests
 import crds
+
+log.set_test_mode()
 
 # =============================================================================
 
-class TobsTestCase(tests.CRDSTestCase):
-    cache = tests.CRDS_CACHE_TEST
-    clear_existing = False
-    server_url = "https://tobs-serverless-mode.stsci.edu"
-
-class Test_00_Selectors(TobsTestCase):
+class Test_00_Selectors(unittest.TestCase):
 
     def setUp(self):
-        super(Test_00_Selectors, self).setUp()
         self.rmap = rmap.get_cached_mapping("tobs_tinstr_tfilekind.rmap")
     
     def _selector_testcase(self, case, parameter, result):
@@ -124,12 +119,11 @@ class Test_00_Selectors(TobsTestCase):
 
 # =============================================================================
 
-class Test_01_Insert(TobsTestCase):
+class Test_01_Insert(unittest.TestCase):
     """Tests for checking automatic rmap update logic for adding new references."""
 
     def setUp(self):
         # Note:  load_mapping must deliver a unique copy of the specified rmap
-        super(Test_01_Insert, self).setUp()
         self.rmap = rmap.load_mapping("tobs_tinstr_tfilekind.rmap")
         self.original = rmap.load_mapping("tobs_tinstr_tfilekind.rmap")
         
@@ -317,7 +311,7 @@ class RecursiveModify(object):
     def test_9_recursive_tear_down(self):
         os.remove(self.result_filename)
         
-class Test_02_DeepRecursiveModify(TobsTestCase, RecursiveModify):
+class Test_02_DeepRecursiveModify(unittest.TestCase, RecursiveModify):
     result_filename = "./recursive_deep.rmap"
     expected_lookup_result = ("foo.fits", "foo.fits")
     rmap_str = '''
@@ -337,7 +331,7 @@ selector = Match({
 })
 '''
 
-class Test_03_RecursiveUseAfter(TobsTestCase, RecursiveModify):
+class Test_03_RecursiveUseAfter(unittest.TestCase, RecursiveModify):
     result_filename = "./recursive_useafter.rmap"
     expected_lookup_result = "foo.fits"
     rmap_str = '''
@@ -363,7 +357,7 @@ selector = UseAfter({
 })
 '''
 
-class Test_04_RecursiveClosestTime(TobsTestCase, RecursiveModify):
+class Test_04_RecursiveClosestTime(unittest.TestCase, RecursiveModify):
     result_filename = "./recursive_closest_time.rmap"
     expected_lookup_result = "foo.fits"
     rmap_str = '''
@@ -389,7 +383,7 @@ selector = ClosestTime({
 })
 '''
 
-class Test_05_RecursiveSelectVersion(TobsTestCase, RecursiveModify):
+class Test_05_RecursiveSelectVersion(unittest.TestCase, RecursiveModify):
     result_filename = "./recursive_select_version.rmap"
     expected_lookup_result = "foo.fits"
     rmap_str = '''
@@ -439,7 +433,7 @@ class Test_07_RecursiveSelectVersion_DefaultVersion(Test_05_RecursiveSelectVersi
           "SW_VERSION" : "default",
         }
 
-class Test_08_RecursiveGeometricallyNearest(TobsTestCase, RecursiveModify):
+class Test_08_RecursiveGeometricallyNearest(unittest.TestCase, RecursiveModify):
     result_filename = "./recursive_geometrically_nearest.rmap"
     expected_lookup_result = "foo.fits"
     rmap_str = '''
@@ -477,7 +471,7 @@ class Test_09_RecursiveGeometricallyNearestExact(Test_08_RecursiveGeometricallyN
           "GEOM_PAR" : "0.1",
         }
     
-class Test_10_RecursiveBracket(TobsTestCase, RecursiveModify):
+class Test_10_RecursiveBracket(unittest.TestCase, RecursiveModify):
     result_filename = "./recursive_bracket.rmap"
     expected_lookup_result = ("foo.fits", "foo.fits")
     rmap_str = '''
@@ -555,7 +549,7 @@ selector = Bracket({
 })
 '''
     
-class Test_13_DeleteTest(TobsTestCase):
+class Test_13_DeleteTest(unittest.TestCase):
     result_filename = "./delete.rmap"
     lookup_header = { 
           "MATCH_PAR1" : "MP1",

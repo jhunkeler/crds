@@ -169,17 +169,13 @@ class KeywordValidator(Validator):
         if value not in self._values:  # and tuple(self._values) != ('*',):
             if isinstance(value, str):
                 for pat in self._values:
-                    if self._match_value(pat, value):
+                    if re.match(pat, value):
                         self.verbose(filename, value, "matches", repr(pat))
                         return
             raise ValueError("Value " + str(log.PP(value)) + " is not one of " +
                             str(log.PP(self._values)))
         else:
             self.verbose(filename, value, "is in", repr(self._values))
-    
-    def _match_value(self, pattern, value):
-        """Match `pattern` to the entirety of `value` by adding re ^ and $ to pattern."""
-        return re.match(config.complete_re(pattern), value)
 
 # ----------------------------------------------------------------------------
 
@@ -271,7 +267,6 @@ class DoubleValidator(FloatValidator):
 
 class PedigreeValidator(KeywordValidator):
     """Validates &PREDIGREE fields."""
-
     _values = ["INFLIGHT", "GROUND", "MODEL", "DUMMY"]
 
     def _get_header_value(self, header):
@@ -279,7 +274,7 @@ class PedigreeValidator(KeywordValidator):
         start/stop dates.   Return only the PEDIGREE classification.
         Ignore missing start/stop dates.
         """
-        value = super(PedigreeValidator, self)._get_header_value(header)
+        value = KeywordValidator._get_header_value(self, header)
         try:
             pedigree, start, stop = value.split()
         except ValueError:
@@ -294,10 +289,6 @@ class PedigreeValidator(KeywordValidator):
         if stop is not None:
             timestamp.Slashdate.get_datetime(stop)
         return pedigree
-
-    def _match_value(self, pattern, value):
-        """Match raw pattern as prefix string only,  no complete_re()."""
-        return re.match(pattern, value)
 
 # ----------------------------------------------------------------------------
 

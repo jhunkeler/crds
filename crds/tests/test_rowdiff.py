@@ -316,8 +316,9 @@ from __future__ import absolute_import
 
 def main():
     """Run module tests,  for now just doctests only."""
-    from crds.tests import test_rowdiff, tstmod
-    return tstmod(test_rowdiff)
+    import doctest
+    from crds.tests import test_rowdiff
+    return doctest.testmod(test_rowdiff)
 
 if __name__ == "__main__":
     print(main())

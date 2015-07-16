@@ -433,7 +433,9 @@ class Script(object):
 
     def fatal_error(self, *args, **keys):
         """Issue an error message and terminate the program."""
-        log.fatal_error(*args, **keys)
+        status = keys.pop("status", -1)
+        log.error(*args, **keys)
+        sys.exit(status)
 
     def dump_files(self, context=None, files=None, ignore_cache=None):
         """Download mapping or reference `files1` with respect to `context`,  tracking stats."""

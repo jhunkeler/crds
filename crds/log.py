@@ -220,10 +220,6 @@ class CrdsLogger(object):
         self.handlers.remove(handler)
         self.logger.removeHandler(handler)
 
-    def fatal_error(self, *args, **keys):
-        error("(FATAL)", *args, **keys)
-        sys.exit(-1)  # FATAL == totally unambiguous
-
 THE_LOGGER = CrdsLogger("CRDS")
 
 info = THE_LOGGER.info
@@ -232,7 +228,6 @@ warning = THE_LOGGER.warn
 verbose_warning = THE_LOGGER.verbose_warning
 verbose = THE_LOGGER.verbose
 debug = THE_LOGGER.debug
-fatal_error = THE_LOGGER.fatal_error
 status = THE_LOGGER.status
 reset = THE_LOGGER.reset
 write = THE_LOGGER.write

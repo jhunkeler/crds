@@ -1,14 +1,3 @@
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
-import os
-import json
-import shutil
-
-from crds.bestrefs import BestrefsScript
-from crds.tests import CRDSTestCase, test_config, CRDS_CACHE_TEST
-
 """
 Bestrefs has a number of command line parameters which make it operate in different modes. 
 
@@ -90,15 +79,21 @@ one reference type was recommended.   This is essentially a list of files to be 
     j8bt05njq_raw.fits
     j8bt06o6q_raw.fits
     j8bt09jcq_raw.fits
-"""
 
-def dt_bestrefs_3_files():
-    """
-    Compute simple bestrefs for 3 files:
+----------
+TEST CASES
+----------
 
-    >>> old_state = test_config.setup()
-    
-    >>> BestrefsScript(argv="bestrefs.py --new-context hst.pmap --files data/j8bt05njq_raw.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits")()
+>>> from crds.tests import test_config
+
+>>> old_state = test_config.setup()
+
+>>> from crds.bestrefs import BestrefsScript
+
+Compute simple bestrefs for 3 files:
+
+    >>> case = BestrefsScript(argv="bestrefs.py --new-context hst.pmap --files data/j8bt05njq_raw.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits")
+    >>> status = case.run()
     CRDS  : INFO     No comparison context or source comparison requested.
     CRDS  : INFO     No file header updates requested;  dry run.
     CRDS  : INFO     ===> Processing data/j8bt05njq_raw.fits
@@ -107,18 +102,14 @@ def dt_bestrefs_3_files():
     CRDS  : INFO     0 errors
     CRDS  : INFO     0 warnings
     CRDS  : INFO     5 infos
-    0
-    
-    >>> test_config.cleanup(old_state)
-    """
 
-def dt_bestrefs_compare_source_files():
-    """
-    Compute and print files with at least one reference change:
+    >>> status == 0
+    True
 
-    >>> old_state = test_config.setup()
-    
-    >>> BestrefsScript(argv="bestrefs.py --new-context hst.pmap --files data/j8bt05njq_raw.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits --print-affected --compare-source-bestrefs")()
+Compute and print files with at least one reference change:
+
+    >>> case = BestrefsScript(argv="bestrefs.py --new-context hst.pmap --files data/j8bt05njq_raw.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits --print-affected --compare-source-bestrefs")
+    >>> case.run()
     CRDS  : INFO     No file header updates requested;  dry run.
     CRDS  : INFO     ===> Processing data/j8bt05njq_raw.fits
     CRDS  : INFO     instrument='ACS' type='ATODTAB' data='data/j8bt05njq_raw.fits' ::  New best reference: 'kcb1734ij_a2d.fits' --> 'n/a' :: Would update.
@@ -146,16 +137,10 @@ def dt_bestrefs_compare_source_files():
     CRDS  : INFO     19 infos
     0
 
-    >>> test_config.cleanup(old_state)
-    """
+Compute simple bestrefs for 3 files using the default context from the server:
 
-def dt_bestrefs_3_files_default_context_from_server():
-    """
-    Compute simple bestrefs for 3 files using the default context from the server:
-
-    >>> old_state = test_config.setup()
-    
-    >>> BestrefsScript(argv="bestrefs.py --new-context=hst.pmap --files data/j8bt05njq_raw.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits")()
+    >>> case = BestrefsScript(argv="bestrefs.py --new-context=hst.pmap --files data/j8bt05njq_raw.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits")
+    >>> case.run()
     CRDS  : INFO     No comparison context or source comparison requested.
     CRDS  : INFO     No file header updates requested;  dry run.
     CRDS  : INFO     ===> Processing data/j8bt05njq_raw.fits
@@ -166,16 +151,10 @@ def dt_bestrefs_3_files_default_context_from_server():
     CRDS  : INFO     5 infos
     0
 
-    >>> test_config.cleanup(old_state)
-    """
+Same + one broken file to test shell error status
 
-def dt_bestrefs_broken_dataset_file():
-    """
-    Same + one broken file to test shell error status
-
-    >>> old_state = test_config.setup()
-    
-    >>> BestrefsScript(argv="bestrefs.py --new-context hst.pmap --files data/j8bt05njq_raw.fits data/j8bt05njq_raw_broke.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits")()
+    >>> case = BestrefsScript(argv="bestrefs.py --new-context hst.pmap --files data/j8bt05njq_raw.fits data/j8bt05njq_raw_broke.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits")
+    >>> status = case.run()
     CRDS  : INFO     No comparison context or source comparison requested.
     CRDS  : INFO     No file header updates requested;  dry run.
     CRDS  : INFO     ===> Processing data/j8bt05njq_raw.fits
@@ -186,59 +165,36 @@ def dt_bestrefs_broken_dataset_file():
     CRDS  : INFO     1 errors
     CRDS  : INFO     0 warnings
     CRDS  : INFO     6 infos
-    1
 
-    >>> test_config.cleanup(old_state)
-    """
+    >>> status == 1
+    True
 
-def dt_bestrefs_broken_cache_and_server():
-    """
-    
+Compute simple bestrefs for 1 catalog datasets using hst.pmap:
 
-    >>> old_state = test_config.setup(cache="/nowhere", url="https://server-is-out-of-town")
-    
-    >> BestrefsScript(argv="bestrefs.py --new-context hst.pmap --files data/j8bt05njq_raw.fits")()
-    CRDS  : ERROR    (FATAL) CRDS server connection and cache load FAILED.  Cannot continue.  See https://hst-crds.stsci.edu or https://jwst-crds.stsci.edu for more information on configuring CRDS.
-    Traceback (most recent call last):
-    ...
-    SystemExit: 1
-
->>> test_config.cleanup(old_state)
-    """
-
-def dt_bestrefs_catalog_dataset():
-    """
-    Compute simple bestrefs for 1 catalog datasets using hst.pmap:
-
-    >>> old_state = test_config.setup()
-    
-    >>> BestrefsScript(argv="bestrefs.py --new-context hst.pmap  --datasets I9ZF01010")() # doctest: +ELLIPSIS
-    CRDS  : INFO     Dumping dataset parameters from CRDS server at 'https://...' for ['I9ZF01010']
-    CRDS  : INFO     Dumped 4 of 1 datasets from CRDS server at 'https://...'
+    >>> case = BestrefsScript(argv="bestrefs.py --new-context hst.pmap  --datasets I9ZF01010")
+    >>> status = case.run()
+    CRDS  : INFO     Dumping dataset parameters from CRDS server at 'https://hst-crds-dev.stsci.edu' for ['I9ZF01010']
+    CRDS  : INFO     Dumped 4 of 1 datasets from CRDS server at 'https://hst-crds-dev.stsci.edu'
     CRDS  : INFO     Computing bestrefs for datasets ['I9ZF01010']
     CRDS  : INFO     No comparison context or source comparison requested.
     CRDS  : INFO     0 errors
     CRDS  : INFO     0 warnings
     CRDS  : INFO     4 infos
+    >>> status
     0
 
-    >>> test_config.cleanup(old_state)
+MAINTENANCE NOTE:  the preceding test is currently an expected error case pending the delivery of a modified
+WFC3 FLSHFILE rmap located at crds/hst/prototypes/wfc3/hst_wfc3_flshfile_0251.rmap.  Once the modified rmap 
+is delivered to operations,  the above new-context should be changed to the new OPS context.  After that point,
+all mirrors of OPS to DEV should work without the exected errors due to FLASHCUR=='UNDEFINED'.   The only changes
+in the modified rmap should be header changes,  nominally the rmap_relevance expression;  additional changes
+may reflect new flshfile submissions which happened after the prototype rmap was created.
 
-    MAINTENANCE NOTE:  the preceding test is currently an expected error case pending the delivery of a modified
-    WFC3 FLSHFILE rmap located at crds/hst/prototypes/wfc3/hst_wfc3_flshfile_0251.rmap.  Once the modified rmap 
-    is delivered to operations,  the above new-context should be changed to the new OPS context.  After that point,
-    all mirrors of OPS to DEV should work without the exected errors due to FLASHCUR=='UNDEFINED'.   The only changes
-    in the modified rmap should be header changes,  nominally the rmap_relevance expression;  additional changes
-    may reflect new flshfile submissions which happened after the prototype rmap was created.
-    """
-    
-def dt_bestrefs_context_to_context():
-    """
-    Compute comparison bestrefs between two contexts:
-    
-    >>> old_state = test_config.setup()
-    
-    >>> BestrefsScript(argv="bestrefs.py --new-context data/hst_0001.pmap  --old-context hst.pmap --files data/j8bt05njq_raw.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits")()
+
+Compute comparison bestrefs between two contexts:
+
+    >>> case = BestrefsScript(argv="bestrefs.py --new-context data/hst_0001.pmap  --old-context hst.pmap --files data/j8bt05njq_raw.fits data/j8bt06o6q_raw.fits data/j8bt09jcq_raw.fits")
+    >>> case.run()
     CRDS  : INFO     No file header updates requested;  dry run.
     CRDS  : INFO     ===> Processing data/j8bt05njq_raw.fits
     CRDS  : INFO     ===> Processing data/j8bt06o6q_raw.fits
@@ -247,15 +203,28 @@ def dt_bestrefs_context_to_context():
     CRDS  : INFO     0 warnings
     CRDS  : INFO     4 infos
     0
-    
+
+CLEANUP: blow away the test cache
+
     >>> test_config.cleanup(old_state)
-    """
+
+"""
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+
+import os
+import json
+import shutil
+
+from crds.bestrefs import BestrefsScript
+from crds.tests import CRDSTestCase
 
 class TestBestrefs(CRDSTestCase):
     
     script_class = BestrefsScript
-    server_url = "https://hst-crds-dev.stsci.edu"
-    cache = CRDS_CACHE_TEST
+    
+    # server_url = "https://hst-crds-dev.stsci.edu"
 
     def test_bestrefs_affected_datasets(self):
         self.run_script("crds.bestrefs --affected-datasets --old-context hst_0314.pmap --new-context hst_0315.pmap",
@@ -334,8 +303,9 @@ def main():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestBestrefs)
     unittest.TextTestRunner().run(suite)
 
-    from crds.tests import test_bestrefs, tstmod
-    return tstmod(test_bestrefs)
+    import doctest
+    from crds.tests import test_bestrefs
+    return doctest.testmod(test_bestrefs)
 
 if __name__ == "__main__":
     print(main())

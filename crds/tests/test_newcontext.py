@@ -16,7 +16,7 @@ from nose.tools import assert_raises, assert_true
 
 # ==================================================================================
 
-def dt_fake_name():
+def tst_fake_name():
     """
     Fake names are only used by crds.newcontext when it is run from the command line.
 
@@ -35,7 +35,7 @@ def dt_fake_name():
     >>> test_config.cleanup(old_state)
     """
 
-def dt_new_context():
+def tst_new_context():
     """
     >>> old_state = test_config.setup()
     >>> os.environ["CRDS_MAPPATH_SINGLE"] = tests.TEST_DATA
@@ -78,14 +78,14 @@ class TestNewContext(CRDSTestCase):
 
 def main():
     """Run module tests,  for now just doctests only."""
-    from crds.tests import test_newcontext, tstmod
-    import unittest
+    from crds.tests import test_newcontext
+    import unittest, doctest
 
     suite = unittest.TestLoader().loadTestsFromTestCase(TestNewContext)
     unittest.TextTestRunner().run(suite)
 
     old_state = test_config.setup()
-    result = tstmod(test_newcontext)
+    result = doctest.testmod(test_newcontext)
     test_config.cleanup(old_state)
 
     return result

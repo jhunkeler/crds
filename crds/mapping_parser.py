@@ -14,7 +14,7 @@ import sys
 import os.path
 from collections import namedtuple
 
-from crds import rmap, selectors, log, exceptions
+from crds import rmap, selectors, log
 
 MAPPING_GRAMMAR = r"""
 
@@ -108,10 +108,9 @@ def parse_mapping(filename):
 
     log.verbose("Parsing", repr(filename))
     filename = rmap.locate_mapping(filename)
-    with log.augment_exception("Parsing error in", repr(filename), exception_class=exceptions.MappingFormatError):
+    with log.augment_exception("Parsing error in", repr(filename)):
         with open(filename) as pfile:
-            parser = MAPPING_PARSER(pfile.read())
-            header, selector, comment = parser.mapping()
+            header, selector, comment = MAPPING_PARSER(pfile.read()).mapping()
             return Parsing(header, selector, comment)
 
 def check_duplicates(parsing):

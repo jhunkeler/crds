@@ -43,6 +43,11 @@ setup_pars = {
             'specs/*.spec',
             'specs/*.rmap',
             ],
+        'crds' : [
+            'cache/mappings/hst/*.*map',
+            'cache/mappings/jwst/*.*map',
+            'cache/mappings/tobs/*.*map',
+            ],
         },
     "scripts" : glob.glob("scripts/*"),
     }
