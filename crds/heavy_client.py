@@ -172,6 +172,7 @@ def _initial_recommendations(
     log.verbose("Final effective context is", repr(final_context))
 
     if mode == "local":
+        log.verbose("Computing best references locally.")
         bestrefs = local_bestrefs(
             parameters, reftypes=reftypes, context=final_context, ignore_cache=ignore_cache)
     else:
@@ -283,7 +284,6 @@ def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
     In the case of the default "auto" mode,  assuming it has an up-to-date client
     CRDS will only use the server for status and to transfer files.
     """
-    log.verbose("Computing best references locally.")
     # Make sure pmap_name is actually present in the local machine's cache.
     # First assume the context files are already here and try to load them.   
     # If that fails,  attempt to get them from the network, then load them.
@@ -365,27 +365,6 @@ def translate_date_based_context(info, context):
         log.verbose("Date based context spec", repr(context), "translates to", repr(translated) + ".", verbosity=80)
         return translated
 
-def local_version_obsolete(server_version):
-    """Return True IFF major_version(server) > major_version(client).  Use to force client to call-up instead
-    of computing locally.
-    """
-    _server_version = major_version(server_version)
-    _client_version = major_version(crds.__version__)
-    obsolete = _client_version < _server_version
-    log.verbose("CRDS client version=", srepr(crds.__version__),
-                " server version=", srepr(server_version),
-                " client is ", srepr("obsolete" if obsolete else "up-to-date"),
-                sep="")
-    return obsolete
-
-def major_version(vers):
-    """Strip the revision number off of `vers` and conver to float.
-    
-    >>> major_version('1.2.7')
-    1.0
-    """
-    return float(".".join(vers.split(".")[0]))
- 
 # ============================================================================
 
 class ConfigInfo(utils.Struct):
@@ -396,23 +375,21 @@ class ConfigInfo(utils.Struct):
         return set(self.get("bad_files", "").split())
 
     def get_effective_mode(self):
-        """Based on environment CRDS_MODE,  connection status,  server s/w version, 
-        and the installed client s/w version,  determine whether best refs should be
-        computed locally or on the server.   Simple unless CRDS_MODE is defaulting
-        to "auto" in which case the effective mode is "remote" when connected and
-        the client is obsolete relative to the server.
+        """Based on environment CRDS_MODE,  connection status,  and server config force_remote_mode flag,
+        determine whether best refs should be computed locally or on the server.   Simple unless 
+        CRDS_MODE defaults to "auto" in which case the effective mode is "remote" when connected and
+        the server sets force_remote_mode to True.
         
         returns 'local' or 'remote'
         """
         mode = config.get_crds_processing_mode()  # local, remote, auto
-        obsolete = local_version_obsolete(self.crds_version["str"])
         if mode == "auto":
-            eff_mode = "remote" if (self.connected and obsolete) else "local"
+            eff_mode = "remote" if (self.connected and hasattr(self, "force_remote_mode") and self.force_remote_mode) else "local"
         else:
             eff_mode = mode   # explicitly local or remote
             if eff_mode == "remote" and not self.connected:
                 raise CrdsError("Can't compute 'remote' best references while off-line.  Set CRDS_MODE to 'local' or 'auto'.")
-            if eff_mode == "local" and obsolete:
+            if eff_mode == "local" and self.force_remote_mode:
                 log.warning("Computing bestrefs locally with obsolete client.   Recommended references may be sub-optimal.")
         return eff_mode
 
@@ -430,7 +407,7 @@ def get_config_info(observatory):
         info = ConfigInfo(api.get_server_info())
         info.status = "server"
         info.connected = True
-        log.verbose("Connected to server at", repr(api.get_crds_server()))
+        log.verbose("Connected to server at", srepr(api.get_crds_server()))
         if not config.writable_cache_or_verbose("Using cached configuration and default context."):
             info = load_server_info(observatory)
             info.status = "cache"
