@@ -26,7 +26,7 @@ from .proxy import CheckingProxy
 from crds import utils, log, config
 from crds.client import proxy
 
-from crds.exceptions import *
+from crds.exceptions import ServiceError, CrdsLookupError, CrdsNetworkError, CrdsDownloadError
 from crds.python23 import *
 
 # ==============================================================================
@@ -70,6 +70,8 @@ __all__ = [
            "get_affected_datasets",
            "get_context_history",
 
+           "push_remote_context",
+           "get_remote_context",
            ]
 
 # ============================================================================
@@ -364,9 +366,22 @@ def get_context_history(observatory):
     """Fetch the history of context transitions, a list of history era tuples:
 
      Returns:  [ (start_date, context_name, description), ... ]
-
     """
     return sorted(tuple(x) for x in S.get_context_history(observatory))
+
+def push_remote_context(observatory, kind, key, context):
+    """Upload the specified `context` of type `kind` (e.g. "operational") to the
+    server,  informing the server of the actual configuration of the local cache
+    for critical systems like pipelines,  not average users.   This lets the server
+    display actual versus commanded (Set Context) operational contexts for a pipeline.
+    """
+    return S.push_remote_context(observatory, kind, key, context)
+
+def get_remote_context(observatory, pipeline_name):
+    """Get the name of the default context last pushed from `pipeline_name` and
+    presumed to be operational.
+    """
+    return S.get_remote_context(observatory, pipeline_name)
 
 # ==============================================================================
 

@@ -101,7 +101,7 @@ from pprint import pprint as pp
 import crds
 from crds import log, utils
 
-from crds.exceptions import *
+from crds.exceptions import ValidationError, CrdsLookupError, AmbiguousMatchError, MatchingError, UseAfterError
 from crds import python23
 
 # ==============================================================================
@@ -326,6 +326,19 @@ class Selector(object):
             "selections" : flat,
             }
         
+    def delete_match_param(self, parameter):
+        """Delete the value of `parameter` name in every match case,  recursively
+        if `parameter is not in self._parameters.
+        """
+        for i, (old_key, choice) in enumerate(self._raw_selections):
+            try:
+                ix = self._parameters.index(parameter)
+                new_key = old_key[:ix] + old_key[ix+1:]
+                self._raw_selections[i] = (new_key, choice)
+                log.verbose("Replacing match case", repr(old_key), "with", repr(new_key))
+            except ValueError:
+                choice.delete_match_param(parameter)
+
     def todict_parameters(self):
         """Overridable,  generally self._parameters."""
         return self._parameters
@@ -378,11 +391,11 @@ class Selector(object):
             try:
                 log.verbose("Trying", selection, verbosity=60)
                 return self.get_choice(selection, header) # recursively,  what's final choice?
-            except crds.CrdsLookupError as exc:
+            except CrdsLookupError as exc:
                 last_exc = exc
                 continue
         more_info = " last exception: " + str(last_exc) if last_exc else ""
-        raise crds.CrdsLookupError("All lookup attempts failed." + more_info)
+        raise CrdsLookupError("All lookup attempts failed." + more_info)
                 
     def get_selection(self, lookup_key):
         """Most selectors are based on a sorted items list which represents a
@@ -1175,7 +1188,23 @@ class NaMatcher(Matcher):
         
     def match(self, value):
         """Always match with "don't care" status."""
-        return 0   
+        return 0
+
+
+class NotMatcher(Matcher):
+    """Matcher which matches the negation of `key`."""
+    def __init__(self, key):
+        super(NotMatcher, self).__init__(key)
+        self._unnegated_matcher = matcher(key[len("NOT "):].strip())
+
+    def match(self, value):
+        """Matches unnegated key normally to `value` and then returns the inverted result."""
+        unnegated = self._unnegated_matcher.match(value)
+        return {
+            1 : -1,
+            -1 : 1,
+            0 : 0,
+            }[unnegated]
 
 def esoteric_key(key):
     """Return True if `key` validation is a tautology or too complicated."""
@@ -1305,6 +1334,61 @@ def matcher(key):
     0
     >>> na.match("*")
     0
+
+    An expression preceded by the keyword "NOT " can be the negation of most other matchers:
+
+    >>> d = matcher("not between 3000 3200")
+    >>> d.match("2999.99")
+    1
+    >>> d.match("3000")
+    -1
+    >>> d.match("3100")
+    -1
+    >>> d.match("3199.99")
+    -1
+    >>> d.match("3200")
+    1
+    >>> d.match("*")
+    -1
+    >>> d.match("N/A")
+    0
+
+    >>> c = matcher("not #>20 or <5#")
+    >>> c.match("#>20 OR <5#")
+    -1
+    >>> c.match("#>20 or <27#")
+    1
+    
+    >>> regex = matcher("not (something(0|1|2)f?tricky)")
+    >>> regex.match("something5tricky")
+    1
+    >>> regex.match("something1tricky")
+    -1
+    >>> regex.match("something1ftricky")
+    -1
+    >>> regex.match("somethingttricky")
+    1
+    >>> regex.match("foo")
+    1
+    >>> regex.match("N/A")
+    0
+    >>> regex.match("*")
+    -1
+    
+    >>> literal = matcher("not {||*|}")
+    >>> literal.match("0")
+    1
+    >>> literal.match("||*|")
+    -1
+    
+    >>> someor = matcher("not {for|me}")
+    >>> someor.match("for")
+    1
+    >>> someor.match("me")
+    1
+    >>> someor.match("for|me")
+    -1
+    
     """
     if isinstance(key, tuple):
         return GlobMatcher("|".join(key))
@@ -1327,6 +1411,8 @@ def matcher(key):
             "Invalid between relation " + repr(key) + \
             " should be 'between lower_bound upper_bound'"
         return BinaryMatcher(">=" + parts[1]+ " AND <" + parts[2], "AND")
+    elif key.upper().startswith("NOT "):
+        return NotMatcher(key)
     elif "|" in key or "*" in key:
         return GlobMatcher(key)
     elif key == "N/A":

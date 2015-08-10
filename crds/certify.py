@@ -387,7 +387,7 @@ class Certifier(object):
 
     def __init__(self, filename, context=None, check_references=False, 
                  compare_old_reference=False, dump_provenance=False,
-                 provenance_keys=("DESCRIP", "COMMENT", "PEDIGREE", "USEAFTER","HISTORY",),
+                 provenance_keys=None,
                  dont_parse=False, script=None, observatory=None, comparison_reference=None,
                  original_name=None, trap_exceptions=None):
         
@@ -396,7 +396,6 @@ class Certifier(object):
         self.check_references = check_references
         self.compare_old_reference = compare_old_reference
         self._dump_provenance_flag = dump_provenance
-        self.provenance_keys = list(provenance_keys)
         self.dont_parse = dont_parse     # mapping only
         self.script = script
         self.observatory = observatory
@@ -407,7 +406,11 @@ class Certifier(object):
     
         assert self.check_references in [False, None, "exist", "contents"], \
             "invalid check_references parameter " + repr(self.check_references)
+
+        self.observatory = observatory or utils.file_to_observatory(filename)
     
+        self.provenance_keys = list(provenance_keys or utils.get_observatory_package(self.observatory).PROVENANCE_KEYWORDS)
+
     @property
     def basename(self):
         return os.path.basename(self.filename)
@@ -482,6 +485,7 @@ class ReferenceCertifier(Certifier):
             self.all_simple_names +   # what's defined in .tpn's, maybe not matched
             self.provenance_keys))    # extra project-specific keywords like HISTORY, COMMENT, PEDIGREE
         unseen = self._dump_provenance_core(dump_keys)
+        log.verbose("Potential provenance keywords:", repr(dump_keys), verbosity=60)
         warn_keys = self.provenance_keys
         for key in sorted(unseen):
             if key in warn_keys:
@@ -492,8 +496,6 @@ class ReferenceCertifier(Certifier):
         unseen = set(dump_keys)
         for key in dump_keys:
             if self._check_provenance_key(key):
-                unseen.remove(key)
-            elif self._check_provenance_key("META." + key):
                 unseen.remove(key)
         return unseen
 
@@ -776,6 +778,7 @@ class FitsCertifier(ReferenceCertifier):
                                 log.info("["+str(i)+"]", key, card.value, card.comment)
                             if key in unseen:
                                 unseen.remove(key)
+        unseen = super(FitsCertifier, self)._dump_provenance_core(unseen)
         return unseen
 
 # ============================================================================
@@ -1070,11 +1073,11 @@ For more information on the checks being performed,  use --verbose or --verbosit
         else:
             all_files = set(self.files)
             
-        if not self.all_references(all_files) and not self.all_mappings(all_files):
+        if not self.are_all_references(all_files) and not self.are_all_mappings(all_files):
             if self.args.comparison_context is None and not self.args.comparison_reference:
                 log.info("Mixing references and mappings in one certify run skips any default comparison checks.")
 
-        if self.all_references(all_files):
+        if self.are_all_references(all_files):
             # Change original default behavior of None to default operational context,  for references.
             # For mappings / older contexts the default tends to be the wrong thing,  hence references only.
             if self.args.comparison_context is None and not self.args.comparison_reference:

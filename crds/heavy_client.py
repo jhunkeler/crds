@@ -35,10 +35,11 @@ import glob
 import ast
 import traceback
 import uuid
+import fnmatch 
 
 from . import rmap, log, utils, config
 from crds.client import api
-from crds.exceptions import *
+from crds.exceptions import CrdsError, CrdsBadRulesError, CrdsBadReferenceError, CrdsNetworkError
 from crds import python23
 
 __all__ = ["getreferences", "getrecommendations"]
@@ -172,6 +173,7 @@ def _initial_recommendations(
     log.verbose("Final effective context is", repr(final_context))
 
     if mode == "local":
+        log.verbose("Computing best references locally.")
         bestrefs = local_bestrefs(
             parameters, reftypes=reftypes, context=final_context, ignore_cache=ignore_cache)
     else:
@@ -231,7 +233,7 @@ def mapping_names(context):
     try:
         mapping = crds.get_cached_mapping(context)
         contained_mappings = mapping.mapping_names()
-    except Exception:
+    except IOError:
         contained_mappings = api.get_mapping_names(context)
     return set(contained_mappings)
 
@@ -239,7 +241,7 @@ def get_bad_mappings_in_context(observatory, context):
     """Return the list of bad files (defined by the server) contained by `context`."""
     bad_mappings = get_config_info(observatory).bad_files_set
     context_mappings = mapping_names(context)
-    return sorted(list(context_mappings.intersection(bad_mappings)))
+    return sorted(list(context_mappings & bad_mappings))
 
 # ============================================================================
 def check_observatory(observatory):
@@ -283,7 +285,6 @@ def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
     In the case of the default "auto" mode,  assuming it has an up-to-date client
     CRDS will only use the server for status and to transfer files.
     """
-    log.verbose("Computing best references locally.")
     # Make sure pmap_name is actually present in the local machine's cache.
     # First assume the context files are already here and try to load them.   
     # If that fails,  attempt to get them from the network, then load them.
@@ -365,27 +366,6 @@ def translate_date_based_context(info, context):
         log.verbose("Date based context spec", repr(context), "translates to", repr(translated) + ".", verbosity=80)
         return translated
 
-def local_version_obsolete(server_version):
-    """Return True IFF major_version(server) > major_version(client).  Use to force client to call-up instead
-    of computing locally.
-    """
-    _server_version = major_version(server_version)
-    _client_version = major_version(crds.__version__)
-    obsolete = _client_version < _server_version
-    log.verbose("CRDS client version=", srepr(crds.__version__),
-                " server version=", srepr(server_version),
-                " client is ", srepr("obsolete" if obsolete else "up-to-date"),
-                sep="")
-    return obsolete
-
-def major_version(vers):
-    """Strip the revision number off of `vers` and conver to float.
-    
-    >>> major_version('1.2.7')
-    1.0
-    """
-    return float(".".join(vers.split(".")[0]))
- 
 # ============================================================================
 
 class ConfigInfo(utils.Struct):
@@ -396,23 +376,21 @@ class ConfigInfo(utils.Struct):
         return set(self.get("bad_files", "").split())
 
     def get_effective_mode(self):
-        """Based on environment CRDS_MODE,  connection status,  server s/w version, 
-        and the installed client s/w version,  determine whether best refs should be
-        computed locally or on the server.   Simple unless CRDS_MODE is defaulting
-        to "auto" in which case the effective mode is "remote" when connected and
-        the client is obsolete relative to the server.
+        """Based on environment CRDS_MODE,  connection status,  and server config force_remote_mode flag,
+        determine whether best refs should be computed locally or on the server.   Simple unless 
+        CRDS_MODE defaults to "auto" in which case the effective mode is "remote" when connected and
+        the server sets force_remote_mode to True.
         
         returns 'local' or 'remote'
         """
         mode = config.get_crds_processing_mode()  # local, remote, auto
-        obsolete = local_version_obsolete(self.crds_version["str"])
         if mode == "auto":
-            eff_mode = "remote" if (self.connected and obsolete) else "local"
+            eff_mode = "remote" if (self.connected and hasattr(self, "force_remote_mode") and self.force_remote_mode) else "local"
         else:
             eff_mode = mode   # explicitly local or remote
             if eff_mode == "remote" and not self.connected:
                 raise CrdsError("Can't compute 'remote' best references while off-line.  Set CRDS_MODE to 'local' or 'auto'.")
-            if eff_mode == "local" and obsolete:
+            if eff_mode == "local" and self.force_remote_mode:
                 log.warning("Computing bestrefs locally with obsolete client.   Recommended references may be sub-optimal.")
         return eff_mode
 
@@ -430,15 +408,25 @@ def get_config_info(observatory):
         info = ConfigInfo(api.get_server_info())
         info.status = "server"
         info.connected = True
-        log.verbose("Connected to server at", repr(api.get_crds_server()))
+        log.verbose("Connected to server at", srepr(api.get_crds_server()))
         if not config.writable_cache_or_verbose("Using cached configuration and default context."):
             info = load_server_info(observatory)
             info.status = "cache"
             info.connected = True
+            log.info("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
     except CrdsError:
         log.verbose_warning("Couldn't contact CRDS server:", srepr(api.get_crds_server()))
         info = load_server_info(observatory)
+        info.status = "cache"
+        info.connected = False
+        log.info("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
     info.effective_mode = info.get_effective_mode()
+
+    # XXX For backward compatibility with older servers which don't have ".mappings" in server info.
+    if not hasattr(info, "mappings"):
+        with log.verbose_warning_on_exception("Failed fetching list of all CRDS mappings from server"):
+            info.mappings = api.list_mappings(observatory, "*.*")
+
     return info
 
 def update_config_info(observatory):
@@ -497,49 +485,11 @@ def load_server_info(observatory):
         with open(server_config) as file_:
             info = ConfigInfo(ast.literal_eval(file_.read()))
         info.status = "cache"
-        log.info("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
-    except IOError:
-        log.error("CRDS server connection and cache load FAILED.  Using pre-installed TEST RULES; NOT FOR CALIBRATION USE." )
-        info = get_installed_info(observatory)
-    info.connected = False
+    except IOError as exc:
+        log.fatal_error("CRDS server connection and cache load FAILED.  Cannot continue. "
+                        " See https://hst-crds.stsci.edu or https://jwst-crds.stsci.edu for more information on configuring CRDS.")
     return info
 
-def get_installed_info(observatory):
-    """Make up a bare-bones server info dictionary to define the pipeline context
-    using pre-installed mappings for `observatory`.   Choose the most recent
-    pipeline context as the default operational context as determined by the 
-    context numbering scheme,  highest serial number wins.
-    
-    These are the ultimate fall-back settings for CRDS in serverless-mode and 
-    assume the mappings are pre-installed and/or visible on the Central Store.
-    
-    By providing a config directory and server config file,  the results of this
-    code should not be used in so-called "server-less mode".   This code is the
-    fallback for remote users when network connectivity has failed and they do
-    not *already* have cached server config (and mappings).
-    """
-    try:
-        # lexical sort of pmap names yields most recent (highest numbered) last.
-        os.environ["CRDS_MAPPATH"] = crds.__path__[0] + "/cache/mappings"
-        where = config.locate_mapping("*.pmap", observatory)
-        pmap = os.path.basename(sorted(glob.glob(where))[-1])
-        log.warning("Using highest numbered pipeline context", repr(pmap), 
-                    "as default. Bad file checking is disabled.")
-    except IndexError as exc:
-        raise CrdsError("Configuration or install error.  Can't find any .pmaps at " + 
-                        repr(where) + " : " + str(exc))
-    return ConfigInfo(
-            edit_context = pmap,
-            operational_context = pmap,
-            observatory = observatory,
-            bad_files = "",
-            status = "s/w install",
-            crds_version = dict( str="0.0.0"),
-            last_synced = "Not connected and not cached,  using installed mappings only.",
-            reference_url = "Not connected",
-            mapping_url = "Not connected"
-            )
-    
 # XXXX Careful with version string length here, FITS has a 68 char limit which degrades to CONTINUE records
 # XXXX which cause problems for other systems.
 def version_info():
@@ -572,6 +522,14 @@ def get_context_parkeys(context, instrument):
         return list(parkeys)
     else:
         return list(parkeys[instrument])
+
+# ============================================================================
+def list_mappings(observatory, glob_pattern):
+    """Optimized version of "list_mappings" server api function which leverages
+    mappings list given in server_info api rather than separate rpc call.  
+    """
+    info = get_config_info(observatory)
+    return sorted([mapping for mapping in info.mappings if fnmatch.fnmatch(mapping, glob_pattern)])
 
 # ============================================================================
 

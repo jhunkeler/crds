@@ -22,9 +22,6 @@ setup_pars = {
         'crds.tests' : 'crds/tests',
         },
     "package_data" : {
-        'crds.tests' : [
-            'data/*',
-            ],
         'crds.hst': [
             '*.dat',
             'tpns/*.tpn',
@@ -43,14 +40,17 @@ setup_pars = {
             'specs/*.spec',
             'specs/*.rmap',
             ],
-        'crds' : [
-            'cache/mappings/hst/*.*map',
-            'cache/mappings/jwst/*.*map',
-            'cache/mappings/tobs/*.*map',
-            ],
         },
     "scripts" : glob.glob("scripts/*"),
     }
+
+if "--include-test-data" in sys.argv:
+    sys.argv.remove("--include-test-data")
+    setup_pars["package_data"].update({
+            'crds.tests' : [
+                'data/*',
+                ],
+            })
 
 import crds   #  local subdirectory...  ew...
 
