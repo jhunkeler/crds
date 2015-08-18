@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'jwst_nircam_readnoise_0000.rmap',
+    'filekind' : 'READNOISE',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_readnoise_0001.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '9b7979634fff7c605a2cc027b8fa6baa953af449',
+}
+
+selector = Match({
+    ('NRCA1',) : 'jwst_nircam_readnoise_0000.fits',
+    ('NRCA2',) : 'jwst_nircam_readnoise_0001.fits',
+    ('NRCA3',) : 'jwst_nircam_readnoise_0002.fits',
+    ('NRCA4',) : 'jwst_nircam_readnoise_0003.fits',
+    ('NRCALONG',) : 'jwst_nircam_readnoise_0004.fits',
+    ('NRCB1',) : 'jwst_nircam_readnoise_0005.fits',
+    ('NRCB2',) : 'jwst_nircam_readnoise_0006.fits',
+    ('NRCB3',) : 'jwst_nircam_readnoise_0007.fits',
+    ('NRCB4',) : 'jwst_nircam_readnoise_0008.fits',
+    ('NRCBLONG',) : 'jwst_nircam_readnoise_0009.fits',
+})

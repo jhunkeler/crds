@@ -1,0 +1,15 @@
+header = {
+    'derived_from' : 'jwst_nirspec_photom_0003.rmap',
+    'filekind' : 'PHOTOM',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_photom_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '45d80a6f6bbda9d4db394feb9967c601e7abd0ed',
+}
+
+selector = Match({
+    ('NRS1',) : 'jwst_nirspec_photom_0009.fits',
+    ('NRS2',) : 'jwst_nirspec_photom_0010.fits',
+})

@@ -1,0 +1,14 @@
+header = {
+    'derived_from' : 'jwst_niriss_readnoise_0002.rmap',
+    'filekind' : 'READNOISE',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_readnoise_0003.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : 'd5923df3272d1a96dd36d6f58fe4e69921f05ccf',
+}
+
+selector = Match({
+    ('NIS',) : 'jwst_niriss_readnoise_0001.fits',
+})

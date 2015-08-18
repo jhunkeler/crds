@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'jwst_nircam_photom_0001.rmap',
+    'filekind' : 'PHOTOM',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_photom_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '45a255324a7b8301af16b419283b0a4d84f1147e',
+}
+
+selector = Match({
+    ('NRCA1',) : 'jwst_nircam_photom_0021.fits',
+    ('NRCA2',) : 'jwst_nircam_photom_0022.fits',
+    ('NRCA3',) : 'jwst_nircam_photom_0023.fits',
+    ('NRCA4',) : 'jwst_nircam_photom_0024.fits',
+    ('NRCALONG',) : 'jwst_nircam_photom_0025.fits',
+    ('NRCB1',) : 'jwst_nircam_photom_0026.fits',
+    ('NRCB2',) : 'jwst_nircam_photom_0027.fits',
+    ('NRCB3',) : 'jwst_nircam_photom_0028.fits',
+    ('NRCB4',) : 'jwst_nircam_photom_0029.fits',
+    ('NRCBLONG',) : 'jwst_nircam_photom_0030.fits',
+})

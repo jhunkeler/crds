@@ -1,0 +1,15 @@
+header = {
+    'derived_from' : 'jwst_nirspec_gain_0000.rmap',
+    'filekind' : 'GAIN',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_gain_0001.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '39828bb3424d7edf5f6bc3f980ad6350ae5272f7',
+}
+
+selector = Match({
+    ('NRS1',) : 'jwst_nirspec_gain_0000.fits',
+    ('NRS2',) : 'jwst_nirspec_gain_0001.fits',
+})

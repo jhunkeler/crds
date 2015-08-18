@@ -1,0 +1,14 @@
+header = {
+    'derived_from' : 'jwst_niriss_gain_0001.rmap',
+    'filekind' : 'GAIN',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_gain_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '521cd707c6fdbcf1f47606b6682e1c91fc8399d3',
+}
+
+selector = Match({
+    ('NIS',) : 'jwst_niriss_gain_0000.fits',
+})

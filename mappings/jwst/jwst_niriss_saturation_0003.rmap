@@ -1,0 +1,14 @@
+header = {
+    'derived_from' : 'jwst_niriss_saturation_0002.rmap',
+    'filekind' : 'SATURATION',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_saturation_0003.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : 'eb9bb098974b635c3c733eff1d9b4cde7980f3e1',
+}
+
+selector = Match({
+    ('NIS',) : 'jwst_niriss_saturation_0004.fits',
+})

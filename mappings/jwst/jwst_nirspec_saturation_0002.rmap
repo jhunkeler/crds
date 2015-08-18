@@ -1,0 +1,15 @@
+header = {
+    'derived_from' : 'jwst_nirspec_saturation_0001.rmap',
+    'filekind' : 'SATURATION',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_saturation_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '923f5eaa52256940e3e449fa580652862959e0b4',
+}
+
+selector = Match({
+    ('NRS1',) : 'jwst_nirspec_saturation_0006.fits',
+    ('NRS2',) : 'jwst_nirspec_saturation_0007.fits',
+})

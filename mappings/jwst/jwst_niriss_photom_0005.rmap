@@ -1,0 +1,14 @@
+header = {
+    'derived_from' : 'jwst_niriss_photom_0004.rmap',
+    'filekind' : 'PHOTOM',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_photom_0005.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '98503e74a543ff6f09998e840e2d5987031b0ffd',
+}
+
+selector = Match({
+    ('NIS',) : 'jwst_niriss_photom_0016.fits',
+})

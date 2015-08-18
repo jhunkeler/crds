@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'jwst_nircam_mask_0001.rmap',
+    'filekind' : 'MASK',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_mask_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : 'efb26f17f3d3819d5d3c5306a90770c2aba29abf',
+}
+
+selector = Match({
+    ('NRCA1',) : 'jwst_nircam_mask_0010.fits',
+    ('NRCA2',) : 'jwst_nircam_mask_0011.fits',
+    ('NRCA3',) : 'jwst_nircam_mask_0012.fits',
+    ('NRCA4',) : 'jwst_nircam_mask_0013.fits',
+    ('NRCALONG',) : 'jwst_nircam_mask_0014.fits',
+    ('NRCB1',) : 'jwst_nircam_mask_0015.fits',
+    ('NRCB2',) : 'jwst_nircam_mask_0016.fits',
+    ('NRCB3',) : 'jwst_nircam_mask_0017.fits',
+    ('NRCB4',) : 'jwst_nircam_mask_0018.fits',
+    ('NRCBLONG',) : 'jwst_nircam_mask_0019.fits',
+})

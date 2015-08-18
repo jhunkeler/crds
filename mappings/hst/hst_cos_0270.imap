@@ -1,11 +1,11 @@
 header = {
-    'derived_from' : 'hst_cos_0267.imap',
+    'derived_from' : 'hst_cos_0269.imap',
     'instrument' : 'COS',
     'mapping' : 'INSTRUMENT',
-    'name' : 'hst_cos_0268.imap',
+    'name' : 'hst_cos_0270.imap',
     'observatory' : 'HST',
     'parkey' : ('REFTYPE',),
-    'sha1sum' : '75275c673ca0b11235d2b9692eced3b62948a8c1',
+    'sha1sum' : 'dd4e6eb9c822ec185ed9cc840ffe4585d6e90b5c',
 }
 
 selector = {
@@ -15,8 +15,8 @@ selector = {
     'brsttab' : 'hst_cos_brsttab_0250.rmap',
     'deadtab' : 'hst_cos_deadtab_0250.rmap',
     'disptab' : 'hst_cos_disptab_0250.rmap',
-    'flatfile' : 'hst_cos_flatfile_0251.rmap',
-    'fluxtab' : 'hst_cos_fluxtab_0253.rmap',
+    'flatfile' : 'hst_cos_flatfile_0252.rmap',
+    'fluxtab' : 'hst_cos_fluxtab_0255.rmap',
     'geofile' : 'hst_cos_geofile_0250.rmap',
     'gsagtab' : 'hst_cos_gsagtab_0250.rmap',
     'hvtab' : 'hst_cos_hvtab_0259.rmap',
