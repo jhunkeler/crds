@@ -1,0 +1,19 @@
+header = {
+    'derived_from' : 'jwst_miri_area_0002.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'AREA',
+    'filetype' : 'AREA',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_area_0003.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.FILTER', 'META.EXPOSURE.TYPE'),),
+    'sha1sum' : '9cf63c6c0585d573766442a3632516dae0d1a88a',
+    'suffix' : 'area',
+    'text_descr' : 'Pixel-Area Map',
+}
+
+selector = Match({
+    ('N/A', 'N/A', 'MIR_IMAGE') : 'jwst_miri_area_0001.fits',
+    ('N/A', 'N/A', 'NOT MIR_IMAGE') : 'N/A',
+})

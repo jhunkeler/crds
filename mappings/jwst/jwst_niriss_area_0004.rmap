@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'jwst_niriss_area_0003.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'AREA',
+    'filetype' : 'AREA',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_area_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.FILTER', 'META.INSTRUMENT.PUPIL', 'META.EXPOSURE.TYPE'),),
+    'sha1sum' : 'fef8dd6af138f20c9c3a315923a27378d878dbe1',
+    'suffix' : 'area',
+    'text_descr' : 'Pixel-Area Map',
+}
+
+selector = Match({
+    ('N/A', 'N/A', 'N/A', 'NIS_IMAGE') : 'jwst_niriss_area_0002.fits',
+    ('N/A', 'N/A', 'N/A', 'NOT NIS_IMAGE') : 'N/A',
+    ('NIS', 'CLEAR', 'CLEARP', 'N/A') : 'jwst_niriss_area_0001.fits',
+})

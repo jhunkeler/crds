@@ -1,0 +1,18 @@
+header = {
+    'derived_from' : 'jwst_nircam_area_0001.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'AREA',
+    'filetype' : 'AREA',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_area_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.FILTER', 'META.INSTRUMENT.PUPIL'),),
+    'sha1sum' : 'bbd3d27291db79667ec043cd333a5d44eb503312',
+    'suffix' : 'area',
+    'text_descr' : 'Pixel-Area Map',
+}
+
+selector = Match({
+    ('N/A', 'N/A', 'N/A') : 'jwst_nircam_area_0001.fits',
+})

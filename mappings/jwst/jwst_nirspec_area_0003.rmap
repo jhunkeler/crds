@@ -1,0 +1,19 @@
+header = {
+    'derived_from' : 'jwst_nirspec_area_0002.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'AREA',
+    'filetype' : 'AREA',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_area_0003.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.FILTER', 'META.EXPOSURE.TYPE'),),
+    'sha1sum' : '43b9ebdb7b919ec806628eca00c548415a7420c1',
+    'suffix' : 'area',
+    'text_descr' : 'Pixel-Area Map',
+}
+
+selector = Match({
+    ('N/A', 'N/A', 'NOT NRS_IMAGE') : 'jwst_nirspec_area_0001.fits',
+    ('N/A', 'N/A', 'NRS_IMAGE') : 'jwst_nirspec_area_0001.fits',
+})
