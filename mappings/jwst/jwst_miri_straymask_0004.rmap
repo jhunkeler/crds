@@ -1,0 +1,17 @@
+header = {
+    'derived_from' : 'jwst_miri_straymask_0003.rmap',
+    'filekind' : 'STRAYMASK',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_straymask_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.BAND'),),
+    'sha1sum' : 'd8a3f3557dcb9c0c4a1293608c1c151e90d3c29b',
+}
+
+selector = Match({
+    ('MIRIFULONG', 'N/A') : 'N/A',
+    ('MIRIFUSHORT', 'LONG') : 'jwst_miri_straymask_0004.fits',
+    ('MIRIFUSHORT', 'MEDIUM') : 'jwst_miri_straymask_0005.fits',
+    ('MIRIFUSHORT', 'SHORT') : 'jwst_miri_straymask_0006.fits',
+})

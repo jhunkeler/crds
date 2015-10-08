@@ -1,0 +1,33 @@
+header = {
+    'derived_from' : 'jwst_nirspec_flat_0003.rmap',
+    'filekind' : 'FLAT',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_flat_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.FILTER', 'META.INSTRUMENT.GRATING', 'META.EXPOSURE.TYPE'),),
+    'sha1sum' : '29f2624b9ebf53c68fd838b2af6b8bd582ca37af',
+}
+
+selector = Match({
+    ('NRS1', '*', '*', 'NRS_IFU') : 'jwst_nirspec_flat_0020.fits',
+    ('NRS1', 'CLEAR', 'PRISM', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0030.fits',
+    ('NRS1', 'F070LP', 'G140H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0022.fits',
+    ('NRS1', 'F070LP', 'G140M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0024.fits',
+    ('NRS1', 'F100LP', 'G140H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0023.fits',
+    ('NRS1', 'F100LP', 'G140M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0025.fits',
+    ('NRS1', 'F170LP', 'G235H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0026.fits',
+    ('NRS1', 'F170LP', 'G235M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0027.fits',
+    ('NRS1', 'F290LP', 'G395H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0028.fits',
+    ('NRS1', 'F290LP', 'G395M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0029.fits',
+    ('NRS2', '*', '*', 'NRS_IFU') : 'jwst_nirspec_flat_0021.fits',
+    ('NRS2', 'CLEAR', 'PRISM', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0039.fits',
+    ('NRS2', 'F070LP', 'G140H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0031.fits',
+    ('NRS2', 'F070LP', 'G140M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0033.fits',
+    ('NRS2', 'F100LP', 'G140H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0032.fits',
+    ('NRS2', 'F100LP', 'G140M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0034.fits',
+    ('NRS2', 'F170LP', 'G235H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0035.fits',
+    ('NRS2', 'F170LP', 'G235M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0036.fits',
+    ('NRS2', 'F290LP', 'G395H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0037.fits',
+    ('NRS2', 'F290LP', 'G395M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_flat_0038.fits',
+})
