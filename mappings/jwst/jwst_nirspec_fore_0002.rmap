@@ -1,0 +1,28 @@
+header = {
+    'derived_from' : 'jwst_nirspec_fore_0001.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'fore',
+    'filetype' : 'FORE',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_fore_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.EXP_TYPE', 'META.INSTRUMENT.FILTER'),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.INSTRUMENT.EXP_TYPE',
+        'FILTER' : 'META.INSTRUMENT.FILTER',
+    },
+    'sha1sum' : '86b35e816e2a87515251ae5989c973453c6c9256',
+    'suffix' : 'fore',
+    'text_descr' : 'NIRSPEC FORE Model',
+}
+
+selector = Match({
+    ('NRS_FIXEDSLIT', 'CLEAR') : 'jwst_nirspec_fore_0001.asdf',
+    ('NRS_FIXEDSLIT', 'F070LP') : 'jwst_nirspec_fore_0002.asdf',
+    ('NRS_FIXEDSLIT', 'F100LP') : 'jwst_nirspec_fore_0003.asdf',
+    ('NRS_FIXEDSLIT', 'F110W') : 'jwst_nirspec_fore_0004.asdf',
+    ('NRS_FIXEDSLIT', 'F140X') : 'jwst_nirspec_fore_0005.asdf',
+    ('NRS_FIXEDSLIT', 'F170LP') : 'jwst_nirspec_fore_0006.asdf',
+    ('NRS_FIXEDSLIT', 'F290LP') : 'jwst_nirspec_fore_0007.asdf',
+})

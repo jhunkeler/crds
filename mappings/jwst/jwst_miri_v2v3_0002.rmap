@@ -1,0 +1,29 @@
+header = {
+    'derived_from' : 'jwst_miri_v2v3_0001.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'v2v3',
+    'filetype' : 'V2V3',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_v2v3_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.EXP_TYPE', 'META.INSTRUMENT.CHANNEL', 'META.INSTRUMENT.BAND'),),
+    'reference_to_dataset' : {
+        'BAND' : 'META.INSTRUMENT.BAND',
+        'CHANNEL' : 'META.INSTRUMENT.CHANNEL',
+        'DETECTOR' : 'META.INSTRUMENT.DETECTOR',
+        'EXP_TYPE' : 'META.INSTRUMENT.EXP_TYPE',
+    },
+    'sha1sum' : 'f4bba72b07e7ad9c964b1fa039b3f5a9da523d66',
+    'suffix' : 'v2v3',
+    'text_descr' : 'MIRI v2-v3 map',
+}
+
+selector = Match({
+    ('MIRIFULONG', 'MIR_MRS', '34', 'LONG') : 'jwst_miri_v2v3_0004.asdf',
+    ('MIRIFULONG', 'MIR_MRS', '34', 'MEDIUM') : 'jwst_miri_v2v3_0005.asdf',
+    ('MIRIFULONG', 'MIR_MRS', '34', 'SHORT') : 'jwst_miri_v2v3_0006.asdf',
+    ('MIRIFUSHORT', 'MIR_MRS', '12', 'MEDIUM') : 'jwst_miri_v2v3_0002.asdf',
+    ('MIRIFUSHORT', 'MIR_MRS', '12', 'SHORT') : 'jwst_miri_v2v3_0003.asdf',
+    ('MIRIFUSHORT', 'N/A', '12', 'LONG') : 'jwst_miri_v2v3_0001.asdf',
+})

@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'jwst_nirspec_extract1d_0001.rmap',
+    'file_ext' : '.json',
+    'filekind' : 'EXTRACT1D',
+    'filetype' : 'EXTRACT1D',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_extract1d_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '1403711c341b366c3172f7ae95e0f95aae4f2f32',
+    'suffix' : 'extract1d',
+    'text_descr' : '1-D Spectral Extraction',
+}
+
+selector = Match({
+    'NRS_FIXEDSLIT' : 'jwst_nirspec_extract1d_0001.json',
+})

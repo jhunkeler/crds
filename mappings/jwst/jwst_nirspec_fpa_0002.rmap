@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'jwst_nirspec_fpa_0001.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'fpa',
+    'filetype' : 'FPA',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_fpa_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.EXP_TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.INSTRUMENT.EXP_TYPE',
+    },
+    'sha1sum' : '9b1ddd078d616106dc281e3d53d195fb4e74a8a7',
+    'suffix' : 'fpa',
+    'text_descr' : 'NIRSPEC FPA Description',
+}
+
+selector = Match({
+    'NRS_FIXEDSLIT' : 'jwst_nirspec_fpa_0001.asdf',
+})

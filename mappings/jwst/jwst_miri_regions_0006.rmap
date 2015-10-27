@@ -1,0 +1,28 @@
+header = {
+    'derived_from' : 'jwst_miri_regions_0005.rmap',
+    'filekind' : 'REGIONS',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_regions_0006.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.CHANNEL', 'META.INSTRUMENT.BAND', 'META.EXPOSURE.TYPE'),),
+    'reference_to_dataset' : {
+        'BAND' : 'META.INSTRUMENT.BAND',
+        'CHANNEL' : 'META.INSTRUMENT.CHANNEL',
+        'DETECTOR' : 'META.INSTRUMENT.DETECTOR',
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : 'c2ffd219d408275bf2928e247761b907ef57ff65',
+}
+
+selector = Match({
+    ('ANY', 'ANY', 'ANY', 'MIR_4QPM') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'MIR_DARK') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'MIR_FLAT-IMAGE') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'MIR_FLAT-MRS') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'MIR_IMAGE') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'MIR_LRS-FIXEDSLIT') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'MIR_LRS-SLITLESS') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'MIR_LYOT') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'MIR_TACQ') : 'N/A',
+})

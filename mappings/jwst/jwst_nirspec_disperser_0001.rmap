@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'jwst_nirspec_disperser_0000.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'disperser',
+    'filetype' : 'DISPERSER',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_disperser_0001.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.GRATING', 'META.INSTRUMENT.EXP_TYPE'),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.INSTRUMENT.EXP_TYPE',
+        'GRATING' : 'META.INSTRUMENT.GRATING',
+    },
+    'sha1sum' : 'ebd718fb97bd6c5a09ed2c48531e0bae1dc2b535',
+    'suffix' : 'disperser',
+    'text_descr' : 'NIRSPEC Disperser Description',
+}
+
+selector = Match({
+})

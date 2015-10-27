@@ -1,0 +1,30 @@
+header = {
+    'derived_from' : 'jwst_nirspec_0032.imap',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'INSTRUMENT',
+    'name' : 'jwst_nirspec_0033.imap',
+    'observatory' : 'JWST',
+    'parkey' : ('REFTYPE',),
+    'sha1sum' : '7178d3a9d70857cf7037dc103f6cde2c7ff52b50',
+}
+
+selector = {
+    'AREA' : 'jwst_nirspec_area_0004.rmap',
+    'DARK' : 'jwst_nirspec_dark_0003.rmap',
+    'DISTORTION' : 'jwst_nirspec_distortion_0003.rmap',
+    'EXTRACT1D' : 'jwst_nirspec_extract1d_0001.rmap',
+    'FLAT' : 'jwst_nirspec_flat_0004.rmap',
+    'GAIN' : 'jwst_nirspec_gain_0001.rmap',
+    'IPC' : 'jwst_nirspec_ipc_0000.rmap',
+    'LASTFRAME' : 'N/A',
+    'LINEARITY' : 'jwst_nirspec_linearity_0003.rmap',
+    'MASK' : 'jwst_nirspec_mask_0002.rmap',
+    'PHOTOM' : 'jwst_nirspec_photom_0004.rmap',
+    'READNOISE' : 'jwst_nirspec_readnoise_0001.rmap',
+    'REGIONS' : 'jwst_nirspec_regions_0004.rmap',
+    'RESET' : 'N/A',
+    'SATURATION' : 'jwst_nirspec_saturation_0002.rmap',
+    'SPECWCS' : 'jwst_nirspec_specwcs_0004.rmap',
+    'SUPERBIAS' : 'jwst_nirspec_superbias_0004.rmap',
+    'WCSREGIONS' : 'N/A',
+}

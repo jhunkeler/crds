@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'jwst_niriss_extract1d_0001.rmap',
+    'file_ext' : '.json',
+    'filekind' : 'EXTRACT1D',
+    'filetype' : 'EXTRACT1D',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_extract1d_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : 'af1879461ba1612aedb7c53c1d7c3073f17ffd82',
+    'suffix' : 'extract1d',
+    'text_descr' : '1-D Spectral Extraction',
+}
+
+selector = Match({
+    'NIS_SOSS' : 'jwst_niriss_extract1d_0001.json',
+})

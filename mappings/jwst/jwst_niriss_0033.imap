@@ -1,0 +1,31 @@
+header = {
+    'derived_from' : 'jwst_niriss_0032.imap',
+    'instrument' : 'NIRISS',
+    'mapping' : 'INSTRUMENT',
+    'name' : 'jwst_niriss_0033.imap',
+    'observatory' : 'JWST',
+    'parkey' : ('REFTYPE',),
+    'sha1sum' : 'd9cc1eb175ade7000d3cd8ca0940d4e414ef8887',
+}
+
+selector = {
+    'AREA' : 'jwst_niriss_area_0004.rmap',
+    'DARK' : 'jwst_niriss_dark_0008.rmap',
+    'DISTORTION' : 'jwst_niriss_distortion_0001.rmap',
+    'EXTRACT1D' : 'jwst_niriss_extract1d_0002.rmap',
+    'FLAT' : 'jwst_niriss_flat_0004.rmap',
+    'GAIN' : 'jwst_niriss_gain_0003.rmap',
+    'IPC' : 'jwst_niriss_ipc_0002.rmap',
+    'LASTFRAME' : 'N/A',
+    'LINEARITY' : 'jwst_niriss_linearity_0006.rmap',
+    'MASK' : 'jwst_niriss_mask_0005.rmap',
+    'PHOTOM' : 'jwst_niriss_photom_0006.rmap',
+    'READNOISE' : 'jwst_niriss_readnoise_0003.rmap',
+    'REGIONS' : 'N/A',
+    'RESET' : 'N/A',
+    'SATURATION' : 'jwst_niriss_saturation_0004.rmap',
+    'SPECWCS' : 'N/A',
+    'SUPERBIAS' : 'jwst_niriss_superbias_0005.rmap',
+    'THROUGHPUT' : 'jwst_niriss_throughput_0003.rmap',
+    'WCSREGIONS' : 'N/A',
+}

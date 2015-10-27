@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'jwst_nirspec_msa_0000.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'msa',
+    'filetype' : 'MSA',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_msa_0001.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.EXP_TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.INSTRUMENT.EXP_TYPE',
+    },
+    'sha1sum' : '8850cef3f165cf9523ddf5e3ca7fc2b06966f381',
+    'suffix' : 'msa',
+    'text_descr' : 'NIRSPEC MSA Description',
+}
+
+selector = Match({
+})

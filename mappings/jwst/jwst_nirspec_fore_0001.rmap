@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'jwst_nirspec_fore_0000.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'fore',
+    'filetype' : 'FORE',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_fore_0001.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.EXP_TYPE', 'META.INSTRUMENT.FILTER'),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.INSTRUMENT.EXP_TYPE',
+        'FILTER' : 'META.INSTRUMENT.FILTER',
+    },
+    'sha1sum' : 'f5ef248e64cd0e729afca4fae18318c9c9a09886',
+    'suffix' : 'fore',
+    'text_descr' : 'NIRSPEC FORE Model',
+}
+
+selector = Match({
+})

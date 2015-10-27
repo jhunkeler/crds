@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'jwst_niriss_distortion_0001.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'DISTORTION',
+    'filetype' : 'DISTORTION',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_distortion_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '7ab1b7226159d79e210c1dd2841354bb1d0d89b9',
+    'suffix' : 'distortion',
+    'text_descr' : 'Distortion',
+}
+
+selector = Match({
+    'NIS_IMAGE' : 'jwst_niriss_distortion_0001.asdf',
+})
