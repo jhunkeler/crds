@@ -1,0 +1,28 @@
+header = {
+    'derived_from' : 'jwst_nirspec_disperser_0002.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'disperser',
+    'filetype' : 'DISPERSER',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_disperser_0003.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.GRATING', 'META.EXPOSURE.TYPE'),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+        'GRATING' : 'META.INSTRUMENT.GRATING',
+    },
+    'sha1sum' : 'c0352eeb5ae90c2d6e98cb07e09ffc2421761222',
+    'suffix' : 'disperser',
+    'text_descr' : 'NIRSPEC Disperser Description',
+}
+
+selector = Match({
+    ('G140H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_disperser_0001.asdf',
+    ('G140M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_disperser_0002.asdf',
+    ('G235H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_disperser_0003.asdf',
+    ('G235M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_disperser_0004.asdf',
+    ('G395H', 'NRS_FIXEDSLIT') : 'jwst_nirspec_disperser_0005.asdf',
+    ('G395M', 'NRS_FIXEDSLIT') : 'jwst_nirspec_disperser_0006.asdf',
+    ('MIRROR', 'NRS_FIXEDSLIT') : 'jwst_nirspec_disperser_0007.asdf',
+})
