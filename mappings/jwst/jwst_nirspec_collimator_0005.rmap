@@ -1,0 +1,31 @@
+header = {
+    'derived_from' : 'jwst_nirspec_collimator_0003.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'collimator',
+    'filetype' : 'COLLIMATOR',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_collimator_0005.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : 'fa0162f97787d96eb14ee8704b5daa2814a795ee',
+    'suffix' : 'collimator',
+    'text_descr' : 'NIRSPEC Collimator Description',
+}
+
+selector = Match({
+    'NRS_BOTA' : 'N/A',
+    'NRS_COMFIRM' : 'N/A',
+    'NRS_FIXEDSLIT' : 'jwst_nirspec_collimator_0001.asdf',
+    'NRS_FOCUS' : 'N/A',
+    'NRS_IFU' : 'N/A',
+    'NRS_IMAGE' : 'N/A',
+    'NRS_MIMF' : 'N/A',
+    'NRS_MSASPEC' : 'N/A',
+    'NRS_TACONFIRM' : 'N/A',
+    'NRS_TACQ' : 'N/A',
+    'NRS_TASLIT' : 'N/A',
+})

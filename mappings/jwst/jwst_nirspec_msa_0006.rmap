@@ -1,0 +1,31 @@
+header = {
+    'derived_from' : 'jwst_nirspec_msa_0005.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'msa',
+    'filetype' : 'MSA',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_msa_0006.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '3a7d30b447e30656becd5bac3af040178990d7d7',
+    'suffix' : 'msa',
+    'text_descr' : 'NIRSPEC MSA Description',
+}
+
+selector = Match({
+    'NRS_BOTA' : 'N/A',
+    'NRS_CONFIRM' : 'N/A',
+    'NRS_FIXEDSLIT' : 'jwst_nirspec_msa_0001.asdf',
+    'NRS_FOCUS' : 'N/A',
+    'NRS_IFU' : 'N/A',
+    'NRS_IMAGE' : 'N/A',
+    'NRS_MIMF' : 'N/A',
+    'NRS_MSASPEC' : 'N/A',
+    'NRS_TACONFIRM' : 'N/A',
+    'NRS_TACQ' : 'N/A',
+    'NRS_TASLIT' : 'N/A',
+})

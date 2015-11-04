@@ -1,0 +1,31 @@
+header = {
+    'derived_from' : 'jwst_nirspec_ote_0005.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'ote',
+    'filetype' : 'OTE',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_ote_0006.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '7d8680d51789633af80b8e4ebd41fbc8752a1ec7',
+    'suffix' : 'ote',
+    'text_descr' : 'NIRSPEC OTE Description',
+}
+
+selector = Match({
+    'NRS_BOTA' : 'N/A',
+    'NRS_CONFIRM' : 'N/A',
+    'NRS_FIXEDSLIT' : 'jwst_nirspec_ote_0001.asdf',
+    'NRS_FOCUS' : 'N/A',
+    'NRS_IFU' : 'N/A',
+    'NRS_IMAGE' : 'N/A',
+    'NRS_MIMF' : 'N/A',
+    'NRS_MSASPEC' : 'N/A',
+    'NRS_TACONFIRM' : 'N/A',
+    'NRS_TACQ' : 'N/A',
+    'NRS_TASLIT' : 'N/A',
+})

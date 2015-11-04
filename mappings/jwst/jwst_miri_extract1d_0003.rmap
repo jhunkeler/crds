@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'jwst_miri_extract1d_0002.rmap',
+    'file_ext' : '.json',
+    'filekind' : 'EXTRACT1D',
+    'filetype' : 'EXTRACT1D',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_extract1d_0003.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : 'f1d6f30dadc6a524cbd4b79779d43d2ae4538fc1',
+    'suffix' : 'extract1d',
+    'text_descr' : '1-D Spectral Extraction',
+}
+
+selector = Match({
+    'MIR_LRS-FIXEDSLIT|MIR_LRS-SLITLESS' : 'jwst_miri_extract1d_0002.json',
+})

@@ -1,0 +1,31 @@
+header = {
+    'derived_from' : 'jwst_nirspec_camera_0003.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'camera',
+    'filetype' : 'CAMERA',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_camera_0005.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '14d5f58530ebb8a73e313f99c96cf1bc75729fc4',
+    'suffix' : 'camera',
+    'text_descr' : 'Camera Model',
+}
+
+selector = Match({
+    'NRS_BOTA' : 'N/A',
+    'NRS_COMFIRM' : 'N/A',
+    'NRS_FIXEDSLIT' : 'jwst_nirspec_camera_0001.asdf',
+    'NRS_FOCUS' : 'N/A',
+    'NRS_IFU' : 'N/A',
+    'NRS_IMAGE' : 'N/A',
+    'NRS_MIMF' : 'N/A',
+    'NRS_MSASPEC' : 'N/A',
+    'NRS_TACONFIRM' : 'N/A',
+    'NRS_TACQ' : 'N/A',
+    'NRS_TASLIT' : 'N/A',
+})
