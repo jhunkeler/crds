@@ -436,7 +436,8 @@ class Mapping(object):
         """Given a mapping at `filepath`,  validate it and return a fully
         instantiated (header, selector) tuple.
         """
-        with log.augment_exception("Can't load file " + where):
+        with log.augment_exception("Can't load file " + where, 
+                                   exception_class=crexc.MappingError):
             code = MAPPING_VALIDATOR.compile_and_check(text)
             header, selector, comment = cls._interpret(code)
         return LowerCaseDict(header), selector, comment
@@ -595,7 +596,7 @@ class Mapping(object):
         crds.certify.   ContextMappings are mostly validated at load time.
         Stick extra checks for context mappings here.
         """
-        log.verbose("Validating", repr(self.basename))
+        log.verbose("Validating", repr(self.basename), "with parameters", repr(self.parkey))
 
     def difference(self, new_mapping, path=(), pars=(), include_header_diffs=False, recurse_added_deleted=False):
         """Compare `self` with `new_mapping` and return a list of difference
@@ -909,16 +910,16 @@ class PipelineContext(ContextMapping):
 
     def get_instrument(self, header):
         """Get the instrument name defined by file `header`."""
-        try:
-            instr = header[self.instrument_key.upper()]
-        except KeyError:
-            try:
-                instr = header[self.instrument_key.lower()]
+        for key in [self.instrument_key.upper(), self.instrument_key.lower()] + crds.INSTRUMENT_KEYWORDS:
+            try: # This hack makes FITS headers work prior to back-mapping to data model names.
+                instr = header[key]
             except KeyError:
-                try: # This hack makes FITS headers work prior to back-mapping to data model names.
-                    instr = header["INSTRUME"]
-                except KeyError:
-                    raise crexc.CrdsError("Missing '%s' keyword in header" % self.instrument_key)
+                continue
+            else:
+                if instr.upper() != "UNDEFINED":
+                    break
+        else:
+            raise crexc.CrdsError("Missing '%s' keyword in header for determining instrument." % self.instrument_key)
         return instr.upper()
 
     def get_item_key(self, filename):
@@ -1361,13 +1362,12 @@ class ReferenceMapping(Mapping):
         filekind / reftype.   Each field of each Match tuple must have a value
         OK'ed by the TPN.  UseAfter dates must be correctly formatted.
         """
-        log.verbose("Validating", repr(self.basename))
-        if  "reference_to_dataset" in self.header:
-            for case in self.parkey:
-                for par in case:
-                    if par.upper() not in self.reference_to_dataset.values():
-                        raise crexc.InconsistentParkeyError("Inconsistent parkey and reference_to_dataset header items:", 
-                                                      repr(par), "in", repr(self.reference_to_dataset))
+        log.verbose("Validating", repr(self.basename), "with parameters", repr(self.parkey))
+        if "reference_to_dataset" in self.header:
+            parkeys = self.get_required_parkeys()
+            for reference, dataset in self.reference_to_dataset.items():
+                assert dataset.upper() in parkeys, \
+                    "reference_to_dataset dataset keyword not in parkey keywords."
         with log.augment_exception("Invalid mapping:", self.instrument, self.filekind):
             self.selector.validate_selector(self.tpn_valid_values)
 
@@ -1455,10 +1455,12 @@ class ReferenceMapping(Mapping):
         """Returns new ReferenceMapping made from `self` inserting `reffile`."""
         # Since expansion rules may depend on keys not used in matching,  get entire header  
         header = data_file.get_header(reffile, observatory=self.observatory)
-        
         header = data_file.ensure_keys_defined(header, needed_keys=self.get_reference_parkeys(), 
-                                               define_as=self.obs_package.UNDEFINED_PARKEY_SUBST_VALUE)
-    
+                                               define_as=self.obs_package.UNDEFINED_PARKEY_SUBST_VALUE)    
+        return self._insert_reference(header, os.path.basename(reffile))
+
+    def _insert_reference(self, header, reffile):
+        """Returns new ReferenceMapping made from `self` inserting `reffile`."""
         # NOTE: required parkeys are in terms of *dataset* headers,  not reference headers.
         log.verbose("insert_reference raw reffile header:\n", 
                     log.PP([ (key,val) for (key,val) in header.items() if key in self.get_reference_parkeys() ]),
@@ -1473,23 +1475,24 @@ class ReferenceMapping(Mapping):
         if self._rmap_update_headers:
             # Generate variations on header as needed to emulate header "pre-conditioning" and fall back scenarios.
             for hdr in self._rmap_update_headers(self, header):
-                new = self.insert(hdr, os.path.basename(reffile))
+                new = self.insert(hdr, reffile)
         else:
             # almost all instruments/types do this.
-            new = self.insert(header, os.path.basename(reffile))
+            new = self.insert(header, reffile)
         return new
 
     def get_reference_parkeys(self):
-        """Return parkey names from the reference file perspective."""
+        """Return parkey names from the reference file perspective,  this can be a superset
+        of the obvious parkey count due to redundant keyword expressions resulting from 
+        reference_to_dataset and mixed filetypes (some translated,  some not.)
+        """
         dataset_parkeys = self.get_required_parkeys()
-        reference_to_dataset = getattr(self, "reference_to_dataset", None)
-        if reference_to_dataset:
-            dataset_to_reference = utils.invert_dict(reference_to_dataset)
-            reference_parkeys = [ dataset_to_reference[key] if key in dataset_to_reference else key 
-                                  for key in dataset_parkeys ]
-            return tuple(reference_parkeys)
-        else:
-            return tuple(dataset_parkeys)
+        if "reference_to_dataset" in self.header:
+            for reference, dataset in self.reference_to_dataset.items():
+                assert dataset in dataset_parkeys, \
+                    "reference_to_dataset dataset keyword not in parkey tuple."
+                dataset_parkeys.append(reference)
+        return tuple(sorted(set(dataset_parkeys)))
 
     def insert(self, header, value):
         """Given reference file `header` and terminal `value`, insert the value into a copy

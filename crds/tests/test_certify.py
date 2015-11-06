@@ -43,9 +43,10 @@ def certify_truncated_file():
     CRDS  : WARNING  AstropyUserWarning : astropy.io.fits.file : File may have been truncated: actual file length (7000) is smaller than the expected size (8640)
     CRDS  : WARNING  AstropyUserWarning : astropy.io.fits.file : File may have been truncated: actual file length (7000) is smaller than the expected size (8640)
     CRDS  : WARNING  AstropyUserWarning : astropy.io.fits.file : File may have been truncated: actual file length (7000) is smaller than the expected size (8640)
+    CRDS  : WARNING  AstropyUserWarning : astropy.io.fits.file : File may have been truncated: actual file length (7000) is smaller than the expected size (8640)
     CRDS  : INFO     ########################################
     CRDS  : INFO     0 errors
-    CRDS  : INFO     12 warnings
+    CRDS  : INFO     13 warnings
     CRDS  : INFO     4 infos
     0
     """
@@ -66,10 +67,12 @@ def certify_dump_provenance_fits():
     CRDS  : INFO     [0] PEDIGREE GROUND 16/07/2008 16/07/2010 
     CRDS  : INFO     [0] USEAFTER Oct 01 1996 00:00:00 
     CRDS  : INFO     [0] VCALCOS 2.0 
+    CRDS  : INFO     DATE-OBS = '1996-10-01'
+    CRDS  : INFO     TIME-OBS = '00:00:00'
     CRDS  : INFO     ########################################
     CRDS  : INFO     0 errors
     CRDS  : INFO     0 warnings
-    CRDS  : INFO     14 infos
+    CRDS  : INFO     16 infos
     0
     """
 
@@ -78,15 +81,19 @@ def certify_dump_provenance_generic():
     >>> TestCertifyScript("crds.certify data/valid.json --dump-provenance --comparison-context jwst.pmap")()
     CRDS  : INFO     ########################################
     CRDS  : INFO     Certifying 'data/valid.json' (1/1) as 'JSON' relative to context 'jwst.pmap'
-    CRDS  : INFO     META.PEDIGREE = 'dummy'
-    CRDS  : INFO     META.USEAFTER = 'Mar 21 2001 12:00:00'
-    CRDS  : WARNING  Missing keyword 'COMMENT'.
-    CRDS  : WARNING  Missing keyword 'DESCRIP'.
-    CRDS  : WARNING  Missing keyword 'HISTORY'.
+    CRDS  : INFO     AUTHOR = 'Todd Miller'
+    CRDS  : INFO     DESCRIP = 'Brief notes on this reference.'
+    CRDS  : INFO     HISTORY = 'How this reference came to be and changed over time.'
+    CRDS  : INFO     META.EXPOSURE.READPATT = 'any'
+    CRDS  : INFO     META.INSTRUMENT.DETECTOR = 'mirifulong'
+    CRDS  : INFO     META.INSTRUMENT.NAME = 'MIRI'
+    CRDS  : INFO     META.TELESCOPE = 'jwst'
+    CRDS  : INFO     PEDIGREE = 'dummy'
+    CRDS  : INFO     USEAFTER = '2015-01-25T12:00:00'
     CRDS  : INFO     ########################################
     CRDS  : INFO     0 errors
-    CRDS  : INFO     3 warnings
-    CRDS  : INFO     5 infos
+    CRDS  : INFO     0 warnings
+    CRDS  : INFO     12 infos
     0
     """
 
@@ -262,7 +269,7 @@ def certify_jwst_invalid():
     CRDS  : INFO     ########################################
     CRDS  : INFO     Certifying 'data/niriss_ref_photom_bad.fits' (1/1) as 'FITS' relative to context None
     CRDS  : INFO     FITS file 'niriss_ref_photom_bad.fits' conforms to FITS standards.
-    CRDS  : ERROR    instrument='UNKNOWN' type='UNKNOWN' data='data/niriss_ref_photom_bad.fits' ::  Validation error : Error loading 'data/niriss_ref_photom_bad.fits' : meta.instrument.detector: 'FOO' is not one of [u'NRCA1', u'NRCA2', u'NRCA3', u'NRCA4', u'NRCALONG', u'NRCB1', u'NRCB2', u'NRCB3', u'NRCB4', u'NRCBLONG', u'NRS1', u'NRS2', u'MIRIMAGE', u'MIRIFULONG', u'MIRIFUSHORT', u'NIRISS', u'NIS', u'GUIDER1', u'GUIDER2']. Setting to default of None
+    CRDS  : ERROR    instrument='UNKNOWN' type='UNKNOWN' data='data/niriss_ref_photom_bad.fits' ::  Validation error : Error loading : JWST Data Model (jwst_lib.models) : 'FOO' is not valid in keyword 'DETECTOR'
     CRDS  : INFO     ########################################
     CRDS  : INFO     1 errors
     CRDS  : INFO     0 warnings
@@ -363,7 +370,7 @@ class TestCertify(CRDSTestCase):
 
     def test_AsdfCertify_valid(self):
         certify.certify_file(
-            self.data("valid.asdf"), observatory="jwst",context="jwst.pmap", trap_exceptions=False)
+            self.data("valid.asdf"), observatory="jwst",context="jwst_0082.pmap", trap_exceptions=False)
             
     def test_AsdfCertify_invalid(self):
         assert_raises(certify.InvalidFormatError, certify.certify_file,

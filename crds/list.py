@@ -10,7 +10,7 @@ import os.path
 import sys
 
 import crds
-from crds import cmdline, rmap, log, config, heavy_client
+from crds import cmdline, rmap, log, config, heavy_client, python23
 from crds.client import api
 
 class ListScript(cmdline.ContextsScript):
@@ -100,7 +100,9 @@ class ListScript(cmdline.ContextsScript):
 
     @property
     def remote_context(self):
-        """Print the name of the context in use by default at the"""
+        """Print the name of the context in use at pipeline `self.args.remote_context`
+        as recorded on the server after being pushed by the crds.sync tool in the pipeline.
+        """
         self.require_server_connection()
         return api.get_remote_context(self.observatory, self.args.remote_context)
 
@@ -147,7 +149,11 @@ class ListScript(cmdline.ContextsScript):
                 pars = api.get_dataset_headers_by_id(context, self.args.datasets)
                 pmap = rmap.get_cached_mapping(context)
                 for (dataset_id, header) in pars.items():
+                    if isinstance(header, python23.string_types):
+                        log.error("No header for", repr(dataset_id), ":", repr(header)) # header is reason
+                        continue
                     header2 = pmap.minimize_header(header)
+                    header2.pop("REFTYPE", None)
                     log.info("Dataset pars for", repr(dataset_id), "with respect to", repr(context) + ":\n",
                              log.PP(header2))
                     
@@ -196,7 +202,10 @@ def _print_dict(title, dictionary, selected = None):
     print(title)
     if dictionary:
         for key in selected:
-            print("\t" + key + " = " + repr(dictionary[key]))
+            try:
+                print("\t" + key + " = " + repr(dictionary[key]))
+            except Exception:
+                print("\t" + key + " = " + repr(getattr(dictionary, key)))
     else:
         print("\t" + "none")
 

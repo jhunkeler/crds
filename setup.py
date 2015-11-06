@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 import sys
 import glob
 
@@ -43,14 +43,6 @@ setup_pars = {
         },
     "scripts" : glob.glob("scripts/*"),
     }
-
-if "--include-test-data" in sys.argv:
-    sys.argv.remove("--include-test-data")
-    setup_pars["package_data"].update({
-            'crds.tests' : [
-                'data/*',
-                ],
-            })
 
 import crds   #  local subdirectory...  ew...
 

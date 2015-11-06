@@ -1,11 +1,18 @@
 {
     "meta" : {
            "instrument" : {
-                "name" : "miri"
+                "name" : "miri",
+                "detector" : "mirifulong"
            },
-           "type" : "flat",
-           "pedigree" : "dummy",
-           "useafter" : "Mar 21 2001 12:00:00",
-           "detector" : "mirifulong"
-           }
+           "exposure" : {
+                      "readpatt" : "any"
+           },
+           "telescope" : "jwst"
+    },
+    "reftype" : "flat",
+    "pedigree" : "dummy",
+    "useafter" : "2015-01-25T12:00:00",
+    "author" : "Todd Miller",
+    "descrip" : "Brief notes on this reference.",
+    "history" : "How this reference came to be and changed over time."
 }

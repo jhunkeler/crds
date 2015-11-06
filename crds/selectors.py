@@ -257,7 +257,7 @@ class Selector(object):
                     new_match = tuple(new_match)
                     log.verbose("In", repr(self._rmap_header["name"]), "applying substitution", 
                                 (parkey, old_parvalue, replacement), "transforms",
-                                repr(match), "-->", repr(new_match), verbosity=60)
+                                repr(match), "-->", repr(new_match), verbosity=70)
                     selections[new_match] = selections.pop(match)
         return selections
 
@@ -267,7 +267,9 @@ class Selector(object):
         """
         return {
                 "parameters" : self.todict_parameters(),
-                "selections" : [ (key, val.todict()) if isinstance(val, Selector) else (key, val) for key,val in self._raw_selections ]
+                "selections" : [ (self.fix_singleton_match_case(key), val.todict()) if isinstance(val, Selector) 
+                                 else (self.fix_singleton_match_case(key), val) 
+                                 for key,val in self._raw_selections ]
                 }
 
     def todict_flat(self):
@@ -295,15 +297,15 @@ class Selector(object):
                         
         Since the selector is already defined,  also test todict():
         
-        >>> pp(sel.todict())      
+        >>> pp(sel.todict())
         {'parameters': ('DETECTOR',),
          'selections': [(('FUV',),
                          {'parameters': ('USEAFTER',),
-                          'selections': [('1996-10-01 00:00:00',
+                          'selections': [(('1996-10-01 00:00:00',),
                                           's7g1700gl_dead.fits')]}),
                         (('NUV',),
                          {'parameters': ('USEAFTER',),
-                          'selections': [('1996-10-01 00:00:00',
+                          'selections': [(('1996-10-01 00:00:00',),
                                           's7g1700ql_dead.fits')]})]}
         """
         flat = []
@@ -313,19 +315,23 @@ class Selector(object):
                 nested = val.todict_flat()
                 subpars = nested["parameters"]
                 # XXX hack!  convert or-globs to comma separated strings for web rendering
-                key = tuple([", ".join(str(parval).split("|")) for parval in key])
-                flat.extend([key + row for row in nested["selections"]])
+                key = tuple([", ".join(str(parval).split("|")) for parval in self.fix_singleton_match_case(key)])
+                flat.extend([self.fix_singleton_match_case(key) + row for row in nested["selections"]])
             else:
                 subpars = ["REFERENCE"]
-                if isinstance(key, python23.string_types):  # Fix non-tuple keys
-                    key = (key,)
-                flat.extend([key + (val,)])
+                flat.extend([self.fix_singleton_match_case(key) + (val,)])
         pars = list(self.todict_parameters()) + subpars
         return {
             "parameters" : pars,
             "selections" : flat,
             }
-        
+
+    def fix_singleton_match_case(self, case):
+        """Change special match cases with singleton parameters which remove the tuple notation
+        into standard tuple parameters.
+        """
+        return (case,) if isinstance(case, (python23.string_types, int, float, bool)) else case
+
     def delete_match_param(self, parameter):
         """Delete the value of `parameter` name in every match case,  recursively
         if `parameter is not in self._parameters.
@@ -434,8 +440,8 @@ class Selector(object):
                         self.short_name + " key=" + repr(key) + 
                         " is wrong length for parameters " + repr(self._parameters))
                 if esoteric_key(key[i]):
-                    # parmap[par] |= set([key[i]])
-                    pass  # for the consistently esoteric,  this == empty list == no checking
+                    parmap[par] = []  # == no checking
+                    break
                 else:
                     parmap[par] |= set(key[i].split("|"))
         for par, val in parmap.items():
@@ -494,6 +500,7 @@ class Selector(object):
         for selection in self._selections:
             key, choice = selection.key, selection.choice
             with log.augment_exception(repr(key)):
+                log.verbose("Validating key", repr(key))
                 self._validate_key(key, valid_values_map)
             with log.augment_exception(repr(key)):
                 if isinstance(choice, Selector):
@@ -554,12 +561,23 @@ class Selector(object):
         for JWST may (eventually) come from the data model schema instead.
         """
         if value in valid_list:   # typical |-glob valid_list membership
+            log.verbose("Value for", repr(name), "of", repr(value), "is in", repr(valid_list), verbosity=60)
             return
-        if "*" in valid_list or "N/A" in valid_list or not valid_list:   # some TPNs are type-only, empty list
+        if "*" in valid_list or "ANY" in valid_list  or \
+                "N/A" in valid_list or not valid_list:   # some TPNs are type-only, empty list
+            log.verbose("Valid list for", repr(name), "is empty or includes wild cards. OK, no other check.", verbosity=60)
             return
-        if esoteric_key(value) or value in ["*", "N/A"]:   # exempt
+        if value.startswith("NOT"):
+            log.verbose("NOT expression for", repr(name), "of", repr(value), 
+                        "validating negated sub-expression value.", verbosity=60)
+            self._validate_value(name, value[len("NOT"):].strip(), valid_list)
+            return
+        if esoteric_key(value) or value in ["*", "ANY", "N/A"]:   # exempt
+            log.verbose("Value of", repr(name), "of", repr(value), 
+                        "is unchecked esoteric or wild card.  OK, no other check.", verbosity=60)
             return
         if value.lower().startswith("between"):
+            log.verbose("Checking 'between' expression for", repr(name), "of", repr(value), verbosity=60)
             _btw, value1, value2 = value.split()
             self._validate_value(name, value1, valid_list)
             self._validate_value(name, value2, valid_list)
@@ -567,12 +585,17 @@ class Selector(object):
         if len(valid_list) == 1 and ":" in valid_list[0]:   # handle ranges in .tpns as n1:n2
             min, max = [float(x) for x in valid_list[0].split(":")]  # normalize everything as float
             if min <= float(value) <= max:
+                log.verbose("Numeric value of", repr(name), "of", repr(value), 
+                            "is in range", repr(min), "...", repr(max), verbosity=60)
                 return
             else:
                 raise ValidationError(
                     " parameter=" + repr(name) + " value =" +  repr(value) + " is not in range [" + 
                     str(min) + " .. " + str(max) + "]")
         if name in self._substitutions and value in self._substitutions[name]:
+            log.verbose("Value of", repr(name), "of", repr(value), "is substitution from", 
+                        repr(value), "to", repr(self._substitutions[name])+". Checking subsititution value.", verbosity=60)
+            self._validate_value(name, self._substitutions[name][value], valid_list)
             return
         raise ValidationError(
             " parameter=" + repr(name) + " value=" + repr(value) + 
@@ -681,6 +704,7 @@ class Selector(object):
     def _insert(self, header, value, parkey, classes, valid_values_map):
         """Execute the insertion,  popping off parkeys and classes on the way down."""
         key = self._make_key(header, parkey[0])
+        log.verbose("Validating key", repr(key))
         self._validate_key(key, valid_values_map)
         i = self._find_key(key)
         if len(classes) > 1:   # add or insert nested selector
@@ -1207,9 +1231,25 @@ class NotMatcher(Matcher):
             }[unnegated]
 
 def esoteric_key(key):
-    """Return True if `key` validation is a tautology or too complicated."""
+    """Return True if `key` validation is a tautology or too complicated.
+
+    >>> esoteric_key('NOT FUN')
+    True
+    >>> esoteric_key('FUN')
+    False
+    >>> esoteric_key('{ThisIsATest}')
+    True
+    >>> esoteric_key('#ThisIsATest#')
+    True
+    >>> esoteric_key('(ThisIsATest)')
+    True
+    >>> esoteric_key('{ThisIsATest)')   # a compromise,  ideally False
+    True
+    >>> esoteric_key('BETWEEN 100 200')
+    True
+    """
     key = key.upper()
-    return key.startswith(("{","(","#")) and key.endswith(("}",")","#")) or key.startswith("BETWEEN")
+    return key.startswith(("{","(","#")) and key.endswith(("}",")","#")) or key.startswith("BETWEEN") or key.startswith("NOT")
 
 def matcher(key):
     """Factory for different matchers based on key types.
@@ -1635,14 +1675,20 @@ Restore original debug behavior:
         for selection in self.winnowing_match(header):
             yield selection
 
-    def winnowing_match(self, header, raise_ambiguous=False):
+    def winnowing_match(self, header, raise_ambiguous=None):
         """Iterate through each of the parameters in `fitskeys`, binding
         them successively to corresponding values from `header`.  For
         each bound fitskey,  iterate through `selections` and winnow out
         keys which cannot match based on the value of the current fitskey.
         Successively yield any survivors,  in the order of most specific
         matching value (fewest *'s) to least specific matching value.
-        """        
+        """
+        if raise_ambiguous is None:
+            if "raise_ambiguous" in self._rmap_header:
+                raise_ambiguous = self._rmap_header["raise_ambiguous"] in ["True", "true", "TRUE", "1"]
+            else:
+                raise_ambiguous =  self._rmap_header.get("observatory", None) != "hst"
+
         weights, remaining = self._winnow(header, dict(self._match_selections))
 
         sorted_candidates = self._rank_candidates(weights, remaining)

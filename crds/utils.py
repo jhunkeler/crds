@@ -412,7 +412,14 @@ def evalfile(fname):
 
 # ===================================================================
 
-def create_path(path, mode=int("755", 8)):
+UMASK = 0o002
+with log.verbose_warning_on_exception("Failed determining UMASK"):
+    UMASK = os.umask(0)
+    os.umask(UMASK)
+
+DEFAULT_DIR_PERMS = ~UMASK & 0o777
+
+def create_path(path, mode=DEFAULT_DIR_PERMS):
     """Recursively traverses directory path creating directories as
     needed so that the entire path exists.
     """
@@ -427,10 +434,10 @@ def create_path(path, mode=int("755", 8)):
         current.append(str(part))
         subdir = os.path.abspath(os.path.join(*current))
         if not os.path.exists(subdir):
-            log.verbose("Creating", repr(subdir))
+            log.verbose("Creating", repr(subdir), "with permissions %o" % mode)
             os.mkdir(subdir, mode)
 
-def ensure_dir_exists(fullpath, mode=int("755", 8)):
+def ensure_dir_exists(fullpath, mode=DEFAULT_DIR_PERMS):
     """Creates dirs from `fullpath` if they don't already exist.
     """
     create_path(os.path.dirname(fullpath), mode)
@@ -444,7 +451,7 @@ def is_writable(filepath, no_exist=True):
     If `filepath` doesn't exist,  return `no_exist` if the directory is writable.
     """
     if not os.path.exists(filepath):   # If file doesn't exist,  make sure directory is writable.
-        return no_exist and is_writable(os.path.dirname(filepath))
+        return no_exist and len(os.path.dirname(filepath)) and is_writable(os.path.dirname(filepath))
     stats = os.stat(filepath)
     return bool((stats.st_mode & stat.S_IWUSR) and (stats.st_uid == os.geteuid()) or 
                 (stats.st_mode & stat.S_IWGRP) and (stats.st_gid in os.getgroups()) or
@@ -465,7 +472,6 @@ def remove(rmpath, observatory):
                 "remove() only works on files in CRDS cache. not: " + repr(rmpath)
             log.verbose("Removing: ", repr(rmpath))
             if os.path.isfile(rmpath):
-                os.chmod(rmpath, 0o666)
                 os.remove(rmpath)
             else:
                 pysh.sh("rm -rf ${rmpath}", raise_on_error=True)
@@ -506,7 +512,7 @@ def get_file_properties(observatory, filename):
 
 # ===================================================================
 
-MODULE_PATH_RE = re.compile(r"^crds(\.\w{1,32}){0,10}$")
+MODULE_PATH_RE = re.compile(r"^crds(\.\w{1,64}){0,10}$")
 
 def get_object(*args):
     """Import the given `dotted_name` and return the object.
@@ -684,6 +690,8 @@ def instrument_to_observatory(instrument):
     
     >>> instrument_to_observatory("acs")
     'hst'
+    >>> instrument_to_observatory("ACS")
+    'hst'
     >>> instrument_to_observatory("miri")
     'jwst'
     >>> instrument_to_observatory("foo")
@@ -779,7 +787,7 @@ def get_any_of(getter,  possible_keys,  default=None):
     """
     for key in possible_keys:
         val = getter.get(key, None)
-        if val is not None:
+        if val is not None and val not in ["undefined", "UNDEFINED"]:
             return val
     else:
         return default
@@ -799,6 +807,25 @@ def get_reference_paths(observatory):
     pkg = get_observatory_package(observatory)
     locate = get_locator_module(observatory)
     return sorted({locate.locate_dir(instrument) for instrument in pkg.INSTRUMENTS})
+
+
+def fix_json_strings(source_json):
+    """Squash unicode in nested json object `source_json`."""
+    if sys.version_info >= (3, 0, 0):
+        return source_json
+    if isinstance(source_json, dict):
+        result = {}
+        for key, val in source_json.items():
+            result[str(key)] = fix_json_strings(val)
+    elif isinstance(source_json, (list, tuple)):
+        result = []
+        for val in source_json:
+            result.append(fix_json_strings(val))
+    elif isinstance(source_json, string_types):
+        result = str(source_json)
+    else:
+        result = source_json
+    return result
 
 # These functions should actually be general,  working on both references and
 # dataset files.

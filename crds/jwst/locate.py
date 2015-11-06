@@ -31,7 +31,8 @@ HERE = os.path.dirname(__file__) or "./"
 
 def test():
     """Run the module doctests."""
-    import doctest, locate
+    import doctest
+    from . import locate
     return doctest.testmod(locate)
 
 # =======================================================================
@@ -43,10 +44,17 @@ from crds.jwst.tpn import get_tpninfos   #  reference_name_to_validator_key, map
 from crds.jwst import TYPES, INSTRUMENTS, FILEKINDS, EXTENSIONS
 
 reference_name_to_validator_key = TYPES.reference_name_to_validator_key 
-mapping_validator_key = TYPES.mapping_validator_key
+# mapping_validator_key = TYPES.mapping_validator_key
 get_row_keys = TYPES.get_row_keys
 get_row_keys_by_instrument = TYPES.get_row_keys_by_instrument
 get_item = TYPES.get_item
+suffix_to_filekind = TYPES.suffix_to_filekind
+
+# =======================================================================
+
+def mapping_validator_key(mapping):
+    """For now,  just use instrument based constraints."""
+    return (mapping.instrument + "_all_ld.tpn", mapping.name)
 
 # =======================================================================
 
@@ -70,6 +78,7 @@ def get_file_properties(filename):
         try:
             return decompose_newstyle_name(filename)[2:4]
         except Exception:
+            # NOTE: load_mapping more conservative than fetch_mapping used in properties_from_mapping
             mapping = rmap.load_mapping(filename)
             return mapping.instrument, mapping.filekind
     elif config.is_reference(filename):
@@ -130,12 +139,11 @@ def decompose_newstyle_name(filename):
         filekind = parts[2]
         serial = list_get(parts, 3, "")
 
-    assert instrument in INSTRUMENTS+[""], "Invalid instrument " + \
-        repr(instrument) + " in name " + repr(filename)
-    assert filekind in FILEKINDS+[""], "Invalid filekind " + \
-        repr(filekind) + " in name " + repr(filename)
-    assert re.match(r"\d*", serial), "Invalid id field " + \
-        repr(id) + " in name " + repr(filename)
+    # Don't include filename in these or it messes up crds.certify unique error tracking.
+
+    assert instrument in INSTRUMENTS+[""], "Invalid instrument " + repr(instrument)
+    assert filekind in FILEKINDS+[""], "Invalid filekind " + repr(filekind)
+    assert re.match(r"\d*", serial), "Invalid id field " + repr(id)
     # extension may vary for upload temporary files.
 
     return path, observatory, instrument, filekind, serial, ext
@@ -200,13 +208,11 @@ def ref_properties_from_header(filename):
     # For legacy files,  just use the root filename as the unique id
     path, parts, ext = _get_fields(filename)
     serial = os.path.basename(os.path.splitext(filename)[0])
-    header = data_file.get_header(filename)
-    instrument = utils.header_to_instrument(header, default="UNDEFINED").lower()
-    assert instrument in INSTRUMENTS, \
-        "Invalid instrument " + repr(instrument) + " in file " + repr(filename)
-    filekind = utils.get_any_of(header, ["REFTYPE", "META.TYPE"], "UNDEFINED").lower()
-    assert filekind in FILEKINDS, \
-        "Invalid file type " + repr(filekind) + " in file " + repr(filename)    
+    header = data_file.get_header(filename, observatory="jwst")
+    instrument = utils.header_to_instrument(header).lower()
+    assert instrument in INSTRUMENTS, "Invalid instrument " + repr(instrument)
+    filekind = utils.get_any_of(header, ["REFTYPE", "TYPE", "META.TYPE", "META.REFFILE.TYPE"], "UNDEFINED").lower()
+    assert filekind in FILEKINDS, "Invalid file type " + repr(filekind)
     return path, "jwst", instrument, filekind, serial, ext
 
 # =============================================================================
@@ -225,11 +231,20 @@ def reference_keys_to_dataset_keys(rmapping, header):
     header = dict(header)
     try:
         translations = rmapping.reference_to_dataset
-        for key in translations:
-            if key in header:
-                header[translations[key]] = header[key]
     except AttributeError:
         pass
+    else:
+        # Add replacements for translations *if* the existing untranslated value
+        # is poor and the translated value is better defined.   This is to do
+        # translations w/o replacing valid/concrete DM values with something 
+        # like guessed values of "UNDEFINED" or "N/A".
+        for rkey in translations:
+            if rkey in header:
+                dkey = translations[rkey]
+                dval = header.get(translations[rkey], None)
+                rval = header[rkey]
+                if dval in [None, "N/A", "UNDEFINED"] and rval not in [None, "UNDEFINED"]:
+                    header[dkey] = rval
     return header
 
 # =============================================================================
@@ -275,8 +290,15 @@ def locate_file(refname, mode=None):
     The aspect of this which is complicated is determining instrument and an instrument
     specific sub-directory for it based on the filename alone,  not the file contents.
     """
-    _path,  _observatory, instrument, _filekind, _serial, _ext = get_reference_properties(refname)
-    rootdir = locate_dir(instrument, mode)
+    if mode is  None:
+        mode = config.get_crds_ref_subdir_mode(observatory="jwst")
+    if mode == "instrument":
+        instrument = utils.file_to_instrument(refname)
+        rootdir = locate_dir(instrument, mode)
+    elif mode == "flat":
+        rootdir = config.get_crds_refpath("jwst")
+    else:
+        raise ValueError("Unhandled reference file location mode " + repr(mode))
     return  os.path.join(rootdir, os.path.basename(refname))
 
 def locate_dir(instrument, mode=None):
@@ -299,5 +321,4 @@ def locate_dir(instrument, mode=None):
 # ============================================================================
 def load_all_type_constraints():
     """Load all the JWST type constraint files."""
-    raise NotImplementedError("expected failure,  JWST type constraints not implemented yet.")
-
+    tpn.get_tpninfos("miri_flat.tpn", "foo.fits")  # With core schema,  one type loads all

@@ -250,7 +250,9 @@ def check_observatory(observatory):
 
 def check_parameters(header):
     """Make sure dict-like `header` is a mapping from strings to simple types."""
-    for key in header:
+    header = dict(header)
+    keys = header.keys()
+    for key in keys:
         assert isinstance(key, python23.string_types), \
             "Non-string key " + repr(key) + " in parameters."
         try:
@@ -258,9 +260,10 @@ def check_parameters(header):
         except Exception as exc:
             raise ValueError("Can't fetch mapping key " + repr(key) + 
                              " from parameters: " + repr(str(exc)))
-        assert isinstance(header[key], (python23.string_types, float, int, bool)), \
-            "Parameter " + repr(key) + " isn't a string, float, int, or bool."
-    
+        if not isinstance(header[key], (python23.string_types, float, int, bool)):
+            log.verbose_warning("Parameter " + repr(key) + " isn't a string, float, int, or bool.   Dropping.", verbosity=90)
+            del header[key]
+
 def check_reftypes(reftypes):
     """Make sure reftypes is a sequence of string identifiers."""
     assert isinstance(reftypes, (list, tuple, type(None))), \
@@ -374,8 +377,9 @@ class ConfigInfo(utils.Struct):
     def bad_files_set(self):
         """Return the set of references and mappings which are considered scientifically invalid."""
         return set(self.get("bad_files", "").split())
-
-    def get_effective_mode(self):
+    
+    @property
+    def effective_mode(self):
         """Based on environment CRDS_MODE,  connection status,  and server config force_remote_mode flag,
         determine whether best refs should be computed locally or on the server.   Simple unless 
         CRDS_MODE defaults to "auto" in which case the effective mode is "remote" when connected and
@@ -409,24 +413,23 @@ def get_config_info(observatory):
         info.status = "server"
         info.connected = True
         log.verbose("Connected to server at", srepr(api.get_crds_server()))
-        if not config.writable_cache_or_verbose("Using cached configuration and default context."):
-            info = load_server_info(observatory)
-            info.status = "cache"
-            info.connected = True
-            log.info("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
-    except CrdsError:
-        log.verbose_warning("Couldn't contact CRDS server:", srepr(api.get_crds_server()))
+        if info.effective_mode != "remote":
+            if not config.writable_cache_or_verbose("Using cached configuration and default context."):
+                info = load_server_info(observatory)
+                info.status = "cache"
+                info.connected = True
+                log.verbose("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
+    except CrdsError as exc:
+        if "serverless" not in api.get_crds_server():
+            log.verbose_warning("Couldn't contact CRDS server:", srepr(api.get_crds_server()), ":", str(exc))
         info = load_server_info(observatory)
         info.status = "cache"
         info.connected = False
-        log.info("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
-    info.effective_mode = info.get_effective_mode()
-
+        log.verbose("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
     # XXX For backward compatibility with older servers which don't have ".mappings" in server info.
     if not hasattr(info, "mappings"):
         with log.verbose_warning_on_exception("Failed fetching list of all CRDS mappings from server"):
             info.mappings = api.list_mappings(observatory, "*.*")
-
     return info
 
 def update_config_info(observatory):
@@ -481,13 +484,11 @@ def cache_atomic_write(replace_path, contents, fail_warning):
 def load_server_info(observatory):
     """Return last connected server status to help configure off-line use."""
     server_config = os.path.join(config.get_crds_cfgpath(observatory), "server_config")
-    try:
+    with log.fatal_error_on_exception("CRDS server connection and cache load FAILED.  Cannot continue. "
+                         " See https://hst-crds.stsci.edu or https://jwst-crds.stsci.edu for more information on configuring CRDS."):
         with open(server_config) as file_:
             info = ConfigInfo(ast.literal_eval(file_.read()))
         info.status = "cache"
-    except IOError as exc:
-        log.fatal_error("CRDS server connection and cache load FAILED.  Cannot continue. "
-                        " See https://hst-crds.stsci.edu or https://jwst-crds.stsci.edu for more information on configuring CRDS.")
     return info
 
 # XXXX Careful with version string length here, FITS has a 68 char limit which degrades to CONTINUE records

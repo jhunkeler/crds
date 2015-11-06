@@ -1,8 +1,13 @@
-date   : 2001-01-23
 meta:
+    exposure:
+        readpatt: any
     instrument:
         name: miri
         detector : mirifulong
-    type: flat
-    useafter: Mar 21 2001 12:00:00
-    pedigree: dummy
+    telescope: jwst
+reftype: flat
+useafter: 2001-03-21T12:00:00
+pedigree: dummy
+author: Todd Miller
+descrip: Brief notes on this reference.
+history: How this reference came to be and changed over time.

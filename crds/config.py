@@ -159,7 +159,7 @@ class BooleanConfigItem(ConfigItem):
 FITS_IGNORE_MISSING_END = BooleanConfigItem("CRDS_FITS_IGNORE_MISSING_END", False,
     "When True, ignore missing END records in the FITS primary header.  Otherwise fail.")
 
-FITS_VERIFY_CHECKSUM = BooleanConfigItem("CRDS_FITS_VERIFY_CHECKSUM", True,
+FITS_VERIFY_CHECKSUM = BooleanConfigItem("CRDS_FITS_VERIFY_CHECKSUM", False,
     "When True, verify that FITS header CHECKSUM and DATASUM values are correct.  Otherwise fail.")
 
 # ===========================================================================
@@ -172,6 +172,9 @@ ALLOW_BAD_RULES = BooleanConfigItem("CRDS_ALLOW_BAD_RULES", False,
 
 ALLOW_PREINSTALLED_RULES = BooleanConfigItem("CRDS_ALLOW_PREINSTALLED_RULES", False,
     "When True, if server connection and cache loads fail,  allow stale rules pre-installed with CRDS package for testing only.")
+
+ALLOW_SCHEMA_VIOLATIONS = BooleanConfigItem("CRDS_ALLOW_SCHEMA_VIOLATIONS", False,
+    "When True, don't map JWST data model warnings onto CRDS errors.")
 
 # ============================================================================
 
@@ -610,6 +613,10 @@ def relocate_file(filepath, observatory):
     Able to determine CRDS cache location based on filename or file
     contents when `filepath` points to a real file.
     """
+    # IMPORTANT:  since the outcome of relocate_file is ALWAYS a CRDS cache path,
+    # the "dirname alresady defined" short-cut should not be used here.  The existing
+    # dirname is irrelevant execept for determining file properties from badly named
+    # reference files by inspecting the header.
     if is_mapping(filepath):
         return relocate_mapping(filepath, observatory)
     else:
@@ -632,30 +639,13 @@ def relocate_reference(ref, observatory):
     the CRDS cache location.  Otherwise, the basename of `ref` must be
     in a standard form which implies location.
     """
-    from crds import utils
-    return utils.get_locator_module(observatory).locate_file(ref)
-
-def is_reference(reference):
-    """Return True IFF file name `reference` is plausible as a reference file name.
-    is_reference() does not *guarantee* that `reference` is a reference file name,
-    in particular a dataset filename might pass as a reference.
-
-    >>> is_reference("something.fits")
-    True
-    >>> is_reference("something.asdf")
-    True
-    >>> is_reference("something.r0h")
-    True
-    >>> is_reference("something.foo")
-    False
-    >>> is_reference("/some/path/something.fits")
-    True
-    >>> is_reference("/some/path/something.pmap")
-    False
-
-    """
-    extension = os.path.splitext(reference)[-1]
-    return re.match(r"\.fits|\.asdf|\.r\dh|\.yaml|\.json|\.text", extension) is not None
+    # This limited case is required for the server and dealing with temporary filenames
+    # which cannot be used to determine instrument subdirectory based on name.
+    if get_crds_ref_subdir_mode(observatory) == "flat":
+        return os.path.join(get_crds_refpath(observatory), os.path.basename(ref))
+    else:
+        from crds import utils
+        return utils.get_locator_module(observatory).locate_file(ref)
 
 # -------------------------------------------------------------------------------------
 
@@ -682,6 +672,84 @@ def check_path(path):
 
 # -------------------------------------------------------------------------------------
 
+def is_reference(reference):
+    """Return True IFF file name `reference` is plausible as a reference file name.
+    is_reference() does not *guarantee* that `reference` is a reference file name,
+    in particular a dataset filename might pass as a reference.
+
+    >>> is_reference("something.fits")
+    True
+    >>> is_reference("something.asdf")
+    True
+    >>> is_reference("something.r0h")
+    True
+    >>> is_reference("something.foo")
+    False
+    >>> is_reference("/some/path/something.fits")
+    True
+    >>> is_reference("/some/path/something.pmap")
+    False
+
+    """
+    extension = os.path.splitext(reference)[-1].lower()
+    return bool(re.match(r"\.fits|\.asdf|\.r\dh|\.yaml|\.json|\.text", extension))
+
+# max len name component == 32.  max components == 6. (currently 3 used).
+# no digits in CRDS name components,  except serial no
+CRDS_NAME_RE_STR = r"([a-z]{1,32}_?){1,6}(_\d\d\d\d)?\."
+CRDS_NAME_RE = re.compile(CRDS_NAME_RE_STR)   # intentionally not complete.
+
+# s7g1700gl_dead.fits
+CDBS_NAME_RE_STR = r"[a-z0-9]{1,10}_[a-z]{1,10}\.(fits|r\d[hd])"
+CDBS_NAME_RE = re.compile(complete_re(CDBS_NAME_RE_STR))
+
+def is_valid_reference_name(filename):
+    """Return True IFF `filename` has a valid CRDS reference filename format.
+    
+    >>> is_valid_reference_name("hst_acs_darkfile_0027.rmap")
+    False
+
+    >>> is_valid_reference_name("hst_acs_darkfile_0027.fits")
+    True
+    
+    >>> is_valid_reference_name("s7g1700gl_dead.fits")
+    True
+    """
+    name = os.path.basename(filename)
+    return is_reference(name) and (is_crds_name(name) or is_cdbs_name(name))
+
+def is_crds_name(name):
+    """Return True IFF `name` is a valid CRDS-style name.
+
+    >>> is_crds_name("hst_acs_darkfile_0027.rmap")
+    True
+    
+    >>> is_crds_name("hst_acs.imap")
+    True
+    
+    >>> is_crds_name("hst_acs_darkfile_0027.fits")
+    True
+    
+    >>> is_crds_name("s7g1700gl_dead.fits")
+    False
+    """
+    name = os.path.basename(name).lower()
+    return bool(CRDS_NAME_RE.match(name))
+
+def is_cdbs_name(name):
+    """Return True IFF `name is a valid CDBS-style name.
+
+    >>> is_cdbs_name("hst_acs_darkfile_0027.rmap")
+    False
+    
+    >>> is_cdbs_name("s7g1700gl_dead.fits")
+    True
+    """
+    name = os.path.basename(name).lower()
+    return bool(CDBS_NAME_RE.match(name))
+
+# -------------------------------------------------------------------------------------
+
 # Standard date time format using T separator for command line use specifying contexts.
 # e.g. 2040-02-22T12:01:30.4567
 CONTEXT_DATETIME_RE_STR = r"\d\d\d\d\-\d\d\-\d\d(T\d\d:\d\d:\d\d(\.\d+)?)?"
@@ -698,9 +766,16 @@ CONTEXT_RE = re.compile(complete_re(CONTEXT_RE_STR))
 PIPELINE_CONTEXT_RE_STR = r"(?P<context>" + CONTEXT_OBS_RE_STR + r"\-)?((?P<date>" + CONTEXT_DATETIME_RE_STR + r"|edit|operational))"
 PIPELINE_CONTEXT_RE = re.compile(complete_re(PIPELINE_CONTEXT_RE_STR))
 
+MAPPING_RE_STR = CRDS_NAME_RE_STR + r".map"
+MAPPING_RE = re.compile(complete_re(MAPPING_RE_STR))
+
 def is_mapping(mapping):
     """Return True IFF `mapping` has an extension indicating a CRDS mapping file."""
     return isinstance(mapping, python23.string_types) and mapping.endswith((".pmap", ".imap", ".rmap"))
+
+def is_valid_mapping_name(mapping):
+    """Return True IFF `mapping` has a CRDS-style root name and a mapping extension."""
+    return is_mapping(mapping) and bool(MAPPING_RE.match(mapping))
 
 def is_mapping_spec(mapping):
     """Return True IFF `mapping` is a mapping name *or* a date based mapping specification.
@@ -832,42 +907,34 @@ def mapping_to_filekind(context_file):
 
 # -------------------------------------------------------------------------------------
 
-def get_crds_state(clear_existing=False, clear_server_url=False):
+def get_crds_state():
     """Capture the current CRDS configuration and return it as a dictionary.
     Intended for customizing state during self-tests and restoring during teardown.
-    
-    if `clear_existing` is True,  the CRDS environment settings are cleared and
-    defaults are used.
-
-    if `clear_server_url` is not True,  the CRDS_SERVER_URL is not changed by 
-    `clear_existing` above.  So by default,  CRDS_SERVER_URL is immune to `clear_existing`.
     """
     env = { key : val for key, val in os.environ.items() if key.startswith("CRDS_") }
     env["CRDS_REF_SUBDIR_MODE"] = CRDS_REF_SUBDIR_MODE
     env["_CRDS_CACHE_READONLY"] = get_cache_readonly()
-    if clear_existing:
-        clear_crds_state(clear_server_url)
     return env
 
 def set_crds_state(old_state):
     """Restore the configuration of CRDS returned by get_crds_state()."""
+    from crds.client import api   # deferred circular import
+    # determination of observatory and server URL are intertwined
     global CRDS_REF_SUBDIR_MODE, _CRDS_CACHE_READONLY
-    clear_crds_state()
+    clear_crds_state()    
     _CRDS_CACHE_READONLY = old_state.pop("_CRDS_CACHE_READONLY")
+    CRDS_REF_SUBDIR_MODE = old_state["CRDS_REF_SUBDIR_MODE"]
     for key, val in old_state.items():
         os.environ[key] = val
-    CRDS_REF_SUBDIR_MODE = old_state["CRDS_REF_SUBDIR_MODE"]
+    if os.environ.get("CRDS_SERVER_URL", None):
+        api.set_crds_server(os.environ["CRDS_SERVER_URL"])
 
-def clear_crds_state(clear_server_url=False):
+def clear_crds_state():
     """Wipe out the existing configuration variable state of CRDS.
-
-    if `clear_server_url` is not True,  the CRDS server is not changed by 
-    `clear_existing` above.  So,  by default,  CRDS_SERVER_URL is immune to 
-    `clear_existing`.
     """
     for var in list(os.environ.keys()):
-        if var.startswith("CRDS_") and (var != "CRDS_SERVER_URL" or clear_server_url):
-            os.environ.pop(var)
+        if var.startswith("CRDS_"):
+            del os.environ[var]
     CRDS_REF_SUBDIR_MODE = None
     _CRDS_CACHE_READONLY = False
 

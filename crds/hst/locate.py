@@ -36,6 +36,7 @@ mapping_validator_key = TYPES.mapping_validator_key
 get_row_keys = TYPES.get_row_keys
 get_row_keys_by_instrument = TYPES.get_row_keys_by_instrument
 get_item = TYPES.get_item
+suffix_to_filekind = TYPES.suffix_to_filekind
 
 from crds.hst.tpn import get_tpninfos, reference_name_to_tpn_text, reference_name_to_ld_tpn_text
 
@@ -60,8 +61,6 @@ def condition_matching_header(rmapping, header):
 
 # =======================================================================
 
-REF_EXT_RE = re.compile(r"\.fits|\.r\dh$")
-
 def get_file_properties(filename):
     """Figure out (instrument, filekind) based on `filename` which
     should be a mapping or FITS reference file.
@@ -84,7 +83,7 @@ def get_file_properties(filename):
             return decompose_newstyle_name(filename)[2:4]
         except Exception:
             return properties_inside_mapping(filename)
-    elif REF_EXT_RE.search(filename):
+    elif config.is_reference(filename):
         result = get_reference_properties(filename)[2:4]
     else:
         try:
@@ -143,15 +142,11 @@ def decompose_newstyle_name(filename):
         serial = list_get(parts, 3, "")
 
     assert observatory == "hst"
-    assert instrument in INSTRUMENTS+[""], "Invalid instrument " + \
-        repr(instrument) + " in name " + repr(filename)
-    assert filekind in FILEKINDS+[""], "Invalid filekind " + \
-        repr(filekind) + " in name " + repr(filename)
+    assert instrument in INSTRUMENTS+[""], "Invalid instrument " + repr(instrument)
+    assert filekind in FILEKINDS+[""], "Invalid filekind " + repr(filekind)
+    # assert re.match("\d*", serial), "Invalid id field " + repr(id)
 
-    # assert re.match("\d*", serial), "Invalid id field " + \
-    #     repr(id) + " in name " + repr(filename)
-    
-# extension may vary for upload temporary files.
+    # extension may vary for upload temporary files.
 
     return path, observatory, instrument, filekind, serial, ext
 
@@ -328,6 +323,29 @@ def ref_properties_from_cdbs_path(filename):
         assert False, "Couldn't map extension/suffix " + repr(suffix) + " to filekind."
     return path, "hst", instrument, filekind, serial, extension
 
+def instrument_from_refname(filename):
+    """Based on `filename` rather than it's contents,  determine the associated
+    instrument or raise an exception.
+
+    >>> instrument_from_refname('hst_cos_spottab_0052.fits')
+    'cos'
+
+    >>> instrument_from_refname('zas1615jl_spot.fits')
+    'cos'
+
+    >>> instrument_from_refname('foobar.fits')
+    Traceback (most recent call last):
+    ...
+    AssertionError: Cannot determine instrument for filename 'foobar.fits'
+    """
+    try:   # Hopefully it's a nice new standard filename, easy
+        return decompose_newstyle_name(filename)[2]
+    except AssertionError:  # cryptic legacy paths & names, i.e. reality
+        try:
+            return siname.WhichCDBSInstrument(os.path.basename(filename)).lower()
+        except Exception:
+            assert False, "Cannot determine instrument for filename '{}'".format(filename)
+
 def ref_properties_from_header(filename):
     """Look inside FITS `filename` header to determine:
 
@@ -368,7 +386,10 @@ def locate_file(refname, mode=None):
     The aspect of this which is complicated is determining instrument and an instrument
     specific sub-directory for it based on the filename alone,  not the file contents.
     """
-    _path,  _observatory, instrument, _filekind, _serial, _ext = get_reference_properties(refname)
+    try:
+        instrument = instrument_from_refname(refname)
+    except Exception:
+        instrument = get_reference_properties(refname)[1]
     rootdir = locate_dir(instrument, mode)
     return  os.path.join(rootdir, os.path.basename(refname))
 
@@ -453,7 +474,7 @@ for name in __all__:
 
 # =======================================================================
 
-def main():
+def test():
     """Run the module doctests."""
     import doctest
     from crds.hst import locate
@@ -462,5 +483,5 @@ def main():
 # =======================================================================
 
 if __name__ == "__main__":
-    print(main())
+    print(test())
 

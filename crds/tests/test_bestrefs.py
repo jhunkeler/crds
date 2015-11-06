@@ -316,14 +316,17 @@ class TestBestrefs(CRDSTestCase):
 
     def test_bestrefs_update_headers(self):
         # """update_headers updates original headers from a pickle saving a new pickle withn orginal + overrides."""
-        self.run_script("crds.bestrefs --new-context hst_0315.pmap --datasets LCE31SW6Q:LCE31SW6Q --load-pickle data/test_cos_update.json --save-pickle ./test_cos_combined.json",
-                       expected_errs=0)
+        self.run_script("crds.bestrefs --new-context hst_0315.pmap --datasets LCE31SW6Q:LCE31SW6Q --load-pickle data/test_cos_update.json "
+                        " --save-pickle ./test_cos_combined.json --update-bestrefs --update-pickle", expected_errs=0)
         with open("./test_cos_combined.json") as pfile:
             header = json.load(pfile)
         header = header["LCE31SW6Q:LCE31SW6Q"]
-        assert header["BADTTAB"] == "FOO_BADT.FITS"
-        assert header["GSAGTAB"] == "BAR_GSAG.FITS"
-        assert header["FLATFILE"] == "XAB1551CL_FLAT.FITS"
+        badttab = header["BADTTAB"]
+        assert badttab == "N/A"
+        gsagtab = header["GSAGTAB"]
+        assert gsagtab == "X6L1439EL_GSAG.FITS"
+        flatfile = header["FLATFILE"] 
+        assert flatfile == "N/A"
         os.remove("./test_cos_combined.json")
 
 # ==================================================================================

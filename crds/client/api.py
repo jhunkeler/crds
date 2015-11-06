@@ -230,6 +230,7 @@ def get_best_references(pipeline_context, header, reftypes=None):
     
     Raises           CrdsLookupError,  typically for problems with header values
     """
+    header = { str(key):str(value) for (key,value) in header.items() }
     try:
         bestrefs = S.get_best_references(pipeline_context, dict(header), reftypes)
     except Exception as exc:
@@ -245,14 +246,14 @@ def get_best_references(pipeline_context, header, reftypes=None):
                                       str(refname)[len("NOT FOUND"):])
     return bestrefs
 
-def get_best_references_by_ids(context, dataset_ids, reftypes=None):
+def get_best_references_by_ids(context, dataset_ids, reftypes=None, include_headers=False):
     """Get best references for the specified `dataset_ids` and reference types.  If
     reftypes is None,  all types are returned.
     
     Returns { dataset_id : { reftype: bestref, ... }, ... }
     """
     try:
-        bestrefs = S.get_best_references_by_ids(context, dataset_ids, reftypes)
+        bestrefs = S.get_best_references_by_ids(context, dataset_ids, reftypes, include_headers)
     except Exception as exc:
         raise CrdsLookupError(str(exc))
     return bestrefs
@@ -317,20 +318,12 @@ def get_server_version():
 def get_dataset_headers_by_id(context, dataset_ids, datasets_since=None):
     """Return { dataset_id : { header } } for `dataset_ids`."""
     context = os.path.basename(context)
-    if get_server_version() >= "1.0":
-        return S.get_dataset_headers_by_id(context, dataset_ids, datasets_since)
-    else:
-        assert datasets_since is None, "datasets_since not supported by this server."
-        return S.get_dataset_headers_by_id(context, dataset_ids)
+    return S.get_dataset_headers_by_id(context, dataset_ids, datasets_since)
     
 def get_dataset_ids(context, instrument, datasets_since=None):
     """Return [ dataset_id, ...] for `instrument`."""
     context = os.path.basename(context)
-    if get_server_version() >= "1.0":
-        return S.get_dataset_ids(context, instrument, datasets_since)
-    else:
-        assert datasets_since is None, "datasets_since not supported by this server."
-        return S.get_dataset_ids(context, instrument)
+    return S.get_dataset_ids(context, instrument, datasets_since)
 
 @utils.cached
 def get_required_parkeys(context):
@@ -345,11 +338,7 @@ def get_required_parkeys(context):
 def get_dataset_headers_by_instrument(context, instrument, datasets_since=None):
     """Return { dataset_id : { header } } for `instrument`."""
     max_ids_per_rpc = get_server_info().get("max_headers_per_rpc", 5000)
-    try:
-        ids = get_dataset_ids(context, instrument, datasets_since)
-    except Exception as exc:
-        log.verbose_warning("get_dataset_ids failed.  ignoring datasets_since = ", repr(datasets_since))
-        ids = get_dataset_ids(context, instrument)        
+    ids = get_dataset_ids(context, instrument, datasets_since)
     headers = {}
     for i in range(0, len(ids), max_ids_per_rpc):
         id_slice = ids[i : i + max_ids_per_rpc]

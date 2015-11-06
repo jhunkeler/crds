@@ -17,6 +17,8 @@ then
 fi
 python setup.py install $* --force  >> install.log
 st=$st$?
+python setup_data.py install --force >>install.log
+st=$st$?
 
 if (test -e clean)
 then

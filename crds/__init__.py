@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import absolute_import
 # The "crds" __version__ defined here should also reflect the behavior of 
 # crds.client
-__version__ = "1.7.0"   # > jwst_build4 
+__version__ = "1.8.0"   #  jwst_build5
 
 # ============================================================================
 
@@ -20,7 +20,8 @@ __all__ = [
 ALL_OBSERVATORIES = ["hst", "jwst", "tobs"]
 
 # keywords used to identify instrument from headers
-INSTRUMENT_KEYWORDS = ["INSTRUME", "META.INSTRUMENT.NAME",  "META_INSTRUMENT_NAME", "INSTRUMENT"]
+INSTRUMENT_KEYWORDS = ["INSTRUME", "META.INSTRUMENT.NAME",  "META_INSTRUMENT_NAME", "INSTRUMENT", 
+                       "META.INSTRUMENT.TYPE", "META_INSTRUMENT_TYPE"]
 
 # ============================================================================
 

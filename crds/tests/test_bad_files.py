@@ -46,7 +46,7 @@ def dt_bad_references_error_cache_config():
     
     The default handling when a bad reference file is assigned is to raise an exception:
     
-    >>> old_state = test_config.setup()
+    >>> old_state = test_config.setup(clear_existing=False)
     >>> config.ALLOW_BAD_RULES.reset()
     >>> config.ALLOW_BAD_REFERENCES.reset()
 
@@ -63,7 +63,7 @@ def dt_bad_references_warning_cache_config():
     """
     A secondary behaviour is to permit use of bad references with a warning:
     
-    >>> old_state = test_config.setup()
+    >>> old_state = test_config.setup(clear_existing=False)
     >>> config.ALLOW_BAD_RULES.set("1")
     >>> config.ALLOW_BAD_REFERENCES.set("1")
     
@@ -79,7 +79,7 @@ def dt_bad_references_fast_mode():
     """
     When run in 'fast' mode as is done for the calls from crds.bestrefs,  no exception or warning is possible:
     
-    >>> old_state = test_config.setup()
+    >>> old_state = test_config.setup(clear_existing=False)
     >>> config.ALLOW_BAD_RULES.reset()
     >>> config.ALLOW_BAD_REFERENCES.reset()
     
@@ -95,7 +95,7 @@ def dt_bad_references_bestrefs_script_error():
     The crds.bestrefs program handles bad files differently because it frequently operates on
     multiple contexts at the same time,  and recommending bad files under the old context is OK.
     
-    >>> old_state = test_config.setup()
+    >>> old_state = test_config.setup(clear_existing=False)
     >>> config.ALLOW_BAD_RULES.reset()
     >>> config.ALLOW_BAD_REFERENCES.reset()
     
@@ -116,7 +116,7 @@ def dt_bad_references_bestrefs_script_error():
     
 def dt_bad_references_bestrefs_script_warning():
     """
-    >>> old_state = test_config.setup()
+    >>> old_state = test_config.setup(clear_existing=False)
     >>> config.ALLOW_BAD_RULES.set("1")
     >>> config.ALLOW_BAD_REFERENCES.set("1")
     
@@ -137,7 +137,7 @@ def dt_bad_references_bestrefs_script_deprecated():
     """
     As a backward compatibility measure,  the --bad-files-are-errors switch is still accepted but is a tautology:
     
-    >>> old_state = test_config.setup()
+    >>> old_state = test_config.setup(clear_existing=False)
     >>> config.ALLOW_BAD_RULES.reset()
     >>> config.ALLOW_BAD_REFERENCES.reset()
     
@@ -182,7 +182,6 @@ def dt_bad_rules_jwst_getreferences_warning():
     >>> config.ALLOW_BAD_RULES.set("1")
     
     >>> refs = crds.getreferences(JWST_HEADER, observatory='jwst', context='jwst_0017.pmap', reftypes=["flat"])   # doctest: +ELLIPSIS
-    CRDS  : INFO     Using CACHED CRDS reference assignment rules last updated on '...'
     CRDS  : WARNING  Final context 'jwst_0017.pmap' is marked as scientifically invalid based on: ['jwst_miri_flat_0003.rmap']
     <BLANKLINE>
     
@@ -203,7 +202,6 @@ def dt_bad_rules_jwst_bestrefs_script_error():
     >>> config.ALLOW_BAD_RULES.reset()
     
     >>> BestrefsScript("crds.bestrefs --jwst --new-context jwst_0017.pmap --files data/jw_nrcb1_uncal_sloper_image.fits --types gain")()   # doctest: +ELLIPSIS
-    CRDS  : INFO     Using CACHED CRDS reference assignment rules last updated on '...'
     CRDS  : ERROR    instrument='ALL' type='ALL' data='ALL' ::  New-context = 'jwst_0017.pmap' is bad or contains bad rules.  Use is not recommended,  results may not be scientifically valid.
     CRDS  : INFO     No comparison context or source comparison requested.
     CRDS  : INFO     No file header updates requested;  dry run.
@@ -212,9 +210,8 @@ def dt_bad_rules_jwst_bestrefs_script_error():
     <BLANKLINE>
     CRDS  : INFO     2 errors
     CRDS  : INFO     0 warnings
-    CRDS  : INFO     4 infos
+    CRDS  : INFO     3 infos
     2
-    
     >>> test_config.cleanup(old_state)
     """
 

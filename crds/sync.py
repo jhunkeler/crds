@@ -238,8 +238,8 @@ class SyncScript(cmdline.ContextsScript):
                           help="When --organize'ing, delete obstructing files or directories CRDS discovers.")
         self.add_argument("--verify-context-change", action="store_true",
                           help="When specified,  it's an error if the context does not update to something new.")
-        self.add_argument("--push-context", metavar="CONTEXT_KEY", type=str,
-                          help="When specified, push the name of the final cached operational context to the server.")
+        self.add_argument("--push-context", metavar="KEY", type=str,
+                          help="When specified, push the name of the final cached context to the server for the pipeline identified by KEY.")
 
     # ------------------------------------------------------------------------------------------
     
@@ -426,11 +426,12 @@ class SyncScript(cmdline.ContextsScript):
         bytes_so_far = 0
         total_bytes = api.get_total_bytes(infos)
         for nth_file, file in enumerate(files):
-            if infos[file] == "NOT FOUND":
-                log.error("CRDS has no record of file", repr(file))
+            bfile = os.path.basename(file)
+            if infos[bfile] == "NOT FOUND":
+                log.error("CRDS has no record of file", repr(bfile))
             else:
-                self.verify_file(file, infos[file], bytes_so_far, total_bytes, nth_file, len(files))
-                bytes_so_far += int(infos[file]["size"])
+                self.verify_file(file, infos[bfile], bytes_so_far, total_bytes, nth_file, len(files))
+                bytes_so_far += int(infos[bfile]["size"])
         
     def verify_file(self, file, info, bytes_so_far, total_bytes, nth_file, total_files):
         """Check one `file` against the provided CRDS database `info` dictionary."""

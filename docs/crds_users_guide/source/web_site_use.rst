@@ -296,7 +296,7 @@ Mark Files Bad
 ..............
 
 *Mark Files Bad* supports marking a file as scientifically invalid and
-also supoports reversing the decision and marking it good once more.
+also supports reversing the decision and marking it good once more.
 
 The CRDS procedure for marking files bad requires three steps:
 
@@ -305,7 +305,14 @@ The CRDS procedure for marking files bad requires three steps:
 3. Mark the prospective bad files actually bad using Mark Bad Files.
 
 Following this procedure maintains the invariant that the operational context
-contains no known bad files.
+contains no known bad files.   The designation as bad files does not take
+effect until any local CRDS cache is synchronized with the server.
+
+Creating a clean context can be done in arbitrary ways,  but the two most
+common ways will likely be:
+
+1. Submit replacement files for the bad files to create a clean context.
+2. Use Delete References to generate a new context without the bad files.
 
 .. figure:: images/web_mark_files_bad.png
    :scale: 50 %
@@ -318,9 +325,69 @@ which refer to the bad .imaps.   Whenever a rules file is marked bad,
 a warning is issued when the containing context is used.
 
 Marking a reference file as bad is a more precise technique which invalidates
-only that reference in every context that includes it.   Warnings are issued related
-to the bad reference only when the reference is actually recommended by CRDS.  
+only that reference in every context that includes it.  Warnings are issued
+related to the bad reference only when the reference is actually recommended by
+CRDS.
 
+By default, recommendation of bad files is an error.  The default
+behaviour can be overrideden, allowing use of bad rules or references with a
+warning, by setting environment variables: *CRDS_ALLOW_BAD_RULES* and/or
+*CRDS_ALLOW_BAD_REFERENCES* or by using command line switches for
+crds.bestrefs: *--allow-bad-rules* and *--allow-bad-references*.
+
+Delete References
+.................
+
+*Delete References* supports supports removing references (but not rules) from
+a context generating a new context.  Delete References provides one
+straightforward way to generate clean rules prior to marking the deleted files
+as bad.
+
+.. figure:: images/web_delete_references.png
+   :scale: 50 %
+   :alt: delete references
+
+Delete References does not remove the files from CRDS, it only removes them
+from the specified set of rules.  The references remain available under any
+contexts which still refer to them.
+
+Once references have been replaced or deleted from the operational context and
+the new context is made operational using Set Context, the deleted or replaced
+references can be marked as scientifically invalid using Mark Files Bad.
+
+Files are specified for Delete References by listing their names in the Deleted
+Files field of the input form, separated by spaces, commas, and/or newlines.
+
+Changes to rules which result from delete references are presented on a results
+page which must be confirmed or cancelled as with other file submissions.
+
+Add References
+..............
+
+*Add References* supports adding existing CRDS references to a CRDS context
+which does not contain them already.  Add References is the inverse of Delete
+References and generates new CRDS rules without requiring the resubmission of
+files to CRDS.
+
+.. figure:: images/web_add_references.png
+   :scale: 50 %
+   :alt: add references
+
+Add references can be used to undo the effects of Delete References in a
+perhaps distant descendant context containing other changes.  Add references
+can also be used to add tested references from a branched context into the
+current operational context.
+
+Files are specified for Add References by listing their names in the Added
+Files field of the input form, separated by spaces, commas, and/or newlines.
+
+Changes to rules which result from add references are presented on a results
+page which must be confirmed or cancelled as with other file submissions.
+Rules changes from add references should be carefully reviewed to ensure that
+the resulting rmap update is as intended.  In particular, other rmap
+differences from a branched context are not added, so additional test
+parameters or other header and structural changes of any test rmap are not
+carried over by Add References,  only the reference files themselves.
 
 Set Context
 ...........
@@ -576,6 +643,47 @@ submitted this way must also pass through crds.certify.
 .. figure:: images/web_submit_mappings.png
    :scale: 50 %
    :alt: create contexts inputs
-   
 
-  
+   
+Mapping Change Procedure
+++++++++++++++++++++++++
+
+The nominal process used to modify CRDS mappings is to:
+
+1. Download the mapping to be used as a baseline for the revised version.
+Leave the name as-is.  The download can be accomplished by using the crds.sync
+tool to download the file to a local cache, or by browsing to the file's
+details page and using the *download* link near the top of the page.  Likewise
+the source file can be copied directly from the shared on site default 
+readonly cache.   This download, don't rename, upload process is used to
+automatically maintain the derivation history of mappings in their headers,
+the name field is progagated down to the derived_from field to track the
+source mapping prior to renaming the new mapping.
+
+2. Modify the mapping in a text editor implementing required changes.  Use
+care editing mappings since many aspects of the mapping cannot be verified by
+crds.certify.   Where possible match values are validated against CRDS .tpn
+files or JWST data model schema.
+
+3. Run crds.certify on the resulting mapping, using the current operational
+context as the point of comparison::
+
+% python -m crds.certify ./jwst_miri_dark_0004.rmap  --comparison-context jwst-operational
+
+4. During iteration, run crds.checksum on the mapping to update the internal
+sha1sum if you wish to load the context into Python to do interactive tests 
+with the .rmap::
+
+% python -m crds.checksum ./jwst_miri_dark_0004.rmap
+% python
+>>> import crds
+>>> r = crds.get_cached_mapping("./jwst_miri_dark_0004.rmap")
+
+The internal checksum can also be used to verify upload integrity when you
+finally submit the file to CRDS, an out-of-date checksum or corrupted file will
+generate a warning.   Alternately:: 
+
+% setenv CRDS_IGNORE_MAPPING_CHECKSUMS 1 
+
+to suppress mapping load errors due to invalid checksums during development.
+

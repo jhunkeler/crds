@@ -53,15 +53,15 @@ from __future__ import absolute_import
 import os.path
 import re
 import json
+import datetime
 import warnings
 import functools
-
-from crds import utils, log, config
 
 from astropy.io import fits as pyfits
 from astropy.utils.exceptions import AstropyUserWarning
 
-from crds import python23
+from crds import utils, log, config, python23, timestamp
+
 # import pyasdf
 
 # ===========================================================================
@@ -76,12 +76,14 @@ def hijack_warnings(func):
         """Reassign warnings to CRDS warnings prior to executing `func`,  restore
         warnings state afterwards and return result of `func`.
         """
+        warnings.resetwarnings()
         with warnings.catch_warnings():
             old_showwarning = warnings.showwarning
             warnings.showwarning = hijacked_showwarning
             warnings.simplefilter("always", AstropyUserWarning)
             warnings.filterwarnings("always", r".*", UserWarning, r".*jwst_lib.*")
-            warnings.filterwarnings("error", r".*is not one of.*", UserWarning, r".*jwst_lib.*")
+            if not config.ALLOW_SCHEMA_VIOLATIONS:
+                warnings.filterwarnings("error", r".*is not valid in keyword.*", UserWarning, r".*jwst_lib.*")
             warnings.filterwarnings("ignore", r".*unclosed file.*", UserWarning, r".*crds.data_file.*")
             warnings.filterwarnings("ignore", r".*unclosed file.*", UserWarning, r".*astropy.io.fits.convenience.*")
             try:
@@ -169,7 +171,6 @@ def dm_setval(filepath, key, value):
         d_model[key.lower()] = value
         d_model.save(filepath)
 
-@hijack_warnings
 def get_conditioned_header(filepath, needed_keys=(), original_name=None, observatory=None):
     """Return the complete conditioned header dictionary of a reference file,
     or optionally only the keys listed by `needed_keys`.
@@ -184,6 +185,19 @@ def get_conditioned_header(filepath, needed_keys=(), original_name=None, observa
 @hijack_warnings
 def get_header(filepath, needed_keys=(), original_name=None, observatory=None):
     """Return the complete unconditioned header dictionary of a reference file.
+
+    Hijack io.fits and data model warnings and map them to errors.
+    
+    Original name is used to determine file type for web upload temporary files which
+    have no distinguishable extension.  Original name is browser-side name for file.
+    """
+    return get_free_header(filepath, needed_keys, original_name, observatory)
+
+
+def get_free_header(filepath, needed_keys=(), original_name=None, observatory=None):
+    """Return the complete unconditioned header dictionary of a reference file.
+
+    Does not hijack warnings.
     
     Original name is used to determine file type for web upload temporary files which
     have no distinguishable extension.  Original name is browser-side name for file.
@@ -212,13 +226,17 @@ def get_header(filepath, needed_keys=(), original_name=None, observatory=None):
 # A clearer name
 get_unconditioned_header = get_header
 
+# ----------------------------------------------------------------------------------------------
+
 def get_data_model_header(filepath, needed_keys=()):
     """Get the header from `filepath` using the jwst data model."""
     from jwst_lib import models
-    with models.open(filepath) as d_model:
-        flat_dict = d_model.to_flat_dict(include_arrays=False)
+    with log.augment_exception("JWST Data Model (jwst_lib.models)"):
+        with models.open(filepath) as d_model:
+            flat_dict = d_model.to_flat_dict(include_arrays=False)
     d_header = sanitize_data_model_dict(flat_dict)
-    header = reduce_header(filepath, d_header, needed_keys)
+    d_header = reduce_header(filepath, d_header, needed_keys)
+    header = cross_strap_header(d_header)
     return header
 
 def get_json_header(filepath, needed_keys=()):
@@ -226,7 +244,9 @@ def get_json_header(filepath, needed_keys=()):
     with open(filepath) as pfile:
         header = json.load(pfile)
         header = to_simple_types(header)
-    return reduce_header(filepath, header, needed_keys)
+    header = reduce_header(filepath, header, needed_keys)
+    header = cross_strap_header(header)
+    return header
 
 def get_yaml_header(filepath, needed_keys=()):
     """Return the flattened header associated with a YAML file."""
@@ -234,21 +254,27 @@ def get_yaml_header(filepath, needed_keys=()):
     with open(filepath) as pfile:
         header = yaml.load(pfile)
         header = to_simple_types(header)
-    return reduce_header(filepath, header, needed_keys)
-
-# ----------------------------------------------------------------------------------------------
+    header = reduce_header(filepath, header, needed_keys)
+    header = cross_strap_header(header)
+    return header
 
 def get_asdf_header(filepath, needed_keys=()):
     """Return the flattened header associated with an ASDF file."""
     import pyasdf
-    with pyasdf.AsdfFile.read(filepath) as handle:
+    with pyasdf.AsdfFile.open(filepath) as handle:
         header = to_simple_types(handle.tree)
-    return reduce_header(filepath, header, needed_keys)
+    header = reduce_header(filepath, header, needed_keys)
+    header = cross_strap_header(header)
+    return header
+
+# ----------------------------------------------------------------------------------------------
 
 def to_simple_types(tree):
     """Convert an ASDF tree structure to a flat dictionary of simple types with dotted path tree keys."""
     result = dict()
     for key in tree:
+        if not isinstance(key, python23.string_types):  # skip non-string keys
+            continue
         value = tree[key]
         if isinstance(value, (type(tree), dict)):
             nested = to_simple_types(value)
@@ -264,9 +290,26 @@ def simple_type(value):
         rval = str(value)
     elif isinstance(value, (list, tuple)):
         rval = tuple(simple_type(val) for val in value)
+    elif isinstance(value, datetime.datetime):
+        rval = timestamp.reformat_date(value).replace(" ", "T")
     else:
         rval = "SUPRESSED_NONSTD_TYPE: " + repr(str(value.__class__.__name__))
     return rval
+
+def cross_strap_header(header):
+    """Foreach DM keyword in header,  add the corresponding FITS keyword,  and vice versa."""
+    from crds.jwst import schema
+    crossed = dict(header)
+    for key, val in header.items():
+        if val is None:
+            val = "UNDEFINED"
+        fitskey = schema.dm_to_fits(key)
+        if fitskey is not None and fitskey not in crossed:
+            crossed[fitskey] = val
+        dmkey = schema.fits_to_dm(key)
+        if dmkey is not None and dmkey not in crossed:
+            crossed[dmkey] = val
+    return crossed
 
 # ----------------------------------------------------------------------------------------------
 
@@ -286,16 +329,13 @@ def reduce_header(filepath, old_header, needed_keys=()):
     for (key, value) in old_header:
         key = str(key.upper())
         value = str(value)
-        if key in DUPLICATES_OK:
-            continue
         if (not needed_keys) or key in needed_keys:
-            if key in header and header[key] != value:
+            if (key in header and header[key] != value) and not key in DUPLICATES_OK:
                 log.verbose_warning("Duplicate key", repr(key), "in", repr(filepath),
                                     "using", repr(header[key]), "not", repr(value), verbosity=70)
                 continue
             else:
-                header[key] = value
-                
+                header[key] = value                
     return ensure_keys_defined(header)
 
 def ensure_keys_defined(header, needed_keys=(), define_as="UNDEFINED"):
@@ -308,7 +348,7 @@ def ensure_keys_defined(header, needed_keys=(), define_as="UNDEFINED"):
     """
     header = dict(header)
     for key in needed_keys:
-        if key not in header or header[key] == "UNDEFINED":
+        if key not in header or header[key] in ["UNDEFINED", None]:
             header[key] = define_as
     return header
 
@@ -320,9 +360,11 @@ def sanitize_data_model_dict(flat_dict):
     for key, val in flat_dict.items():
         skey = str(key).upper()
         sval = str(val)
-        fits_magx = "_EXTRA_FITS.PRIMARY."
+        fits_magx = "EXTRA_FITS.PRIMARY.HEADER."
         if key.upper().startswith(fits_magx):
-            cleaned[skey[len(fits_magx):]] = sval
+            if key.endswith(".0"):
+                skey = flat_dict[key].upper()
+                sval = flat_dict[key[:-len(".0")] + ".1"]
         cleaned[skey] = sval
     # Hack for backward incompatible model naming change.
     if "META.INSTRUMENT.NAME" in cleaned:
@@ -348,6 +390,11 @@ def get_fits_header_union(filepath, needed_keys=()):
 
 
 # ================================================================================================================
+
+@hijack_warnings
+def fits_open_trapped(filename, **keys):
+    """Same as fits_open but with some astropy and JWST DM warnings hijacked by CRDS."""
+    return fits_open(filename, **keys)
 
 def fits_open(filename, **keys):
     """Return the results of io.fits.open() configured using CRDS environment settings,  overriden by
