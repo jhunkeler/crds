@@ -204,11 +204,11 @@ def certify_table_comparison_reference():
     CRDS  : WARNING  Table mode (('DATE', 56923.583400000003),) from old reference 'y9j16159l_hv.fits[1]' is NOT IN new reference 'y951738kl_hv.fits[1]'
     CRDS  : WARNING  Table mode (('DATE', 56923.625),) from old reference 'y9j16159l_hv.fits[1]' is NOT IN new reference 'y951738kl_hv.fits[1]'
     CRDS  : WARNING  Duplicate definitions in old reference 'y9j16159l_hv.fits[2]' for mode: (('DATE', 56924.041700000002),) :
-     (('DATE', 56925.0), ('HVLEVELB', 175))
-    (('DATE', 56925.0), ('HVLEVELB', 175))
+     (129, (('DATE', 56924.041700000002), ('HVLEVELB', 169)))
+    (131, (('DATE', 56924.041700000002), ('HVLEVELB', 169)))
     CRDS  : WARNING  Duplicate definitions in old reference 'y9j16159l_hv.fits[2]' for mode: (('DATE', 56925.0),) :
-     (('DATE', 56925.0), ('HVLEVELB', 175))
-    (('DATE', 56925.0), ('HVLEVELB', 175))
+     (132, (('DATE', 56925.0), ('HVLEVELB', 175)))
+    (134, (('DATE', 56925.0), ('HVLEVELB', 175)))
     CRDS  : WARNING  Table mode (('DATE', 56921.833400000003),) from old reference 'y9j16159l_hv.fits[2]' is NOT IN new reference 'y951738kl_hv.fits[2]'
     CRDS  : WARNING  Table mode (('DATE', 56922.0),) from old reference 'y9j16159l_hv.fits[2]' is NOT IN new reference 'y951738kl_hv.fits[2]'
     CRDS  : WARNING  Table mode (('DATE', 56923.625),) from old reference 'y9j16159l_hv.fits[2]' is NOT IN new reference 'y951738kl_hv.fits[2]'
@@ -394,8 +394,8 @@ class TestCertify(CRDSTestCase):
             original_name="s7g1700gl_dead.fits", trap_exceptions=False)
 
     def test_AsdfCertify_opaque_name(self):
-        certify.certify_file(self.data("opaque_asd.tmp"), observatory="hst", context="hst.pmap", 
-            original_name="valid.asdf", trap_exceptions=False)
+        certify.certify_file(self.data("opaque_asd.tmp"), observatory="jwst", context="jwst_0082.pmap", 
+            original_name="valid.tmp", trap_exceptions=False)
 
 # ==================================================================================
 

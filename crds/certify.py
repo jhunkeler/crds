@@ -560,7 +560,7 @@ class ReferenceCertifier(Certifier):
     def _dump_provenance_core(self, dump_keys):
         """Generic dumper for self.header,  returns unseen keys."""
         unseen = set(dump_keys)
-        for key in dump_keys:
+        for key in sorted(dump_keys):
             if self._check_provenance_key(key):
                 unseen.remove(key)
         return unseen
@@ -791,6 +791,9 @@ def table_mode_dictionary(generic_name, tab, mode_keys):
         if len(modes[mode]) > 1:
             log.warning("Duplicate definitions in", generic_name, basename, "for mode:", mode, ":\n", 
                         "\n".join([repr(row) for row in modes[mode]]))
+            # log.warning("-"*80, "\n\nDuplicate definitions in", generic_name, basename, "for mode:", mode, 
+            #            "in rows", repr([row[0] for row in modes[mode]]), ":\n\n", 
+            #            "\n\n".join([repr(row) for row in modes[mode]]), "\n")
     # modes[mode][0] is first instance of multiply defined mode.
     return { mode:modes[mode][0] for mode in modes }, all_cols
 
@@ -846,7 +849,7 @@ class UnknownCertifier(Certifier):
 
     def load(self):
         """Load file of unknown type."""
-        with open(self.filename) as handle:
+        with open(self.filename, "rb") as handle:
             contents = handle.read()
         return contents
     
@@ -931,7 +934,7 @@ def banner(char='#'):
     
 # ============================================================================
 
-@data_file.hijack_warnings
+# @data_file.hijack_warnings
 def certify_file(filename, context=None, dump_provenance=False, check_references=False, 
                   trap_exceptions=True, compare_old_reference=False,
                   dont_parse=False, script=None, observatory=None,
@@ -939,7 +942,7 @@ def certify_file(filename, context=None, dump_provenance=False, check_references
     """Certify the list of `files` relative to .pmap `context`.   Files can be
     references or mappings.   This function primarily provides an interface for web code.
     
-    files:                  list of file paths to certify.
+    filename:               path of file to certify
     context:                .pmap name to certify relative to
     dump_provenance:        for references,  log provenance keywords and rmap parkey values.
     check_references:       False, "exists", "contents"
@@ -958,7 +961,7 @@ def certify_file(filename, context=None, dump_provenance=False, check_references
         if observatory is None:
             observatory = utils.file_to_observatory(filename)
 
-        filetype, klass = get_certifier_class(original_name)
+        filetype, klass = get_certifier_class(original_name, filename)
 
         if comparison_reference:
             log.info("Certifying", repr(original_name) + ith,  "as", repr(filetype.upper()),
@@ -983,7 +986,7 @@ def certify_file(filename, context=None, dump_provenance=False, check_references
     finally:
         log.set_exception_trap(old_flag)
 
-def get_certifier_class(original_name):
+def get_certifier_class(original_name, filepath):
     """Given a reference file name with a valid extension, return the filetype and 
     Certifier subclass used to check it.
     """
@@ -996,11 +999,11 @@ def get_certifier_class(original_name):
         "geis" : ReferenceCertifier,
         "unknown" : UnknownCertifier,
     }
-    filetype = config.filetype(original_name)
+    filetype = data_file.get_filetype(original_name, filepath)
     klass = klasses.get(filetype, UnknownCertifier)
     return filetype, klass
         
-@data_file.hijack_warnings
+# @data_file.hijack_warnings
 def certify_files(files, context=None, dump_provenance=False, check_references=False, 
                   trap_exceptions=True, compare_old_reference=False,
                   dont_parse=False, skip_banner=False, script=None, observatory=None,

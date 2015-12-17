@@ -56,6 +56,7 @@ import json
 import datetime
 import warnings
 import functools
+import contextlib
 
 from astropy.io import fits as pyfits
 from astropy.utils.exceptions import AstropyUserWarning
@@ -76,7 +77,7 @@ def hijack_warnings(func):
         """Reassign warnings to CRDS warnings prior to executing `func`,  restore
         warnings state afterwards and return result of `func`.
         """
-        warnings.resetwarnings()
+        # warnings.resetwarnings()
         with warnings.catch_warnings():
             old_showwarning = warnings.showwarning
             warnings.showwarning = hijacked_showwarning
@@ -84,8 +85,8 @@ def hijack_warnings(func):
             warnings.filterwarnings("always", r".*", UserWarning, r".*jwst_lib.*")
             if not config.ALLOW_SCHEMA_VIOLATIONS:
                 warnings.filterwarnings("error", r".*is not valid in keyword.*", UserWarning, r".*jwst_lib.*")
-            warnings.filterwarnings("ignore", r".*unclosed file.*", UserWarning, r".*crds.data_file.*")
-            warnings.filterwarnings("ignore", r".*unclosed file.*", UserWarning, r".*astropy.io.fits.convenience.*")
+            # warnings.filterwarnings("ignore", r".*unclosed file.*", UserWarning, r".*crds.data_file.*")
+            # warnings.filterwarnings("ignore", r".*unclosed file.*", UserWarning, r".*astropy.io.fits.convenience.*")
             try:
                 result = func(*args, **keys)
             finally:
@@ -114,6 +115,7 @@ def is_dataset(name):
     """Returns True IFF `name` is plausible as a dataset.   Not a guarantee."""
     return config.filetype(name) in ["fits", "asdf", "geis"]
 
+@utils.gc_collected
 def get_observatory(filepath, original_name=None):
     """Return the observatory corresponding to `filepath`.  filepath
     may be a web temporary file with a garbage name.   Use 
@@ -124,9 +126,9 @@ def get_observatory(filepath, original_name=None):
         original_name = filepath
     if "jwst" in original_name:
         return "jwst"
-    if "hst" in original_name:
+    elif "hst" in original_name:
         return "hst"
-    if original_name.endswith(".fits"):
+    elif original_name.endswith(".fits"):
         try:
             observatory = pyfits.getval(filepath, keyword="TELESCOP")
         except KeyError:
@@ -136,9 +138,8 @@ def get_observatory(filepath, original_name=None):
         return "jwst"
     else:
         return "hst"
-
     
-@hijack_warnings
+# @hijack_warnings
 def getval(filepath, key, condition=True):
     """Return a single metadata value from `key` of file at `filepath`."""
     if condition:
@@ -148,22 +149,23 @@ def getval(filepath, key, condition=True):
     return header[key]
 
 @hijack_warnings
+@utils.gc_collected
 def setval(filepath, key, value):
     """Set metadata `key` in file `filepath` to `value`."""
     ftype = config.filetype(filepath)
     if ftype == "fits":
         if key.upper().startswith(("META.","META_")):
             key = key.replace("META_", "META.")
-            return dm_setval(filepath, key, value)
+            return _dm_setval(filepath, key, value)
         else:
-            return pyfits.setval(filepath, key, value)
+            return pyfits.setval(filepath, key, value=value)
     elif ftype == "asdf":
-        return dm_setval(filepath, key, value)
+        return _dm_setval(filepath, key, value)
     else:
         raise NotImplementedError("setval not supported for type " + repr(ftype))
 
-@hijack_warnings
-def dm_setval(filepath, key, value):
+# @hijack_warnings,  hidden,  use setval() above
+def _dm_setval(filepath, key, value):
     """Set metadata `key` in file `filepath` to `value` using jwst datamodel.
     """
     from jwst_lib import models
@@ -194,6 +196,10 @@ def get_header(filepath, needed_keys=(), original_name=None, observatory=None):
     return get_free_header(filepath, needed_keys, original_name, observatory)
 
 
+# A clearer name
+get_unconditioned_header = get_header
+
+@utils.gc_collected
 def get_free_header(filepath, needed_keys=(), original_name=None, observatory=None):
     """Return the complete unconditioned header dictionary of a reference file.
 
@@ -204,7 +210,7 @@ def get_free_header(filepath, needed_keys=(), original_name=None, observatory=No
     """
     if original_name is None:
         original_name = os.path.basename(filepath)
-    filetype = config.filetype(original_name)
+    filetype = get_filetype(original_name, filepath)
     try:
         header_func = {
             "asdf" : get_asdf_header,
@@ -223,8 +229,34 @@ def get_free_header(filepath, needed_keys=(), original_name=None, observatory=No
     log.verbose("Header of", repr(filepath), "=", log.PP(header), verbosity=90)
     return header
 
-# A clearer name
-get_unconditioned_header = get_header
+# ----------------------------------------------------------------------------------------------
+
+def get_filetype(original_name, filepath):
+    """Determine file type from `original_name` if possible, otherwise attempt to
+    idenitfy based on file contents.
+    """
+    filetype = config.filetype(original_name)
+    if filetype != "unknown":
+        return filetype
+    with open(filepath, "rb") as handle:
+        first_5 = handle.read(5)
+    if first_5 == "#ASDF":
+        return "asdf"
+    elif first_5 == "SIMPLE":
+        return "fits"
+    try:
+        with open(filepath) as handle:
+            json.load(handle)
+            return "json"
+    except Exception:
+        pass
+    try:
+        with open(filepath) as handle:
+            yaml.load(handle)
+            return "yaml"
+    except Exception:
+        pass
+    return "unknown"
 
 # ----------------------------------------------------------------------------------------------
 
@@ -238,6 +270,18 @@ def get_data_model_header(filepath, needed_keys=()):
     d_header = reduce_header(filepath, d_header, needed_keys)
     header = cross_strap_header(d_header)
     return header
+
+'''
+from jwst_lib import models
+def dm_leak(filepath):
+    """Memory leak demo/test/debug function."""
+    # with log.augment_exception("JWST Data Model (jwst_lib.models)"):
+    d_model = models.open(filepath)
+    flat_dict = d_model.to_flat_dict(include_arrays=False)
+    d_model.close()
+    del d_model
+    return dict(flat_dict)
+'''
 
 def get_json_header(filepath, needed_keys=()):
     """Return the flattened header associated with a JSON file."""
@@ -396,6 +440,8 @@ def fits_open_trapped(filename, **keys):
     """Same as fits_open but with some astropy and JWST DM warnings hijacked by CRDS."""
     return fits_open(filename, **keys)
 
+@contextlib.contextmanager
+@utils.gc_collected
 def fits_open(filename, **keys):
     """Return the results of io.fits.open() configured using CRDS environment settings,  overriden by
     any conflicting keyword parameter values.
@@ -405,7 +451,13 @@ def fits_open(filename, **keys):
         keys["checksum"] = bool(config.FITS_VERIFY_CHECKSUM)
     if "ignore_missing_end" not in keys:
         keys["ignore_missing_end"] = bool(config.FITS_IGNORE_MISSING_END)
-    return pyfits.open(filename, **keys)
+    handle = None
+    try:
+        handle = pyfits.open(filename, **keys)
+        yield handle
+    finally:
+        if handle is not None:
+            handle.close()
 
 # ================================================================================================================
 
@@ -479,7 +531,6 @@ def is_geis_header(name):
 
 def get_geis_header(name, needed_keys=()):
     """Return the `needed_keys` from GEIS file at `name`."""
-
     if isinstance(name, python23.string_types):
         if name.endswith("d"):
             name = name[:-1] + "h"

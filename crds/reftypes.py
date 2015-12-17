@@ -179,6 +179,15 @@ class TypeParameters(object):
             instrument = "nicmos"
         return self._suffix_to_filekind[instrument][suffix]
 
+    def filekind_to_suffix(self, instrument, filekind):
+        """Given and instrument (e.g. acs) and filekind (e.g. darkfile)
+        turn the associated file suffix (e.g. drk) for use in generating
+        legacy filenames.
+        """
+        if instrument == "nic":
+            instrument = "nicmos"
+        return self._filekind_to_suffix[instrument][filekind]
+
 # =============================================================================
 
     def mapping_validator_key(self, mapping):
@@ -193,7 +202,7 @@ class TypeParameters(object):
         is nominally a .tpn filename and can vary by observatory, instrument, and type as well
         as by functions on the header of `filename`.
         """
-        header = data_file.get_header(filename)
+        header = data_file.get_free_header(filename)
         observatory = utils.header_to_observatory(header)
         instrument, filekind = utils.get_file_properties(observatory, filename)
         results = []

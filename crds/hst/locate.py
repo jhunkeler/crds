@@ -15,12 +15,12 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 import os.path
-import gzip
-import re
 import glob
+import datetime
+import time
 
 # import crds.pysh as pysh
-from crds import (log, rmap, pysh, data_file, config, utils, timestamp)
+from crds import (log, rmap, data_file, config, utils, timestamp)
 from crds.exceptions import CrdsError
 from crds.hst import siname
 
@@ -37,6 +37,7 @@ get_row_keys = TYPES.get_row_keys
 get_row_keys_by_instrument = TYPES.get_row_keys_by_instrument
 get_item = TYPES.get_item
 suffix_to_filekind = TYPES.suffix_to_filekind
+filekind_to_suffix = TYPES.filekind_to_suffix
 
 from crds.hst.tpn import get_tpninfos, reference_name_to_tpn_text, reference_name_to_ld_tpn_text
 
@@ -374,6 +375,89 @@ def ref_properties_from_header(filename):
 
 # ============================================================================
 
+def generate_unique_name(filename, now=None):
+
+    """Given an arbitrarily named filename (which must correctly define it's format, e.g. .fits)
+    generate and return a unique enhanced CDBS-style name which incorporates a timestamp,
+    and instrument id character, and a filetype suffix.
+
+Character 1   : Year [z=2015, 0=2016, 1= 2017, etc.]
+Character 2   : Month [1-9, a-c]
+Character 3   : Day [1-9, a-s(28), t(29), u(30), v(31)]
+Character 4-5: UT Hour [00 - 23]
+Character 6-7: UT Minute [00 - 59]
+Character 8   : UT Seconds [0-9, a-t (~2 second intervals)]
+Character 9   : Instrument Designation [j=ACS, i=WFC3, o=STIS, l=COS,
+u=WFPC2, n=NICMOS]
+    """
+    path, _obs, instr, filekind, _serial, ext = get_reference_properties(filename)
+
+    name = generate_unique_name_core(instr, filekind, ext, now)
+
+    return os.path.join(path, name)
+
+def generate_unique_name_core(instr, filekind, extension, now=None):
+    """Given an arbitrarily named filename (which must correctly define it's format, e.g. .fits)
+    generate and return a unique enhanced CDBS-style name which incorporates a timestamp,
+    and instrument id character, and a filetype suffix.
+
+Character 1   : Year [z=2015, 0=2016, 1= 2017, etc.]
+Character 2   : Month [1-9, a-c]
+Character 3   : Day [1-9, a-s(28), t(29), u(30), v(31)]
+Character 4-5: UT Hour [00 - 23]
+Character 6-7: UT Minute [00 - 59]
+Character 8   : UT Seconds [0-9, a-t (~2 second intervals)]
+Character 9   : Instrument Designation [j=ACS, i=WFC3, o=STIS, l=COS,
+u=WFPC2, n=NICMOS]
+    """
+    if now is None:
+        time.sleep(2)
+
+    suffix = "_" + filekind_to_suffix(instr, filekind)
+    
+    instr_char = siname.instrument_to_id_char(instr)
+
+    timeid = generate_timestamp(now)
+
+    return timeid + instr_char + suffix + extension
+
+def generate_timestamp(now=None):
+
+    """Generate an enhanced CDBS-style uniqname."""
+
+    if now is None:
+        now = datetime.datetime.now()
+    
+    if now.year < 2016:
+        year = chr(now.year - 2015 + ord('z'))
+    elif 2016 <= now.year <= 2025:
+        year = chr(now.year - 2016 + ord('0'))
+    else:
+        raise RuntimeError("Unique names are not defined for 2026 and beyond.")
+
+    if 1 <= now.month <= 9:
+        month = chr(now.month - 1 + ord('1'))
+    elif 10 <= now.month <= 12:
+        month = chr(now.month - 10 + ord('a'))
+
+    if 1 <= now.day <= 9:
+        day = chr(now.day - 1 + ord('1'))
+    elif 10 <= now.day <= 31:
+        day = chr(now.day - 10 + ord('a'))
+
+    hour = "%02d" % now.hour
+    minute = "%02d" % now.minute
+
+    hsecs = now.second // 2
+    if 0 <= hsecs <= 9:
+        second = chr(hsecs + ord('0'))
+    elif 10 <= hsecs <= 59:
+        second = chr(hsecs - 10 + ord('a'))
+
+    return "".join([year, month, day, hour, minute, second])
+    
+# ============================================================================
+
 # HST FITS headers have filenames adorned with environment prefixes for each
 # instrument.
 
@@ -467,6 +551,10 @@ __all__ = [
     "fits_to_parkeys",
     "reference_keys_to_dataset_keys",
     "condition_matching_header",
+
+    "generate_unique_name",
+    "generate_unique_name_core",
+    "generate_timestamp",
 ]
 
 for name in __all__:
