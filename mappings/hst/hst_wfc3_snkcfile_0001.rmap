@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'hst_wfc3_snkcfile.rmap',
+    'filekind' : 'SNKCFILE',
+    'filetype' : 'SINK PIXELS',
+    'instrument' : 'WFC3',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_wfc3_snkcfile_0001.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR', 'BINAXIS1', 'BINAXIS2'), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'IMAGE',
+    'reffile_required' : 'YES',
+    'reffile_switch' : 'PCTECORR',
+    'rmap_relevance' : '(DETECTOR == "UVIS" and SUBARRAY == "FALSE")',
+    'sha1sum' : 'd9cbe7d18264fa0be6417a2aa32f4e802637b30c',
+    'suffix' : 'snk',
+    'text_descr' : 'Sink Pixel Correction Image',
+}
+
+selector = Match({
+})

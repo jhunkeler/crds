@@ -1,0 +1,32 @@
+header = {
+    'derived_from' : 'jwst_nirspec_regions_0007.rmap',
+    'filekind' : 'REGIONS',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_regions_0008.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.GRATING', 'META.INSTRUMENT.FILTER', 'META.EXPOSURE.TYPE'),),
+    'reference_to_dataset' : {
+        'DETECTOR' : 'META.INSTRUMENT.DETECTOR',
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+        'FILTER' : 'META.INSTRUMENT.FILTER',
+        'GRATING' : 'META.INSTRUMENT.GRATING',
+    },
+    'sha1sum' : 'f7fc143cd97397c8fb6ca195acd98485e1a422af',
+}
+
+selector = Match({
+    ('ANY', 'ANY', 'ANY', 'NRS_AUTOFLAT') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_AUTOWAVE') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_BRIGHTOBJ') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_CONFIRM') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_FIXEDSLIT') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_FOCUS') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_IFU') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_IMAGE') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_MIMF') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_MSASPEC') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_TACONFIRM') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_TACQ') : 'N/A',
+    ('ANY', 'ANY', 'ANY', 'NRS_TASLIT') : 'N/A',
+})

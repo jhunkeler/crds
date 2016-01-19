@@ -1,0 +1,35 @@
+header = {
+    'derived_from' : 'jwst_nirspec_wavelengthrange_0006.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'wavelengthrange',
+    'filetype' : 'WAVELENGTHRANGE',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_wavelengthrange_0007.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '5ca1437ba6257d9daf1908030f028390d16d72d1',
+    'suffix' : 'wavelengthrange',
+    'text_descr' : 'NIRSPEC Spectral Configurations',
+}
+
+selector = Match({
+    'NRS_AUTOFLAT' : 'N/A',
+    'NRS_AUTOWAVE' : 'N/A',
+    'NRS_BOTA' : 'N/A',
+    'NRS_BRIGHTOBJ' : 'N/A',
+    'NRS_CONFIRM' : 'N/A',
+    'NRS_FIXEDSLIT' : 'jwst_nirspec_wavelengthrange_0001.asdf',
+    'NRS_FOCUS' : 'N/A',
+    'NRS_IFU' : 'N/A',
+    'NRS_IMAGE' : 'N/A',
+    'NRS_LAMP' : 'N/A',
+    'NRS_MIMF' : 'N/A',
+    'NRS_MSASPEC' : 'N/A',
+    'NRS_TACONFIRM' : 'N/A',
+    'NRS_TACQ' : 'N/A',
+    'NRS_TASLIT' : 'N/A',
+})

@@ -1,0 +1,38 @@
+header = {
+    'derived_from' : 'jwst_nircam_distortion_0004.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'DISTORTION',
+    'filetype' : 'DISTORTION',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_distortion_0005.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE', 'META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.CHANNEL'),),
+    'reference_to_dataset' : {
+        'CHANNEL' : 'META.INSTRUMENT.CHANNEL',
+        'DETECTOR' : 'META.INSTRUMENT.DETECTOR',
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : 'fc60a50cfbdba700f24eea75cd4390a93e27f4e4',
+    'suffix' : 'distortion',
+    'text_descr' : 'Distortion',
+}
+
+selector = Match({
+    ('NRC_CORON', 'ANY', 'ANY') : 'N/A',
+    ('NRC_FOCUS', 'ANY', 'ANY') : 'N/A',
+    ('NRC_IMAGE', 'NRCA1', 'SHORT') : 'jwst_nircam_distortion_0001.asdf',
+    ('NRC_IMAGE', 'NRCA2', 'SHORT') : 'jwst_nircam_distortion_0002.asdf',
+    ('NRC_IMAGE', 'NRCA3', 'SHORT') : 'jwst_nircam_distortion_0003.asdf',
+    ('NRC_IMAGE', 'NRCA4', 'SHORT') : 'jwst_nircam_distortion_0004.asdf',
+    ('NRC_IMAGE', 'NRCALONG', 'LONG') : 'jwst_nircam_distortion_0005.asdf',
+    ('NRC_IMAGE', 'NRCB1', 'SHORT') : 'jwst_nircam_distortion_0010.asdf',
+    ('NRC_IMAGE', 'NRCB2', 'SHORT') : 'jwst_nircam_distortion_0009.asdf',
+    ('NRC_IMAGE', 'NRCB3', 'SHORT') : 'jwst_nircam_distortion_0008.asdf',
+    ('NRC_IMAGE', 'NRCB4', 'SHORT') : 'jwst_nircam_distortion_0007.asdf',
+    ('NRC_IMAGE', 'NRCBLONG', 'LONG') : 'jwst_nircam_distortion_0006.asdf',
+    ('NRC_SLITLESS', 'ANY', 'ANY') : 'N/A',
+    ('NRC_TACQ', 'ANY', 'ANY') : 'N/A',
+    ('NRC_TSI', 'ANY', 'ANY') : 'N/A',
+    ('NRC_TSS', 'ANY', 'ANY') : 'N/A',
+})

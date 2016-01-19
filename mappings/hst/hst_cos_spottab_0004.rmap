@@ -1,0 +1,26 @@
+header = {
+    'derived_from' : 'hst_cos_spottab_0003.rmap',
+    'extra_keys' : (),
+    'file_ext' : '.fits',
+    'filekind' : 'SPOTTAB',
+    'filetype' : 'TRANSIENT BAD PIXEL REFERENCE TABLE',
+    'instrument' : 'COS',
+    'ld_tpn' : 'cos_spot_ld.tpn',
+    'mapping' : 'REFERENCE',
+    'name' : 'hst_cos_spottab_0004.rmap',
+    'observatory' : 'HST',
+    'parkey' : (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')),
+    'reffile_format' : 'TABLE',
+    'reffile_required' : 'NO',
+    'sha1sum' : '6c156c2e3e645cc3482de0dd002984bd6ddf7c1b',
+    'suffix' : 'spot',
+    'text_descr' : 'Spot Position Table',
+    'tpn' : 'cos_spot.tpn',
+    'unique_rowkeys' : None,
+}
+
+selector = Match({
+    'FUV' : UseAfter({
+        '2009-05-11 00:00:00' : 'zas1615jl_spot.fits',
+    }),
+})
