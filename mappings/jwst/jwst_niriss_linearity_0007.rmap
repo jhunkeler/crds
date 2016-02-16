@@ -1,0 +1,14 @@
+header = {
+    'derived_from' : 'jwst_niriss_linearity_0006.rmap',
+    'filekind' : 'LINEARITY',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_linearity_0007.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '24b27407b5626fc6fc8c99fe9cc83be63570e0f2',
+}
+
+selector = Match({
+    ('NIS', 'GENERIC') : 'jwst_niriss_linearity_0005.fits',
+})

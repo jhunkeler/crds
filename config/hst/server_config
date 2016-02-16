@@ -1,55 +1,97 @@
-{'bad_files': 'l2d0959cj_pfl.fits lbe1209bj_pfl.fits m1l0942nj_pfl.fits m5t12222j_pfl.fits z1r1943fl_bpix.fits',
+{'bad_files': 'l2d0959cj_pfl.fits lbe1209bj_pfl.fits m1l0942nj_pfl.fits '
+              'm5t12222j_pfl.fits z1r1943fl_bpix.fits',
  'bad_files_list': ['l2d0959cj_pfl.fits',
                     'lbe1209bj_pfl.fits',
                     'm1l0942nj_pfl.fits',
                     'm5t12222j_pfl.fits',
                     'z1r1943fl_bpix.fits'],
  'connected': True,
- 'context_history': [['2016-01-07 15:28:57',
+ 'context_history': [['2016-02-11 09:56:15',
+                      'hst_0424.pmap',
+                      'New ACS WFC1-1K subarray bias for data taken after '
+                      'November 19 2015.'],
+                     ['2016-02-10 15:48:44',
+                      'hst_0423.pmap',
+                      'Delivery of new STIS CCD bias and dark reference '
+                      'files.'],
+                     ['2016-01-07 15:28:57',
                       'hst_0380.pmap',
-                      'New ACS WFC bias, dark, and cte-corrected dark reference files.'],
+                      'New ACS WFC bias, dark, and cte-corrected dark '
+                      'reference files.'],
                      ['2015-12-22 15:02:47',
                       'hst_0379.pmap',
-                      'These post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to be used to calibrate all UVIS data, flashed and un-flashed, taken after November 21st 2015.'],
+                      'These post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to be used to calibrate all UVIS data, flashed '
+                      'and un-flashed, taken after November 21st 2015.'],
                      ['2015-12-01 12:28:10',
                       'hst_0378.pmap',
-                      'Redelivery of unchanged COS SPOTTAB rmap with references to add COS SPOTTAB back into operational context following OPUS-2015.2 code changes required to support COS SPOTTAB.'],
+                      'Redelivery of unchanged COS SPOTTAB rmap with '
+                      'references to add COS SPOTTAB back into operational '
+                      'context following OPUS-2015.2 code changes required to '
+                      'support COS SPOTTAB.'],
                      ['2015-11-24 11:24:35',
                       'hst_0377.pmap',
-                      'These post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to\r\nbe used to calibrate all UVIS data, flashed and un-flashed, taken after October 11th 2015.'],
+                      'These post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to\r\n'
+                      'be used to calibrate all UVIS data, flashed and '
+                      'un-flashed, taken after October 11th 2015.'],
                      ['2015-11-23 15:48:40',
                       'hst_0376.pmap',
-                      'New gainsag holes have appeared on the detector that need to be flagged and removed from final extracted spectrum. This delivery has two files, gsag_2015-10-27T10-24-18.392734.fits is the gainsag table for all observing modes and gsag_2015-10-27T10-24-18.392734_blue.fits which is for 1055 and 1096 blue modes only.'],
+                      'New gainsag holes have appeared on the detector that '
+                      'need to be flagged and removed from final extracted '
+                      'spectrum. This delivery has two files, '
+                      'gsag_2015-10-27T10-24-18.392734.fits is the gainsag '
+                      'table for all observing modes and '
+                      'gsag_2015-10-27T10-24-18.392734_blue.fits which is for '
+                      '1055 and 1096 blue modes only.'],
                      ['2015-11-19 15:40:17',
                       'hst_0375.pmap',
-                      'New ACS bias, darks and cte corrected dark reference files.'],
+                      'New ACS bias, darks and cte corrected dark reference '
+                      'files.'],
                      ['2015-11-18 10:16:23',
                       'hst_0374.pmap',
-                      'New BIASFILE rmap which includes the new aperture names.'],
+                      'New BIASFILE rmap which includes the new aperture '
+                      'names.'],
                      ['2015-11-18 09:23:43',
                       'hst_0373.pmap',
                       'New STIS CCD biases and darks.'],
                      ['2015-11-16 10:54:16',
                       'hst_0372.pmap',
-                      'Reactivating previous BPIXTAB.  Current file has a correction included that is no longer needed.'],
+                      'Reactivating previous BPIXTAB.  Current file has a '
+                      'correction included that is no longer needed.'],
                      ['2015-11-12 09:56:03',
                       'hst_0371.pmap',
                       'Delivery of the new COS FUV GSAGTAB.'],
                      ['2015-11-10 13:13:10',
                       'hst_0368.pmap',
-                      'Reference file installation following 2015.2b installation.'],
+                      'Reference file installation following 2015.2b '
+                      'installation.'],
                      ['2015-11-03 12:12:33',
                       'hst_0366.pmap',
-                      'These post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to\r\nbe used to calibrate all UVIS data, flashed and un-flashed, taken after October 19 2015.\r\n\r\nThese new IR darks support the new SPARS5 mode.'],
+                      'These post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to\r\n'
+                      'be used to calibrate all UVIS data, flashed and '
+                      'un-flashed, taken after October 19 2015.\r\n'
+                      '\r\n'
+                      'These new IR darks support the new SPARS5 mode.'],
                      ['2015-10-20 14:14:31',
                       'hst_0365.pmap',
-                      'Updated FLSHFILEs where CCDAMP was changed from ABCD to ANY in order to correctly process post-flashed subarray data.'],
+                      'Updated FLSHFILEs where CCDAMP was changed from ABCD to '
+                      'ANY in order to correctly process post-flashed subarray '
+                      'data.'],
                      ['2015-10-16 15:35:00',
                       'hst_0364.pmap',
-                      'These post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to be used to calibrate all UVIS data, flashed and un-flashed, taken after September 29 2015.'],
+                      'These post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to be used to calibrate all UVIS data, flashed '
+                      'and un-flashed, taken after September 29 2015.'],
                      ['2015-10-15 14:42:43',
                       'hst_0363.pmap',
-                      'Removed ZERO, ZEROCUR, OFF match rules for WFC3 FLSHFILE.'],
+                      'Removed ZERO, ZEROCUR, OFF match rules for WFC3 '
+                      'FLSHFILE.'],
                      ['2015-10-01 14:43:40',
                       'hst_0362.pmap',
                       'New WFC3 UVIS post-flashed darks.'],
@@ -64,7 +106,8 @@
                       'New WFC3 UVIS post-flashed darks.'],
                      ['2015-08-27 09:37:21',
                       'hst_0358.pmap',
-                      'New ACS bias, dark, and CTE-corrected dark reference files for data taken after June 3, 2015.'],
+                      'New ACS bias, dark, and CTE-corrected dark reference '
+                      'files for data taken after June 3, 2015.'],
                      ['2015-08-25 13:12:44',
                       'hst_0357.pmap',
                       'New STIS CCD bias and dark reference files.'],
@@ -73,13 +116,21 @@
                       'ACS HRC replacement dark for o9f1554oj.'],
                      ['2015-07-29 13:52:17',
                       'hst_0355.pmap',
-                      'New STIS weekly biases and darks were created for the new anneal month.'],
+                      'New STIS weekly biases and darks were created for the '
+                      'new anneal month.'],
                      ['2015-07-24 15:56:03',
                       'hst_0354.pmap',
-                      'These WFC3 post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to\r\nbe used to calibrate all UVIS data, flashed and un-flashed, taken after July 12 2015.'],
+                      'These WFC3 post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to\r\n'
+                      'be used to calibrate all UVIS data, flashed and '
+                      'un-flashed, taken after July 12 2015.'],
                      ['2015-07-20 16:47:18',
                       'hst_0353.pmap',
-                      'These WFC3 post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to be used to calibrate all UVIS data, flashed and un-flashed, taken after July 7 2015.'],
+                      'These WFC3 post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to be used to calibrate all UVIS data, flashed '
+                      'and un-flashed, taken after July 7 2015.'],
                      ['2015-07-09 09:58:22',
                       'hst_0352.pmap',
                       'New COS FUV FLUXTAB.'],
@@ -88,7 +139,8 @@
                       'Delivery of new COS FUV flats and PHOTTAB.'],
                      ['2015-06-29 15:51:55',
                       'hst_0349.pmap',
-                      'New ACS WFC1-2K, WFC1-1K, and WFC1-512 subarray biases.'],
+                      'New ACS WFC1-2K, WFC1-1K, and WFC1-512 subarray '
+                      'biases.'],
                      ['2015-06-25 10:22:44',
                       'hst_0348.pmap',
                       'New ACS WFC1-1K and WFC1-2K sub-array biases.'],
@@ -97,7 +149,9 @@
                       'New WFC3 UVIS post-flashed darks.'],
                      ['2015-06-17 14:43:34',
                       'hst_0346.pmap',
-                      'Delivery of new ACS bias, dark, and cte-corrected dark reference files, and the delivery of WFC3 UVIS post-flashed dark reference files.'],
+                      'Delivery of new ACS bias, dark, and cte-corrected dark '
+                      'reference files, and the delivery of WFC3 UVIS '
+                      'post-flashed dark reference files.'],
                      ['2015-06-03 13:53:08',
                       'hst_0344.pmap',
                       'New WFC3 UVIS post-flashed darks.'],
@@ -109,37 +163,49 @@
                       'Updated ACS WFC CTE-corrected dark frames.'],
                      ['2015-05-21 11:15:45',
                       'hst_0341.pmap',
-                      'New reference files for ACS WFC data taken after Apr 10 2015'],
+                      'New reference files for ACS WFC data taken after Apr 10 '
+                      '2015'],
                      ['2015-05-20 13:23:15',
                       'hst_0340.pmap',
                       'New WFC3 UVIS post-flashed darks.'],
                      ['2015-05-19 15:38:02',
                       'hst_0339.pmap',
-                      'New STIS weekly biases and darks were created for the new anneal month and need to be delivered for GO observations.'],
+                      'New STIS weekly biases and darks were created for the '
+                      'new anneal month and need to be delivered for GO '
+                      'observations.'],
                      ['2015-05-19 11:25:39',
                       'hst_0338.pmap',
-                      'New ACS CTE-corrected darks with updated flags for hot and warm pixels.  Replaces 268MB files from deliveries during the week of 5/11.'],
+                      'New ACS CTE-corrected darks with updated flags for hot '
+                      'and warm pixels.  Replaces 268MB files from deliveries '
+                      'during the week of 5/11.'],
                      ['2015-05-12 17:05:27',
                       'hst_0337.pmap',
                       'New weekly STIS biases and darks.'],
                      ['2015-05-12 12:27:54',
                       'hst_0336.pmap',
-                      'Delivery of 1210 new ACS DKC files for data taken prior to SM4.'],
+                      'Delivery of 1210 new ACS DKC files for data taken prior '
+                      'to SM4.'],
                      ['2015-04-21 13:29:45',
                       'hst_0326.pmap',
                       'New WFC3 UVIS post-flashed darks.'],
                      ['2015-04-21 10:36:10',
                       'hst_0325.pmap',
-                      'New ACS WFC bias, dark, and cte-corrected dark reference files.'],
+                      'New ACS WFC bias, dark, and cte-corrected dark '
+                      'reference files.'],
                      ['2015-04-16 10:29:07',
                       'hst_0324.pmap',
-                      'New ACS flash file for full frame data after Jul 01 2014'],
+                      'New ACS flash file for full frame data after Jul 01 '
+                      '2014'],
                      ['2015-04-09 16:41:11',
                       'hst_0323.pmap',
-                      'These WFC3 post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to be used to calibrate all UVIS data, flashed and un-flashed, taken after Mar 21 2015.'],
+                      'These WFC3 post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to be used to calibrate all UVIS data, flashed '
+                      'and un-flashed, taken after Mar 21 2015.'],
                      ['2015-04-08 16:33:22',
                       'hst_0322.pmap',
-                      'New reference files for ACS WFC data taken after Jan 15 2015'],
+                      'New reference files for ACS WFC data taken after Jan 15 '
+                      '2015'],
                      ['2015-04-01 15:07:43',
                       'hst_0321.pmap',
                       'New WFC3 UVIS post-flashed Darks.'],
@@ -151,10 +217,14 @@
                       'New STIS CCD biases and darks.'],
                      ['2015-02-25 14:10:20',
                       'hst_0318.pmap',
-                      'These WFC3 post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to be used to calibrate all UVIS data, flashed and un-flashed, taken after Feb 15 2015.'],
+                      'These WFC3 post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to be used to calibrate all UVIS data, flashed '
+                      'and un-flashed, taken after Feb 15 2015.'],
                      ['2015-02-24 15:06:03',
                       'hst_0317.pmap',
-                      'New darks, CTEdarks, and bias files for ACS WFC data taken after Dec 16 2014.'],
+                      'New darks, CTEdarks, and bias files for ACS WFC data '
+                      'taken after Dec 16 2014.'],
                      ['2015-02-16 15:47:04',
                       'hst_0316.pmap',
                       'New WFC3 UVIS Darks'],
@@ -163,10 +233,14 @@
                       'New COS TWOZXTAB and 1DXTAB.'],
                      ['2015-02-03 15:18:49',
                       'hst_0314.pmap',
-                      'New reference files for ACS WFC1-2K subarray data taken after Jan 19 2015'],
+                      'New reference files for ACS WFC1-2K subarray data taken '
+                      'after Jan 19 2015'],
                      ['2015-02-03 13:48:34',
                       'hst_0313.pmap',
-                      'These WFC3 post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and are to be used to calibrate all UVIS data, flashed and un-flashed, taken after Jan 18 2015.'],
+                      'These WFC3 post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and are to be used to calibrate all UVIS data, flashed '
+                      'and un-flashed, taken after Jan 18 2015.'],
                      ['2015-01-28 14:27:34',
                       'hst_0312.pmap',
                       'New ACS WFC1-2K and WFC1-1K subarray biases.'],
@@ -175,16 +249,19 @@
                       'New COS FUV 1DX and BPIX reference tables.'],
                      ['2015-01-27 12:57:20',
                       'hst_0310.pmap',
-                      'Initial delivery of COS FUV TWOZXTAB, PROFTAB, and TRACETAB reference tables.'],
+                      'Initial delivery of COS FUV TWOZXTAB, PROFTAB, and '
+                      'TRACETAB reference tables.'],
                      ['2015-01-22 16:57:26',
                       'hst_0307.pmap',
                       'New WFC3 darks for data after Dec. 10 2014.'],
                      ['2015-01-21 09:41:04',
                       'hst_0306.pmap',
-                      'New reference files for ACS WFC data taken after Nov 19 2014'],
+                      'New reference files for ACS WFC data taken after Nov 19 '
+                      '2014'],
                      ['2015-01-15 14:33:11',
                       'hst_0305.pmap',
-                      'New ACS WFC DRK and DKC files for data after Nov 19 2014.'],
+                      'New ACS WFC DRK and DKC files for data after Nov 19 '
+                      '2014.'],
                      ['2014-12-19 14:28:48',
                       'hst_0304.pmap',
                       'New COS FUV FLUXTAB and TDSTAB reference tables.'],
@@ -193,10 +270,12 @@
                       'New WFC3 UVIS post-flashed dark reference files.'],
                      ['2014-12-10 16:51:51',
                       'hst_0302.pmap',
-                      'Delivery of new ACS bias, dark and CTE-dark files for use after 10/22/2014.'],
+                      'Delivery of new ACS bias, dark and CTE-dark files for '
+                      'use after 10/22/2014.'],
                      ['2014-12-08 14:52:43',
                       'hst_0301.pmap',
-                      'Delivery of new WFC3 post-flashed dark files for data after 11/14/2014.'],
+                      'Delivery of new WFC3 post-flashed dark files for data '
+                      'after 11/14/2014.'],
                      ['2014-11-25 15:48:40',
                       'hst_0300.pmap',
                       'Delivery of a new COS HVTAB for association LCIX02080.'],
@@ -211,7 +290,8 @@
                       'The WFC3 Team delivered 3 new dark reference files.'],
                      ['2014-11-05 13:53:15',
                       'hst_0296.pmap',
-                      'Delivery of new ACS bias, dark, and cte_corrected dark reference files.'],
+                      'Delivery of new ACS bias, dark, and cte_corrected dark '
+                      'reference files.'],
                      ['2014-11-04 12:03:53',
                       'hst_0295.pmap',
                       'Delivery of new STIS dark and bias files.'],
@@ -223,7 +303,8 @@
                       'Delivery of new WFC3 UVIS darks, NPOLFILE, and IDCTAB.'],
                      ['2014-10-22 12:04:58',
                       'hst_0292.pmap',
-                      'The WFC3 Team delivered new darks and the STIS team delivered darks and biases.'],
+                      'The WFC3 Team delivered new darks and the STIS team '
+                      'delivered darks and biases.'],
                      ['2014-10-16 15:29:20',
                       'hst_0290.pmap',
                       'Delivery of new WFC3 UVIS darks.'],
@@ -238,28 +319,33 @@
                       'Delivery of new WFC3 darks.'],
                      ['2014-09-19 17:57:45',
                       'hst_0286.pmap',
-                      'To replace the previous HVTAB with incorrect and duplicated rows.'],
+                      'To replace the previous HVTAB with incorrect and '
+                      'duplicated rows.'],
                      ['2014-09-19 17:26:14',
                       'hst_0285.pmap',
                       'A new COS HVTAB accommodating new HV levels.'],
                      ['2014-09-18 13:44:16',
                       'hst_0284.pmap',
-                      'Delivery of new STIS biases and darks for the anneal month.'],
+                      'Delivery of new STIS biases and darks for the anneal '
+                      'month.'],
                      ['2014-09-16 19:40:53',
                       'hst_0283.pmap',
-                      'New WFC3 NPOLFILE, D2I, IDC references.  Removed some unviable ACS SBC thermal vac references.'],
+                      'New WFC3 NPOLFILE, D2I, IDC references.  Removed some '
+                      'unviable ACS SBC thermal vac references.'],
                      ['2014-09-12 15:10:24',
                       'hst_0279.pmap',
                       'Delivery of a new HVTAB by the COS Team.'],
                      ['2014-09-09 16:22:28',
                       'hst_0278.pmap',
-                      'The WFC3 team delivered 2 new post-flashed darks to be used with all UVIS data.'],
+                      'The WFC3 team delivered 2 new post-flashed darks to be '
+                      'used with all UVIS data.'],
                      ['2014-09-05 13:58:23',
                       'hst_0277.pmap',
                       'Delivery of a new COS FUV HVTAB.'],
                      ['2014-09-05 09:14:04',
                       'hst_0276.pmap',
-                      'Delivery of new ACS Bias, Dark, and CTE-Corrected Dark reference files.'],
+                      'Delivery of new ACS Bias, Dark, and CTE-Corrected Dark '
+                      'reference files.'],
                      ['2014-09-03 14:54:05',
                       'hst_0275.pmap',
                       'Delivery of new WFC3 UVIS darks.'],
@@ -268,37 +354,45 @@
                       'Delivery of new WFC3 post-flashed darks.'],
                      ['2014-08-25 14:57:16',
                       'hst_0273.pmap',
-                      'Delivery of new bias reference files for ACS/WFC subarray data.'],
+                      'Delivery of new bias reference files for ACS/WFC '
+                      'subarray data.'],
                      ['2014-08-20 16:25:56',
                       'hst_0272.pmap',
-                      'The WFC3 Team delivered 3 new post-flashed darks to be used with UVIS data.'],
+                      'The WFC3 Team delivered 3 new post-flashed darks to be '
+                      'used with UVIS data.'],
                      ['2014-08-18 15:51:15',
                       'hst_0271.pmap',
-                      'The ACS Team delivered 2 subarray bias files for use with data taken after May 16th.'],
+                      'The ACS Team delivered 2 subarray bias files for use '
+                      'with data taken after May 16th.'],
                      ['2014-08-11 12:34:55',
                       'hst_0270.pmap',
                       'Delivery of new WFC3/UVIS post-flashed darks.'],
                      ['2014-08-05 13:13:36',
                       'hst_0269.pmap',
-                      'New STIS darks and biases delivered for the new anneal month.'],
+                      'New STIS darks and biases delivered for the new anneal '
+                      'month.'],
                      ['2014-07-15 16:30:10',
                       'hst_0268.pmap',
                       'Delivery of new WFC3 UVIS post-flashed dark files.'],
                      ['2014-07-15 13:35:58',
                       'hst_0267.pmap',
-                      'New ACS full frame darks, cte corrected darks, and biases.'],
+                      'New ACS full frame darks, cte corrected darks, and '
+                      'biases.'],
                      ['2014-07-08 12:26:33',
                       'hst_0266.pmap',
                       'The COS Team delivered a new HVTAB.'],
                      ['2014-07-02 14:49:41',
                       'hst_0265.pmap',
-                      'Delivery of a new COS NUV High Voltage Reference Table.'],
+                      'Delivery of a new COS NUV High Voltage Reference '
+                      'Table.'],
                      ['2014-07-01 13:25:04',
                       'hst_0264.pmap',
-                      'Delivery of a new COS WCPTAB and new WFC3 UVIS darks and IR BPIXTAB reference files.'],
+                      'Delivery of a new COS WCPTAB and new WFC3 UVIS darks '
+                      'and IR BPIXTAB reference files.'],
                      ['2014-06-19 12:08:22',
                       'hst_0262.pmap',
-                      'The ACS Team delivered a new set of dark, cte-corrected dark, and bias reference files.'],
+                      'The ACS Team delivered a new set of dark, cte-corrected '
+                      'dark, and bias reference files.'],
                      ['2014-06-18 14:40:38',
                       'hst_0261.pmap',
                       'Delivery of new WFC3 dark reference files'],
@@ -313,10 +407,12 @@
                       'New STIS CCD bias and dark reference files.'],
                      ['2014-06-03 16:29:31',
                       'hst_0257.pmap',
-                      'Delivery of new STIS CCD bias and dark reference frames.'],
+                      'Delivery of new STIS CCD bias and dark reference '
+                      'frames.'],
                      ['2014-06-03 10:22:32',
                       'hst_0256.pmap',
-                      'Delivery of new ACS bias, dark, and cte-corrected dark reference files.'],
+                      'Delivery of new ACS bias, dark, and cte-corrected dark '
+                      'reference files.'],
                      ['2014-05-29 14:27:07',
                       'hst_0255.pmap',
                       'Delivery of new WFC3 darks.'],
@@ -328,7 +424,8 @@
                       'Delivery of new STIS bias and dark reference files.'],
                      ['2014-05-15 15:31:54',
                       'hst_0252.pmap',
-                      'New files needed for 2014.2 were delivered by Todd Miller.'],
+                      'New files needed for 2014.2 were delivered by Todd '
+                      'Miller.'],
                      ['2014-05-09 14:14:58',
                       'hst_0064.pmap',
                       'Delivery of new apertab and pctabs for STIS.'],
@@ -337,10 +434,12 @@
                       'Updated for the delivery of WFC3 dark reference files.'],
                      ['2014-04-22 15:52:29',
                       'hst_0062.pmap',
-                      'WFC3 delivery of 2x2 binned post-flash reference files that update the current dummy files.'],
+                      'WFC3 delivery of 2x2 binned post-flash reference files '
+                      'that update the current dummy files.'],
                      ['2014-04-21 17:53:01',
                       'hst_0061.pmap',
-                      'Delivery of new ACS DRK, DKC, and BIAS files to be used with data after 03/10/2014.'],
+                      'Delivery of new ACS DRK, DKC, and BIAS files to be used '
+                      'with data after 03/10/2014.'],
                      ['2014-04-16 13:50:42',
                       'hst_0060.pmap',
                       'Delivery of new WFC3 dark files.'],
@@ -370,7 +469,8 @@
                       'Delivery of a new ACS bias.'],
                      ['2014-02-20 10:29:25',
                       'hst_0051.pmap',
-                      'Delivery of ACS full-frame bias, dark, and cte-corrected dark reference files.'],
+                      'Delivery of ACS full-frame bias, dark, and '
+                      'cte-corrected dark reference files.'],
                      ['2014-02-19 14:15:03',
                       'hst_0050.pmap',
                       'Delivery of new WFC3 UVIS darks.'],
@@ -379,10 +479,28 @@
                       'Delivery of new STIS IMPHTTAB.'],
                      ['2014-02-10 11:49:57',
                       'hst_0048.pmap',
-                      'These post-flashed dark current files continue the temporal monitoring of the UVIS channel dark current and have useafter dates of January 29th and 30th, 2014.\r\n\r\nSTIS darks & biases:\r\nNew weekly biases and darks were created for the new anneal month to used with GO observations.\r\n\r\nCOS hvtab:\r\nDQ flags have been slightly redefined and regions have been added, removed, or modified based on current data and detector understanding.  In particular, data from COS FUV lifetime planning has enabled flagging of bad regions over a larger area of the detector than in previous implementation, and additional dark data has allowed a better qualification of what should or should not be flagged.'],
+                      'These post-flashed dark current files continue the '
+                      'temporal monitoring of the UVIS channel dark current '
+                      'and have useafter dates of January 29th and 30th, '
+                      '2014.\r\n'
+                      '\r\n'
+                      'STIS darks & biases:\r\n'
+                      'New weekly biases and darks were created for the new '
+                      'anneal month to used with GO observations.\r\n'
+                      '\r\n'
+                      'COS hvtab:\r\n'
+                      'DQ flags have been slightly redefined and regions have '
+                      'been added, removed, or modified based on current data '
+                      'and detector understanding.  In particular, data from '
+                      'COS FUV lifetime planning has enabled flagging of bad '
+                      'regions over a larger area of the detector than in '
+                      'previous implementation, and additional dark data has '
+                      'allowed a better qualification of what should or should '
+                      'not be flagged.'],
                      ['2014-02-05 15:07:10',
                       'hst_0045.pmap',
-                      'Updating context to hst_0045.pmap following CRDS delivery 12666.'],
+                      'Updating context to hst_0045.pmap following CRDS '
+                      'delivery 12666.'],
                      ['2014-01-29 13:48:49',
                       'hst_0044.pmap',
                       'Delivery of new WFC3 dark reference files.'],
@@ -400,13 +518,19 @@
                       'New ACS WFC biases, darks, and cte-corrected darks.'],
                      ['2014-01-09 16:26:23',
                       'hst_0039.pmap',
-                      '4 WFC3 darks that are post-flashed dark current files which continue the temporal monitoring of the UVIS channel dark current.'],
+                      '4 WFC3 darks that are post-flashed dark current files '
+                      'which continue the temporal monitoring of the UVIS '
+                      'channel dark current.'],
                      ['2014-01-09 15:27:38',
                       'hst_0038.pmap',
-                      'This file will populate header keywords with the commanded COS FUV high voltage values for 1/6/2014 which are part of proposal 13617 (LOP1), intended to characterize the LP3 gain'],
+                      'This file will populate header keywords with the '
+                      'commanded COS FUV high voltage values for 1/6/2014 '
+                      'which are part of proposal 13617 (LOP1), intended to '
+                      'characterize the LP3 gain'],
                      ['2014-01-08 09:53:10',
                       'hst_0037.pmap',
-                      'New ACS bias, dark, and npol reference files; and new STIS bias and dark reference files.'],
+                      'New ACS bias, dark, and npol reference files; and new '
+                      'STIS bias and dark reference files.'],
                      ['2014-01-07 11:34:07',
                       'hst_0035.pmap',
                       'Second parallel ops setting.'],
@@ -415,13 +539,10 @@
                       'First operational setting of the context (FH).'],
                      ['2013-11-22 13:15:17',
                       'hst_0033.pmap',
-                      'New ACS full-frame bias, WFC1-2K bias, standard dark, and cte-corrected dark reference files.'],
-                     ['2013-11-19 13:00:40',
-                      'hst_0032.pmap',
-                      'New wfc3 darks'],
-                     ['2013-11-18 10:51:07',
-                      'hst_0031.pmap',
-                      'STIS APDESTAB'],
+                      'New ACS full-frame bias, WFC1-2K bias, standard dark, '
+                      'and cte-corrected dark reference files.'],
+                     ['2013-11-19 13:00:40', 'hst_0032.pmap', 'New wfc3 darks'],
+                     ['2013-11-18 10:51:07', 'hst_0031.pmap', 'STIS APDESTAB'],
                      ['2013-11-13 09:49:22',
                       'hst_0030.pmap',
                       'new COS spwcs file'],
@@ -445,7 +566,8 @@
                       'COS FLUXTAB and WCPTAB updates'],
                      ['2013-10-17 13:00:13',
                       'hst_0023.pmap',
-                      'Modified COS FLUXTAB rmap to match on LIFE_ADJ.   New STIS TDCTAB.'],
+                      'Modified COS FLUXTAB rmap to match on LIFE_ADJ.   New '
+                      'STIS TDCTAB.'],
                      ['2013-10-15 07:43:15', 'hst_0021.pmap', 'COS WCBPTAB'],
                      ['2013-10-11 15:51:15',
                       'hst_0020.pmap',
@@ -458,10 +580,12 @@
                       'New ACS PCTETAB and CCDTAB tables.'],
                      ['2013-10-08 11:35:19',
                       'hst_0016.pmap',
-                      'New ACS bias, subarray bias, dark, and cte-corrected dark reference files.'],
+                      'New ACS bias, subarray bias, dark, and cte-corrected '
+                      'dark reference files.'],
                      ['2013-10-04 09:25:43',
                       'hst_0015.pmap',
-                      'Added new ACS WFC bias, standard dark, and CTE-corrected dark reference files.'],
+                      'Added new ACS WFC bias, standard dark, and '
+                      'CTE-corrected dark reference files.'],
                      ['2013-10-01 14:25:43',
                       'hst_0014.pmap',
                       'STIS bias and dark files'],
@@ -473,24 +597,31 @@
                       'New WFC3 UVIS darks'],
                      ['2013-09-19 13:59:45',
                       'hst_0010.pmap',
-                      'New WFC3 D2IMFILE type and initial rmap,  new WFC3\r\nD2IMFILE reference x5o1555ji_d2i.fits,  two new COS references\r\nx5t2047dl_flat.fits and x9h1254fl_tds.fits.'],
+                      'New WFC3 D2IMFILE type and initial rmap,  new WFC3\r\n'
+                      'D2IMFILE reference x5o1555ji_d2i.fits,  two new COS '
+                      'references\r\n'
+                      'x5t2047dl_flat.fits and x9h1254fl_tds.fits.'],
                      ['2013-09-17 18:17:17',
                       'hst_0008.pmap',
-                      'Updated ACS D2I and COS FLAT from 2013-09-16.  Added DETECTOR==UVIS rmap_relevance condition to WFC3 FLSHFILE with custom rmap update.'],
+                      'Updated ACS D2I and COS FLAT from 2013-09-16.  Added '
+                      'DETECTOR==UVIS rmap_relevance condition to WFC3 '
+                      'FLSHFILE with custom rmap update.'],
                      ['2013-09-16 16:14:23',
                       'hst_0005.pmap',
                       'Updated STIS darks and biases from 2013-09-12.'],
                      ['2013-09-13 13:59:02',
                       'hst_0004.pmap',
-                      'Found and added additional wfc3 darkfiles submitted since hst.pmap was generated.'],
+                      'Found and added additional wfc3 darkfiles submitted '
+                      'since hst.pmap was generated.'],
                      ['2013-09-10 18:23:06',
                       'hst_0003.pmap',
-                      'Updated hst.pmap with new references (known to reffile_ops_rep on harpo) up to 09-10-2013'],
+                      'Updated hst.pmap with new references (known to '
+                      'reffile_ops_rep on harpo) up to 09-10-2013'],
                      ['2013-07-02 15:44:53', 'hst.pmap', 'set by system']],
- 'crds_version': {'rev': '2788M', 'str': '1.7.0', 'svnurl': '/'},
- 'edit_context': 'hst_0396.pmap',
+ 'crds_version': {'rev': '2825M', 'str': '1.7.0', 'svnurl': '/'},
+ 'edit_context': 'hst_0424.pmap',
  'force_remote_mode': False,
- 'last_synced': '2016-01-19 16:55:09.050649',
+ 'last_synced': '2016-02-16 11:10:26.757816',
  'mapping_url': {'hst': 'https://hst-crds.stsci.edu/unchecked_get/mappings/hst/'},
  'mappings': ['hst.pmap',
               'hst_0001.pmap',
@@ -704,6 +835,34 @@
               'hst_0394.pmap',
               'hst_0395.pmap',
               'hst_0396.pmap',
+              'hst_0397.pmap',
+              'hst_0398.pmap',
+              'hst_0399.pmap',
+              'hst_0400.pmap',
+              'hst_0401.pmap',
+              'hst_0402.pmap',
+              'hst_0403.pmap',
+              'hst_0404.pmap',
+              'hst_0405.pmap',
+              'hst_0406.pmap',
+              'hst_0407.pmap',
+              'hst_0408.pmap',
+              'hst_0409.pmap',
+              'hst_0410.pmap',
+              'hst_0411.pmap',
+              'hst_0412.pmap',
+              'hst_0413.pmap',
+              'hst_0414.pmap',
+              'hst_0415.pmap',
+              'hst_0416.pmap',
+              'hst_0417.pmap',
+              'hst_0418.pmap',
+              'hst_0419.pmap',
+              'hst_0420.pmap',
+              'hst_0421.pmap',
+              'hst_0422.pmap',
+              'hst_0423.pmap',
+              'hst_0424.pmap',
               'hst_acs.imap',
               'hst_acs_0001.imap',
               'hst_acs_0002.imap',
@@ -761,6 +920,7 @@
               'hst_acs_0289.imap',
               'hst_acs_0290.imap',
               'hst_acs_0291.imap',
+              'hst_acs_0292.imap',
               'hst_acs_atodtab.rmap',
               'hst_acs_atodtab_0250.rmap',
               'hst_acs_biasfile.rmap',
@@ -799,6 +959,7 @@
               'hst_acs_biasfile_0271.rmap',
               'hst_acs_biasfile_0275.rmap',
               'hst_acs_biasfile_0277.rmap',
+              'hst_acs_biasfile_0278.rmap',
               'hst_acs_bpixtab.rmap',
               'hst_acs_bpixtab_0250.rmap',
               'hst_acs_ccdtab.rmap',
@@ -1111,6 +1272,7 @@
               'hst_stis_0263.imap',
               'hst_stis_0264.imap',
               'hst_stis_0265.imap',
+              'hst_stis_0266.imap',
               'hst_stis_apdestab.rmap',
               'hst_stis_apdestab_0001.rmap',
               'hst_stis_apdestab_0250.rmap',
@@ -1139,6 +1301,7 @@
               'hst_stis_biasfile_0263.rmap',
               'hst_stis_biasfile_0264.rmap',
               'hst_stis_biasfile_0265.rmap',
+              'hst_stis_biasfile_0266.rmap',
               'hst_stis_bpixtab.rmap',
               'hst_stis_bpixtab_0250.rmap',
               'hst_stis_ccdtab.rmap',
@@ -1168,6 +1331,7 @@
               'hst_stis_darkfile_0263.rmap',
               'hst_stis_darkfile_0264.rmap',
               'hst_stis_darkfile_0265.rmap',
+              'hst_stis_darkfile_0266.rmap',
               'hst_stis_disptab.rmap',
               'hst_stis_disptab_0250.rmap',
               'hst_stis_echsctab.rmap',
@@ -1308,9 +1472,37 @@
               'hst_wfc3_0310.imap',
               'hst_wfc3_0311.imap',
               'hst_wfc3_0312.imap',
+              'hst_wfc3_0313.imap',
+              'hst_wfc3_0314.imap',
+              'hst_wfc3_0315.imap',
+              'hst_wfc3_0316.imap',
+              'hst_wfc3_0317.imap',
+              'hst_wfc3_0318.imap',
+              'hst_wfc3_0319.imap',
+              'hst_wfc3_0320.imap',
+              'hst_wfc3_0321.imap',
+              'hst_wfc3_0322.imap',
+              'hst_wfc3_0323.imap',
+              'hst_wfc3_0324.imap',
+              'hst_wfc3_0325.imap',
+              'hst_wfc3_0326.imap',
+              'hst_wfc3_0327.imap',
+              'hst_wfc3_0328.imap',
+              'hst_wfc3_0329.imap',
+              'hst_wfc3_0330.imap',
+              'hst_wfc3_0331.imap',
+              'hst_wfc3_0332.imap',
+              'hst_wfc3_0333.imap',
+              'hst_wfc3_0334.imap',
+              'hst_wfc3_0335.imap',
+              'hst_wfc3_0336.imap',
+              'hst_wfc3_0337.imap',
+              'hst_wfc3_0338.imap',
               'hst_wfc3_atodtab.rmap',
               'hst_wfc3_atodtab_0250.rmap',
               'hst_wfc3_biacfile_0001.rmap',
+              'hst_wfc3_biacfile_0002.rmap',
+              'hst_wfc3_biacfile_0003.rmap',
               'hst_wfc3_biasfile.rmap',
               'hst_wfc3_biasfile_0250.rmap',
               'hst_wfc3_biasfile_0251.rmap',
@@ -1387,6 +1579,26 @@
               'hst_wfc3_darkfile_0292.rmap',
               'hst_wfc3_darkfile_0293.rmap',
               'hst_wfc3_darkfile_0294.rmap',
+              'hst_wfc3_darkfile_0295.rmap',
+              'hst_wfc3_darkfile_0296.rmap',
+              'hst_wfc3_darkfile_0297.rmap',
+              'hst_wfc3_darkfile_0298.rmap',
+              'hst_wfc3_darkfile_0299.rmap',
+              'hst_wfc3_darkfile_0300.rmap',
+              'hst_wfc3_darkfile_0301.rmap',
+              'hst_wfc3_darkfile_0302.rmap',
+              'hst_wfc3_darkfile_0303.rmap',
+              'hst_wfc3_darkfile_0304.rmap',
+              'hst_wfc3_darkfile_0306.rmap',
+              'hst_wfc3_darkfile_0307.rmap',
+              'hst_wfc3_darkfile_0308.rmap',
+              'hst_wfc3_darkfile_0309.rmap',
+              'hst_wfc3_darkfile_0310.rmap',
+              'hst_wfc3_darkfile_0311.rmap',
+              'hst_wfc3_darkfile_0312.rmap',
+              'hst_wfc3_darkfile_0313.rmap',
+              'hst_wfc3_darkfile_0314.rmap',
+              'hst_wfc3_darkfile_0315.rmap',
               'hst_wfc3_drkcfile_0001.rmap',
               'hst_wfc3_drkcfile_0002.rmap',
               'hst_wfc3_drkcfile_0003.rmap',
@@ -1403,6 +1615,12 @@
               'hst_wfc3_drkcfile_0014.rmap',
               'hst_wfc3_drkcfile_0015.rmap',
               'hst_wfc3_drkcfile_0016.rmap',
+              'hst_wfc3_drkcfile_0017.rmap',
+              'hst_wfc3_drkcfile_0018.rmap',
+              'hst_wfc3_drkcfile_0019.rmap',
+              'hst_wfc3_drkcfile_0021.rmap',
+              'hst_wfc3_drkcfile_0023.rmap',
+              'hst_wfc3_drkcfile_0024.rmap',
               'hst_wfc3_flshfile.rmap',
               'hst_wfc3_flshfile_0001.rmap',
               'hst_wfc3_flshfile_0002.rmap',
@@ -1415,6 +1633,7 @@
               'hst_wfc3_idctab_0252.rmap',
               'hst_wfc3_imphttab.rmap',
               'hst_wfc3_imphttab_0250.rmap',
+              'hst_wfc3_imphttab_0252.rmap',
               'hst_wfc3_mdriztab.rmap',
               'hst_wfc3_mdriztab_0250.rmap',
               'hst_wfc3_nlinfile.rmap',
@@ -1425,9 +1644,12 @@
               'hst_wfc3_oscntab.rmap',
               'hst_wfc3_oscntab_0250.rmap',
               'hst_wfc3_pctetab_0001.rmap',
+              'hst_wfc3_pctetab_0002.rmap',
               'hst_wfc3_pfltfile.rmap',
               'hst_wfc3_pfltfile_0250.rmap',
+              'hst_wfc3_pfltfile_0252.rmap',
               'hst_wfc3_snkcfile_0001.rmap',
+              'hst_wfc3_snkcfile_0002.rmap',
               'hst_wfpc2.imap',
               'hst_wfpc2_0250.imap',
               'hst_wfpc2_atodfile.rmap',
@@ -1453,7 +1675,7 @@
  'max_bestrefs_per_rpc': 1000,
  'max_headers_per_rpc': 5000,
  'observatory': 'hst',
- 'operational_context': 'hst_0380.pmap',
+ 'operational_context': 'hst_0424.pmap',
  'reference_url': {'hst': 'https://hst-crds.stsci.edu/unchecked_get/references/hst/'},
  'server': 'https://hst-crds.stsci.edu',
  'status': 'server'}

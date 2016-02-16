@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'jwst_fgs_mask_0003.rmap',
+    'filekind' : 'MASK',
+    'instrument' : 'FGS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_fgs_mask_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '7ddac7fc445b16d0d0f1cc54a1a854b86e455f4e',
+    'substitutions' : {
+        'META.SUBARRAY.NAME' : {
+            'GENERIC' : 'N/A',
+        },
+    },
+}
+
+selector = Match({
+    ('GUIDER1', 'GENERIC') : 'jwst_fgs_mask_0002.fits',
+    ('GUIDER2', 'GENERIC') : 'jwst_fgs_mask_0003.fits',
+})

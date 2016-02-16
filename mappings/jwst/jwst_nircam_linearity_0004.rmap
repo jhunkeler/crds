@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'jwst_nircam_linearity_0003.rmap',
+    'filekind' : 'LINEARITY',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_linearity_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : 'd727b2f61ced666a90abba4d73edbd400480ee89',
+}
+
+selector = Match({
+    ('NRCA1', 'FULL') : 'jwst_nircam_linearity_0020.fits',
+    ('NRCA2', 'FULL') : 'jwst_nircam_linearity_0021.fits',
+    ('NRCA3', 'FULL') : 'jwst_nircam_linearity_0022.fits',
+    ('NRCA4', 'FULL') : 'jwst_nircam_linearity_0023.fits',
+    ('NRCALONG', 'FULL') : 'jwst_nircam_linearity_0024.fits',
+    ('NRCB1', 'FULL') : 'jwst_nircam_linearity_0025.fits',
+    ('NRCB2', 'FULL') : 'jwst_nircam_linearity_0026.fits',
+    ('NRCB3', 'FULL') : 'jwst_nircam_linearity_0027.fits',
+    ('NRCB4', 'FULL') : 'jwst_nircam_linearity_0028.fits',
+    ('NRCBLONG', 'FULL') : 'jwst_nircam_linearity_0029.fits',
+})

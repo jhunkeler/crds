@@ -1,0 +1,22 @@
+header = {
+    'derived_from' : 'jwst_nirspec_dark_0003.rmap',
+    'filekind' : 'DARK',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_dark_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : 'e104169382c19f0aedafdab210f7ffe8c25a44ee',
+    'substitutions' : {
+        'META.SUBARRAY.NAME' : {
+            'GENERIC' : 'N/A',
+        },
+    },
+}
+
+selector = Match({
+    ('NRS1', 'ALLSLITS') : 'jwst_nirspec_dark_0007.fits',
+    ('NRS1', 'FULL') : 'jwst_nirspec_dark_0006.fits',
+    ('NRS2', 'ALLSLITS') : 'jwst_nirspec_dark_0009.fits',
+    ('NRS2', 'FULL') : 'jwst_nirspec_dark_0008.fits',
+})

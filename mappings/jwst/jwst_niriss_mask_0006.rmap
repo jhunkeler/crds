@@ -1,0 +1,14 @@
+header = {
+    'derived_from' : 'jwst_niriss_mask_0005.rmap',
+    'filekind' : 'MASK',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_mask_0006.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '384c64d6fd317f8325a776dd2feab3217e9d2301',
+}
+
+selector = Match({
+    ('NIS', 'GENERIC') : 'jwst_niriss_mask_0004.fits',
+})

@@ -1,0 +1,20 @@
+header = {
+    'derived_from' : 'jwst_nirspec_readnoise_0001.rmap',
+    'filekind' : 'READNOISE',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_readnoise_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.EXPOSURE.READPATT', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : 'e42deb3f2bdc2dd278351ec0b723652bb7a7b531',
+    'substitutions' : {
+        'META.SUBARRAY.NAME' : {
+            'GENERIC' : 'N/A',
+        },
+    },
+}
+
+selector = Match({
+    ('NRS1', 'N/A', 'GENERIC') : 'jwst_nirspec_readnoise_0000.fits',
+    ('NRS2', 'N/A', 'GENERIC') : 'jwst_nirspec_readnoise_0001.fits',
+})

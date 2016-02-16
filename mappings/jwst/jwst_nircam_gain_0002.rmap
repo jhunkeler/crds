@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'jwst_nircam_gain_0001.rmap',
+    'filekind' : 'GAIN',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_gain_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '57361979869384bf9f896ed28fb8913a7b8c3536',
+}
+
+selector = Match({
+    ('NRCA1', 'GENERIC') : 'jwst_nircam_gain_0000.fits',
+    ('NRCA2', 'GENERIC') : 'jwst_nircam_gain_0001.fits',
+    ('NRCA3', 'GENERIC') : 'jwst_nircam_gain_0002.fits',
+    ('NRCA4', 'GENERIC') : 'jwst_nircam_gain_0003.fits',
+    ('NRCALONG', 'GENERIC') : 'jwst_nircam_gain_0004.fits',
+    ('NRCB1', 'GENERIC') : 'jwst_nircam_gain_0005.fits',
+    ('NRCB2', 'GENERIC') : 'jwst_nircam_gain_0006.fits',
+    ('NRCB3', 'GENERIC') : 'jwst_nircam_gain_0007.fits',
+    ('NRCB4', 'GENERIC') : 'jwst_nircam_gain_0008.fits',
+    ('NRCBLONG', 'GENERIC') : 'jwst_nircam_gain_0009.fits',
+})

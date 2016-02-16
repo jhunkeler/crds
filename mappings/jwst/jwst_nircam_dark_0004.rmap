@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'jwst_nircam_dark_0003.rmap',
+    'filekind' : 'DARK',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_dark_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '65e3aaa32baba32d0dad0de0ed5862f91b7ac428',
+}
+
+selector = Match({
+    ('NRCA1', 'FULL') : 'jwst_nircam_dark_0040.fits',
+    ('NRCA2', 'FULL') : 'jwst_nircam_dark_0031.fits',
+    ('NRCA3', 'FULL') : 'jwst_nircam_dark_0041.fits',
+    ('NRCA4', 'FULL') : 'jwst_nircam_dark_0042.fits',
+    ('NRCALONG', 'FULL') : 'jwst_nircam_dark_0043.fits',
+    ('NRCB1', 'FULL') : 'jwst_nircam_dark_0044.fits',
+    ('NRCB2', 'FULL') : 'jwst_nircam_dark_0045.fits',
+    ('NRCB3', 'FULL') : 'jwst_nircam_dark_0046.fits',
+    ('NRCB4', 'FULL') : 'jwst_nircam_dark_0047.fits',
+    ('NRCBLONG', 'FULL') : 'jwst_nircam_dark_0048.fits',
+})

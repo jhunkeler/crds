@@ -1,0 +1,19 @@
+header = {
+    'derived_from' : 'jwst_niriss_dark_0008.rmap',
+    'filekind' : 'DARK',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_dark_0010.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '4e92b9374c25d4c92e89a8cb9745ee1e67604783',
+    'substitutions' : {
+        'META.SUBARRAY.NAME' : {
+            'GENERIC' : 'N/A',
+        },
+    },
+}
+
+selector = Match({
+    ('NIS', 'FULL') : 'jwst_niriss_dark_0005.fits',
+})

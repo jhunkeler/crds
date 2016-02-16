@@ -1,0 +1,28 @@
+header = {
+    'derived_from' : 'jwst_nircam_readnoise_0002.rmap',
+    'filekind' : 'READNOISE',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_readnoise_0003.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.EXPOSURE.READPATT', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : 'b96b82eb8d553b102ea775f0f15ffca6c278c035',
+    'substitutions' : {
+        'META.SUBARRAY.NAME' : {
+            'GENERIC' : 'N/A',
+        },
+    },
+}
+
+selector = Match({
+    ('NRCA1', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0010.fits',
+    ('NRCA2', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0001.fits',
+    ('NRCA3', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0011.fits',
+    ('NRCA4', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0012.fits',
+    ('NRCALONG', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0013.fits',
+    ('NRCB1', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0014.fits',
+    ('NRCB2', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0015.fits',
+    ('NRCB3', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0016.fits',
+    ('NRCB4', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0017.fits',
+    ('NRCBLONG', 'N/A', 'GENERIC') : 'jwst_nircam_readnoise_0018.fits',
+})

@@ -1,0 +1,14 @@
+header = {
+    'derived_from' : 'jwst_niriss_flat_0004.rmap',
+    'filekind' : 'FLAT',
+    'instrument' : 'NIRISS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_niriss_flat_0005.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.FILTER', 'META.INSTRUMENT.PUPIL'),),
+    'sha1sum' : '07e1bc5b568f1329c736280a56171ebc6b006e0f',
+}
+
+selector = Match({
+    ('NIS', 'CLEAR', 'CLEARP') : 'jwst_niriss_flat_0003.fits',
+})

@@ -1,0 +1,23 @@
+header = {
+    'derived_from' : 'jwst_nircam_ipc_0000.rmap',
+    'filekind' : 'IPC',
+    'instrument' : 'NIRCAM',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nircam_ipc_0001.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : 'd123867eae43d29f269cb7d86737811b460116e0',
+}
+
+selector = Match({
+    'NRCA1' : 'jwst_nircam_ipc_0011.fits',
+    'NRCA2' : 'jwst_nircam_ipc_0012.fits',
+    'NRCA3' : 'jwst_nircam_ipc_0013.fits',
+    'NRCA4' : 'jwst_nircam_ipc_0014.fits',
+    'NRCALONG' : 'jwst_nircam_ipc_0015.fits',
+    'NRCB1' : 'jwst_nircam_ipc_0016.fits',
+    'NRCB2' : 'jwst_nircam_ipc_0017.fits',
+    'NRCB3' : 'jwst_nircam_ipc_0018.fits',
+    'NRCB4' : 'jwst_nircam_ipc_0019.fits',
+    'NRCBLONG' : 'jwst_nircam_ipc_0020.fits',
+})
