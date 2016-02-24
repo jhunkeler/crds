@@ -177,6 +177,7 @@ class CrdsLogger(object):
         """
         output = self.format(*args, **keys)
         self.eol_pending = not output.endswith("\n")
+        sys.stderr.flush()
         sys.stdout.write(output)
         sys.stdout.flush()
 
@@ -402,6 +403,14 @@ def format_parameter_list(parameters):
     items = sorted(dict(parameters).items())
     return " ".join(["=".join([key, repr(str(value))]) for (key,value) in items])
     
+# ==============================================================================
+
+def srepr(obj):
+    """Return the repr() of the str() of obj"""  
+    return repr(str(obj))
+
+# ==============================================================================
+
 def test():
     from crds import log
     import doctest

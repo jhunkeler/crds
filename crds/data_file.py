@@ -9,43 +9,43 @@ False
 >>> import io
 >>> header = get_geis_header(io.StringIO(_GEIS_TEST_DATA))
 
->>> import pprint
->>> pprint.pprint(header)
-{'ATODGAIN': '0.',
- 'BITPIX': '16',
- 'DATATYPE': 'INTEGER*2',
- 'DESCRIP': 'STATIC MASK - INCLUDES CHARGE TRANSFER TRAPS',
- 'FILETYPE': 'MSK',
- 'FILTER1': '0',
- 'FILTER2': '0',
- 'FILTNAM1': '',
- 'FILTNAM2': '',
- 'GCOUNT': '4',
- 'GROUPS': 'T',
- 'HISTORY': ['This file was edited by Michael S. Wiggs, August 1995',
-             '',
-             'e2112084u.r0h was edited to include values of 256'],
- 'INSTRUME': 'WFPC2',
- 'KSPOTS': 'OFF',
- 'NAXIS': '1',
- 'NAXIS1': '800',
- 'PCOUNT': '38',
- 'PDTYPE1': 'REAL*8',
- 'PDTYPE2': 'REAL*8',
- 'PEDIGREE': 'INFLIGHT 01/01/1994 - 15/05/1995',
- 'PSIZE': '1760',
- 'PSIZE1': '64',
- 'PSIZE2': '64',
- 'PTYPE1': 'CRVAL1',
- 'PTYPE2': 'CRVAL2',
- 'ROOTNAME': 'F8213081U',
- 'SHUTTER': '',
- 'SIMPLE': 'F',
- 'UBAY3TMP': '0.',
- 'UCH1CJTM': '0.',
- 'UCH2CJTM': '0.',
- 'UCH3CJTM': '0.',
- 'UCH4CJTM': '0.'}
+>> import pprint
+>> pprint.pprint(header)
+    {'ATODGAIN': '0.',
+     'BITPIX': '16',
+     'DATATYPE': 'INTEGER*2',
+     'DESCRIP': 'STATIC MASK - INCLUDES CHARGE TRANSFER TRAPS',
+     'FILETYPE': 'MSK',
+     'FILTER1': '0',
+     'FILTER2': '0',
+     'FILTNAM1': '',
+     'FILTNAM2': '',
+     'GCOUNT': '4',
+     'GROUPS': 'T',
+     'HISTORY': 'This file was edited by Michael S. Wiggs, August 1995\n'
+                '\n'
+                'e2112084u.r0h was edited to include values of 256',
+     'INSTRUME': 'WFPC2',
+     'KSPOTS': 'OFF',
+     'NAXIS': '1',
+     'NAXIS1': '800',
+     'PCOUNT': '38',
+     'PDTYPE1': 'REAL*8',
+     'PDTYPE2': 'REAL*8',
+     'PEDIGREE': 'INFLIGHT 01/01/1994 - 15/05/1995',
+     'PSIZE': '1760',
+     'PSIZE1': '64',
+     'PSIZE2': '64',
+     'PTYPE1': 'CRVAL1',
+     'PTYPE2': 'CRVAL2',
+     'ROOTNAME': 'F8213081U',
+     'SHUTTER': '',
+     'SIMPLE': 'F',
+     'UBAY3TMP': '0.',
+     'UCH1CJTM': '0.',
+     'UCH2CJTM': '0.',
+     'UCH3CJTM': '0.',
+     'UCH4CJTM': '0.'}
 """
 from __future__ import print_function
 from __future__ import division
@@ -252,6 +252,7 @@ def get_filetype(original_name, filepath):
         pass
     try:
         with open(filepath) as handle:
+            import yaml
             yaml.load(handle)
             return "yaml"
     except Exception:
@@ -307,6 +308,12 @@ def get_asdf_header(filepath, needed_keys=()):
     import pyasdf
     with pyasdf.AsdfFile.open(filepath) as handle:
         header = to_simple_types(handle.tree)
+        if "history" in handle.tree:
+            histall = []
+            for hist in handle.tree["history"]:
+                histall.append(timestamp.format_date(hist["time"]).split(".")[0] +
+                               " :: " + hist["description"])
+            header["HISTORY"] = "\n".join(histall)
     header = reduce_header(filepath, header, needed_keys)
     header = cross_strap_header(header)
     return header
@@ -358,6 +365,7 @@ def cross_strap_header(header):
 # ----------------------------------------------------------------------------------------------
 
 DUPLICATES_OK = ["COMMENT", "HISTORY", "NAXIS"]
+APPEND_KEYS = ["COMMENT", "HISTORY"]
 
 def reduce_header(filepath, old_header, needed_keys=()):
     """Limit `header` to `needed_keys`,  converting all keys to upper case
@@ -371,13 +379,16 @@ def reduce_header(filepath, old_header, needed_keys=()):
     if isinstance(old_header, dict):
         old_header = old_header.items()
     for (key, value) in old_header:
-        key = str(key.upper())
+        key = str(key).upper()
         value = str(value)
         if (not needed_keys) or key in needed_keys:
-            if (key in header and header[key] != value) and not key in DUPLICATES_OK:
-                log.verbose_warning("Duplicate key", repr(key), "in", repr(filepath),
-                                    "using", repr(header[key]), "not", repr(value), verbosity=70)
-                continue
+            if (key in header and header[key] != value):
+                if not key in DUPLICATES_OK:
+                    log.verbose_warning("Duplicate key", repr(key), "in", repr(filepath),
+                                        "using", repr(header[key]), "not", repr(value), verbosity=70)
+                    continue
+                elif key in APPEND_KEYS:
+                    header[key] += "\n" + value
             else:
                 header[key] = value                
     return ensure_keys_defined(header)
@@ -401,15 +412,20 @@ def sanitize_data_model_dict(flat_dict):
     strings, upper case the keys,  and add fake keys for FITS keywords.
     """
     cleaned = {}
-    for key, val in flat_dict.items():
-        skey = str(key).upper()
-        sval = str(val)
+    history = []
+    for key, val in sorted(flat_dict.items()):
+        skey, sval = str(key).upper(), str(val)
         fits_magx = "EXTRA_FITS.PRIMARY.HEADER."
-        if key.upper().startswith(fits_magx):
+        if skey.startswith("HISTORY") and skey.endswith("DESCRIPTION"):
+            history.append(sval)
+            continue
+        if skey.startswith(fits_magx):
             if key.endswith(".0"):
                 skey = flat_dict[key].upper()
                 sval = flat_dict[key[:-len(".0")] + ".1"]
         cleaned[skey] = sval
+    if history:
+        cleaned["HISTORY"] = " ".join(history)
     # Hack for backward incompatible model naming change.
     if "META.INSTRUMENT.NAME" in cleaned:
         if "META.INSTRUMENT.TYPE" not in cleaned:
@@ -575,7 +591,7 @@ def get_geis_header(name, needed_keys=()):
         header[str(key)] = str(value)
         
     if not needed_keys or "HISTORY" in needed_keys:
-        header["HISTORY"] = history
+        header["HISTORY"] = "\n".join(history)
     
     return header
 

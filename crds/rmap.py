@@ -408,8 +408,17 @@ class Mapping(object):
 
     @classmethod
     def from_file(cls, basename, *args, **keys):
-        """Load a mapping file `basename` and do syntax and basic validation."""
-        with  open(config.locate_mapping(basename)) as pfile:
+        """Load a mapping file `basename` and do syntax and basic validation.  If `path` is
+        specified, recursively load all files relative to `path` and include path in the 
+        name of the mapping.
+        """
+        path = keys.get("path", None)
+        if path:
+            filename = os.path.join(path, os.path.basename(basename))
+            basename = filename
+        else:
+            filename = config.locate_mapping(basename)
+        with  open(filename) as pfile:
             text = pfile.read()
         return cls.from_string(text, basename, *args, **keys)
 
@@ -1499,7 +1508,8 @@ class ReferenceMapping(Mapping):
         of this rmap and return it.
         """
         new = self.copy()
-        new.selector.insert(header, value, self.tpn_valid_values)
+        new.selector.insert(header, value, 
+            self.tpn_valid_values if not config.ALLOW_BAD_PARKEY_VALUES else {})
         return new
     
     def delete(self, terminal):

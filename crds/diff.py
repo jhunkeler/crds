@@ -15,6 +15,7 @@ from collections import defaultdict
 import tempfile
 import json
 import pprint
+import re
 
 from crds import rmap, log, pysh, cmdline, utils, rowdiff, config, sync
 from crds import naming
@@ -100,6 +101,7 @@ class Differencer(object):
     new_file              str  name of second/new file in difference
     primitive_diffs       bool difference replaced reference files using fitsdiff
     check_diffs           bool check for name reversions, file deletions, rule changes, class changes, and parameter changes
+    check_references      bool check for reference additions or deletions, regardless of matching criteria
     mapping_text_diffs    bool print out UNIX text diffs for mapping changes 
     include_header_diffs  bool include header changes in logical diff output for mappings
     hide_boring_diffs     bool hide boring header changes in logical diff output (name, sha1sum, derived_from, etc.)
@@ -110,12 +112,14 @@ class Differencer(object):
 
     def __init__(self, observatory, old_file, new_file, primitive_diffs=False, check_diffs=False, mapping_text_diffs=False,
                  include_header_diffs=False, hide_boring_diffs=False, recurse_added_deleted=False,
-                 lowest_mapping_only=False, remove_paths=False, squash_tuples=False):
+                 lowest_mapping_only=False, remove_paths=False, squash_tuples=False, check_references=False,
+                 cache1=None, cache2=None):
         self.observatory = observatory
         self.old_file = old_file
         self.new_file = new_file
         self.primitive_diffs = primitive_diffs
         self.check_diffs = check_diffs
+        self.check_references = check_references
         self.mapping_text_diffs = mapping_text_diffs
         self.include_header_diffs = include_header_diffs
         self.hide_boring_diffs = hide_boring_diffs
@@ -123,6 +127,10 @@ class Differencer(object):
         self.lowest_mapping_only = lowest_mapping_only
         self.remove_paths = remove_paths
         self.squash_tuples = squash_tuples
+        self.cache1 = cache1
+        self.cache2 = cache2
+        self.mappings_cache1 = os.path.join(self.cache1, "mappings", self.observatory) if cache1 else None
+        self.mappings_cache2 = os.path.join(self.cache2, "mappings", self.observatory) if cache2 else None
 
     def locate_file(self, filename):
         """Return the full path for `filename` implementing default CRDS file cache
@@ -176,17 +184,22 @@ class MappingDifferencer(Differencer):
                 # XXXX fragile, coordinate with selector.py and rmap.py
                 if "replaced" in diff[-1]:
                     old, new = diff_replace_old_new(diff)
-                    from crds import diff
-                    diff.difference(self.observatory, old, new, primitive_diffs=self.primitive_diffs, 
-                                    recurse_added_deleted=self.recurse_added_deleted)
-        if self.mapping_text_diffs:
-            pairs = sorted(set(mapping_pairs(differences) +  [(self.old_file, self.new_file)]))
-            for (old, new) in pairs:
+                    if old and new:
+                        from crds import diff
+                        diff.difference(self.observatory, old, new, primitive_diffs=self.primitive_diffs, 
+                                        recurse_added_deleted=self.recurse_added_deleted)
+        pairs = sorted(set(mapping_pairs(differences) +  [(self.old_file, self.new_file)]))
+        for (old, new) in pairs:
+            if self.mapping_text_diffs:
                 log.write("="*20, "text difference", repr(old), "vs.", repr(new), "="*20)
                 text_difference(self.observatory, old, new)
                 log.write("="*80)
+            if self.check_references:
+                mapping_check_references(new, old)
+
         if self.check_diffs:
             mapping_check_diffs_core(differences)
+        
         return 1 if differences else 0
 
     def squash_diff_tuples(self, diff2):
@@ -202,8 +215,8 @@ class MappingDifferencer(Differencer):
         mapping is added or deleted.   Else, only include the higher level mapping,  not contained files.
         
         """
-        old_map = rmap.fetch_mapping(self.locate_file(self.old_file), ignore_checksum=True)
-        new_map = rmap.fetch_mapping(self.locate_file(self.new_file), ignore_checksum=True)
+        old_map = rmap.fetch_mapping(self.locate_file(self.old_file), ignore_checksum=True, path=self.mappings_cache1)
+        new_map = rmap.fetch_mapping(self.locate_file(self.new_file), ignore_checksum=True, path=self.mappings_cache2)
         differences = old_map.difference(new_map, include_header_diffs=self.include_header_diffs,
                                          recurse_added_deleted=self.recurse_added_deleted)
         return differences
@@ -218,8 +231,17 @@ class MappingDifferencer(Differencer):
         diffs = remove_boring(diffs)
         for diff in diffs:
             for step in diff:
+                # Walking down the diff steps 1-by-1 eventually hits an rmap comparison which
+                # will define both instrument and type.  pmaps and imaps leave at least one blank.
                 if len(step) == 2 and rmap.is_mapping(step[0]):
                     instrument, filekind = utils.get_file_properties(self.observatory, step[0])
+                # This is inefficient since diff doesn't vary by step,  but set logic cleans up the redundancy
+                # New rmaps imply reprocessing the entire type.
+                elif isinstance(diff[-1],str) and diff[-1].startswith(("added","deleted")) and \
+                        diff[-1].endswith(".rmap'"):
+                    rmap_name = diff[-1].split()[-1].replace("'","")
+                    rmapping = rmap.fetch_mapping(rmap_name, ignore_checksum=True)
+                    instrument, filekind = rmapping.instrument, rmapping.filekind
                 if instrument.strip() and filekind.strip():
                     if filekind not in instrs[instrument]:
                         log.verbose("Affected", (instrument, filekind), "based on diff", diff, verbosity=20)
@@ -412,8 +434,11 @@ def unquote(name):
 # XXXX fragile,  coordinate with selector.py and rmap.py
 def diff_replace_old_new(diff):
     """Return the (old, new) filenames from difference tuple `diff`."""
-    _replaced, old, _with, new = diff[-1].split()
-    return unquote(old), unquote(new)
+    match = re.search(r"replaced '(.+)' with '(.+)'", diff[-1])
+    if match:
+        return match.group(1), match.group(2)
+    else:
+        return None, None
 
 # XXXX fragile,  coordinate with selector.py and rmap.py
 def diff_added_new(diff):
@@ -511,6 +536,21 @@ def remove_boring(diffs):
 
 # ============================================================================
 
+def mapping_check_references(mapping, derived_from):
+    """Regardless of matching criteria,  do a simple check listing added or deleted
+    references as appropritate.
+    """
+    mapping = rmap.asmapping(mapping, cached="readonly")
+    derived_from = rmap.asmapping(derived_from, cached="readonly")
+    old_refs = set(derived_from.reference_names())
+    new_refs = set(mapping.reference_names())
+    if old_refs - new_refs:
+        log.warning("Deleted references for", repr(derived_from.filename), "and", repr(mapping.filename), "=",
+                 list(old_refs - new_refs))
+    if new_refs - old_refs:
+        log.warning("Added references for", repr(derived_from.filename), "and", repr(mapping.filename), "=",
+                 list(new_refs - old_refs))
+ 
 def mapping_check_diffs(mapping, derived_from):
     """Issue warnings for *deletions* in self relative to parent derived_from
     mapping.  Issue warnings for *reversions*,  defined as replacements which
@@ -538,11 +578,15 @@ def mapping_check_diffs_core(diffs):
         elif "rule" in action:
             log.warning("Rule change at", _diff_tail(msg)[:-1], msg[-1])
         elif action == "replace":
-            old_val, new_val = [os.path.basename(x) for x in diff_replace_old_new(msg)]
-            if naming.newer(new_val, old_val):
-                log.verbose("In", _diff_tail(msg)[:-1], msg[-1])
+            old_val, new_val = diff_replace_old_new(msg)
+            if old_val and new_val:
+                old_val, new_val = [os.path.basename(x) for x in diff_replace_old_new(msg)]
+                if naming.newer(new_val, old_val):
+                    log.verbose("In", _diff_tail(msg)[:-1], msg[-1])
+                else:
+                    log.warning("Reversion at", _diff_tail(msg)[:-1], msg[-1])
             else:
-                log.warning("Reversion at", _diff_tail(msg)[:-1], msg[-1])
+                log.warning("Unusual replacement", _diff_tail(msg)[:-1], msg[-1])
         elif action == "delete":
             log.warning("Deletion at", _diff_tail(msg)[:-1], msg[-1])
         elif action == "parkey_difference":
@@ -661,12 +705,23 @@ Will recursively produce logical, textual, and FITS diffs for all changes betwee
          1 some differences
          2 errors or warnings
 
-Differencing two sets of rules with simplified output:
+Differencing two sets of rules (withing the same cache) with simplified output:
 
     % python -m crds.diff jwst_0080.pmap jwst_0081.pmap --brief --squash-tuples
     jwst_miri_regions_0004.rmap jwst_miri_regions_0005.rmap -- MIRIFUSHORT 12 SHORT N/A -- added Match rule for jwst_miri_regions_0006.fits
     jwst_miri_0048.imap jwst_miri_0049.imap -- regions -- replaced jwst_miri_regions_0004.rmap with jwst_miri_regions_0005.rmap
     jwst_0080.pmap jwst_0081.pmap -- miri -- replaced jwst_miri_0048.imap with jwst_miri_0049.imap
+
+Differencing two sets of rules (from two different pre-synced caches, e.g. from TEST and OPS)  rules only:
+
+    % .... sync cache #1 using crds.sync and server #1
+    % .... sync cache #2 using crds.sync and server #2
+    % python -m crds.diff --cache1=/Users/fred/crds_cache_test --cache2=/Users/fred/crds_cache_ops hst_0382.pmap hst_0422.pmap  -F -Q
+    ...
+
+    This is a direct approach for recursively differencing a version of rules from the TEST pipeline with rules from the OPS pipeline.
+    Not all differencing modes work for this feature,  it's intended only for comparing rules,  doesn't support direct sync'ing, etc.
+    A key point is that different rules files in TEST and OPS can have the same name.
 
     """
     def __init__(self, *args, **keys):
@@ -687,6 +742,8 @@ Differencing two sets of rules with simplified output:
             help="When a mapping is added or deleted, include all nested files as also added or deleted.  Else only top mapping change listed.")
         self.add_argument("-K", "--check-diffs", dest="check_diffs", action="store_true",
             help="Issue warnings about new rules, deletions, or reversions.")
+        self.add_argument("--check-references", dest="check_references", action="store_true",
+            help="Issue warnings if references are added to or deleted from either mapping.")
         self.add_argument("-N", "--print-new-files", dest="print_new_files", action="store_true",
             help="Rather than printing diffs for mappings,  print the names of new or replacement files.  Excludes intermediaries.")
         self.add_argument("-A", "--print-all-new-files", dest="print_all_new_files", action="store_true",
@@ -694,7 +751,7 @@ Differencing two sets of rules with simplified output:
         self.add_argument("-i", "--include-header-diffs", dest="include_header_diffs", action="store_true",
             help="Include mapping header differences in logical diffs: sha1sum, derived_from, etc.")
         self.add_argument("-B", "--hide-boring-diffs", dest="hide_boring_diffs", action="store_true",
-            help="Include mapping header differences in logical diffs: sha1sum, derived_from, etc.")
+            help="Remove boiler-plate header differences in logical diffs: sha1sum, derived_from, etc.")
         self.add_argument("--print-affected-instruments", dest="print_affected_instruments", action="store_true",
             help="Print out the names of instruments which appear in diffs,  rather than diffs.")
         self.add_argument("--print-affected-types", dest="print_affected_types", action="store_true",
@@ -711,6 +768,10 @@ Differencing two sets of rules with simplified output:
             help="Simplify formatting of difference results (remove tuple notations)")
         self.add_argument("-F", "--brief", dest="brief", action="store_true",
             help="Switch alias for --lowest-mapping-only --remove-paths --hide-boring-diffs --include-headers")
+        self.add_argument("--cache1",  dest="cache1", default=None,
+            help="CRDS_PATH for the first cache in a cache-to-cache difference.  Mappings only.""")
+        self.add_argument("--cache2",  dest="cache2", default=None,
+            help="CRDS_PATH for the second cache in a cache-to-cache difference.  Mappings only.""")
         
     # locate_file = cmdline.Script.locate_file_outside_cache
 
@@ -723,7 +784,7 @@ Differencing two sets of rules with simplified output:
             self.args.lowest_mapping_only = True
             self.args.remove_paths = True
             self.args.hide_boring_diffs = True
-            self.args.include_headers = True
+            self.args.include_header_diffs = True
         if self.args.sync_files:
             if self.args.print_all_new_files:
                 serial_old = naming.newstyle_serial(self.old_file)
@@ -754,13 +815,16 @@ Differencing two sets of rules with simplified output:
             status = difference(self.observatory, self.old_file, self.new_file, 
                                 primitive_diffs=self.args.primitive_diffs, 
                                 check_diffs=self.args.check_diffs,
+                                check_references=self.args.check_references,
                                 mapping_text_diffs=self.args.mapping_text_diffs,
                                 include_header_diffs=self.args.include_header_diffs,
                                 hide_boring_diffs=self.args.hide_boring_diffs,
                                 recurse_added_deleted=self.args.recurse_added_deleted,
                                 lowest_mapping_only=self.args.lowest_mapping_only,
                                 remove_paths=self.args.remove_paths,
-                                squash_tuples=self.args.squash_tuples)
+                                squash_tuples=self.args.squash_tuples,
+                                cache1=self.args.cache1,
+                                cache2=self.args.cache2)
         if log.errors() or log.warnings():
             return 2
         else:
