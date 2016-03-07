@@ -1,0 +1,19 @@
+header = {
+    'derived_from' : 'jwst_fgs_area_0001.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'AREA',
+    'filetype' : 'AREA',
+    'instrument' : 'FGS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_fgs_area_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '7476f9e9f697daa8ae7b6fb70098d573a505aa78',
+    'suffix' : 'area',
+    'text_descr' : 'Pixel-Area Map',
+}
+
+selector = Match({
+    'GUIDER1' : 'jwst_fgs_area_0001.fits',
+    'GUIDER2' : 'jwst_fgs_area_0002.fits',
+})

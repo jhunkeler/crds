@@ -1,0 +1,16 @@
+header = {
+    'derived_from' : 'jwst_miri_saturation_0003.rmap',
+    'filekind' : 'SATURATION',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_saturation_0005.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '3667f9442ca2b60cd77f357caaabc8c2b8c5ef34',
+}
+
+selector = Match({
+    ('MIRIFULONG',) : 'jwst_miri_saturation_0015.fits',
+    ('MIRIFUSHORT',) : 'jwst_miri_saturation_0016.fits',
+    ('MIRIMAGE',) : 'jwst_miri_saturation_0017.fits',
+})

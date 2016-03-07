@@ -1,0 +1,28 @@
+header = {
+    'derived_from' : 'jwst_miri_wavelengthrange_0006.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'wavelengthrange',
+    'filetype' : 'WAVELENGTHRANGE',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_wavelengthrange_0007.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.EXPOSURE.TYPE',),),
+    'reference_to_dataset' : {
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '34df4d52c3c19afa445e78a274f56d10d0008c33',
+    'suffix' : 'wavelengthrange',
+    'text_descr' : 'MIRI wavelength range',
+}
+
+selector = Match({
+    'MIR_4QPM' : 'N/A',
+    'MIR_CORONCAL' : 'N/A',
+    'MIR_IMAGE' : 'N/A',
+    'MIR_LRS-FIXEDSLIT' : 'N/A',
+    'MIR_LRS-SLITLESS' : 'N/A',
+    'MIR_LYOT' : 'N/A',
+    'MIR_MRS' : 'jwst_miri_wavelengthrange_0001.asdf',
+    'MIR_TACQ' : 'N/A',
+})

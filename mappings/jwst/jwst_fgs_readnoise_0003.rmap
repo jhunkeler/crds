@@ -1,0 +1,22 @@
+header = {
+    'derived_from' : 'jwst_fgs_readnoise_0002.rmap',
+    'filekind' : 'READNOISE',
+    'instrument' : 'FGS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_fgs_readnoise_0003.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.EXPOSURE.READPATT', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '5dbd3b404094bc875fee8a7adda9897935611ff2',
+    'substitutions' : {
+        'META.SUBARRAY.NAME' : {
+            'GENERIC' : 'N/A',
+        },
+    },
+}
+
+selector = Match({
+    ('GUIDER1', 'FGSRAPID', 'GENERIC') : 'jwst_fgs_readnoise_0002.fits',
+    ('GUIDER1', 'N/A', 'GENERIC') : 'jwst_fgs_readnoise_0000.fits',
+    ('GUIDER2', 'FGSRAPID', 'GENERIC') : 'jwst_fgs_readnoise_0003.fits',
+    ('GUIDER2', 'N/A', 'GENERIC') : 'jwst_fgs_readnoise_0001.fits',
+})

@@ -1,0 +1,19 @@
+header = {
+    'derived_from' : 'jwst_miri_fringe_0005.rmap',
+    'filekind' : 'FRINGE',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_fringe_0006.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.BAND'),),
+    'sha1sum' : 'b83390bd29842d5ec9777f90561d38cdeeea7280',
+}
+
+selector = Match({
+    ('MIRIFULONG', 'LONG') : 'jwst_miri_fringe_0019.fits',
+    ('MIRIFULONG', 'MEDIUM') : 'jwst_miri_fringe_0020.fits',
+    ('MIRIFULONG', 'SHORT') : 'jwst_miri_fringe_0021.fits',
+    ('MIRIFUSHORT', 'LONG') : 'jwst_miri_fringe_0022.fits',
+    ('MIRIFUSHORT', 'MEDIUM') : 'jwst_miri_fringe_0023.fits',
+    ('MIRIFUSHORT', 'SHORT') : 'jwst_miri_fringe_0024.fits',
+})

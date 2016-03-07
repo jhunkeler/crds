@@ -1,0 +1,17 @@
+header = {
+    'derived_from' : 'fgs_photom.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'PHOTOM',
+    'filetype' : 'PHOTOMETRIC CALIBRATION',
+    'instrument' : 'FGS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_fgs_photom_0001.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '22ed76c84f18a020be63c44e612995fe6ba95e94',
+    'suffix' : 'photom',
+    'text_descr' : 'Absolute Calibration',
+}
+
+selector = Match({
+})

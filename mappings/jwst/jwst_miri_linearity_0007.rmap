@@ -1,0 +1,21 @@
+header = {
+    'derived_from' : 'jwst_miri_linearity_0006.rmap',
+    'filekind' : 'LINEARITY',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_linearity_0007.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '10efb3ae40110bb282560ebe059f699b3eaa47e6',
+    'substitutions' : {
+        'META.SUBARRAY.NAME' : {
+            'GENERIC' : 'N/A',
+        },
+    },
+}
+
+selector = Match({
+    ('MIRIFULONG', 'GENERIC') : 'jwst_miri_linearity_0012.fits',
+    ('MIRIFUSHORT', 'GENERIC') : 'jwst_miri_linearity_0013.fits',
+    ('MIRIMAGE', 'GENERIC') : 'jwst_miri_linearity_0014.fits',
+})

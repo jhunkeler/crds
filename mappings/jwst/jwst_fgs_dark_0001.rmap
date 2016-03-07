@@ -1,0 +1,17 @@
+header = {
+    'derived_from' : 'fgs_dark.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'DARK',
+    'filetype' : 'DARK',
+    'instrument' : 'FGS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_fgs_dark_0001.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'),),
+    'sha1sum' : '471f87a21ae82d33e235ab4238118bb3a1f9b286',
+    'suffix' : 'dark',
+    'text_descr' : 'Dark Frame',
+}
+
+selector = Match({
+})

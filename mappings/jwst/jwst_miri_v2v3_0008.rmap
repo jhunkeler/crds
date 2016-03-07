@@ -1,0 +1,36 @@
+header = {
+    'derived_from' : 'jwst_miri_v2v3_0007.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'v2v3',
+    'filetype' : 'V2V3',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_v2v3_0008.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.EXPOSURE.TYPE', 'META.INSTRUMENT.CHANNEL', 'META.INSTRUMENT.BAND'),),
+    'reference_to_dataset' : {
+        'BAND' : 'META.INSTRUMENT.BAND',
+        'CHANNEL' : 'META.INSTRUMENT.CHANNEL',
+        'DETECTOR' : 'META.INSTRUMENT.DETECTOR',
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '0e9cfe92a061b3808e68f7a4ceb311382af83d6b',
+    'suffix' : 'v2v3',
+    'text_descr' : 'MIRI v2-v3 map',
+}
+
+selector = Match({
+    ('ANY', 'MIR_4QPM', 'ANY', 'ANY') : 'N/A',
+    ('ANY', 'MIR_CORONCAL', 'ANY', 'ANY') : 'N/A',
+    ('ANY', 'MIR_IMAGE', 'ANY', 'ANY') : 'N/A',
+    ('ANY', 'MIR_LRS-FIXEDSLIT', 'ANY', 'ANY') : 'N/A',
+    ('ANY', 'MIR_LRS-SLITLESS', 'ANY', 'ANY') : 'N/A',
+    ('ANY', 'MIR_LYOT', 'ANY', 'ANY') : 'N/A',
+    ('ANY', 'MIR_TACQ', 'ANY', 'ANY') : 'N/A',
+    ('MIRIFULONG', 'MIR_MRS', '34', 'LONG') : 'jwst_miri_v2v3_0004.asdf',
+    ('MIRIFULONG', 'MIR_MRS', '34', 'MEDIUM') : 'jwst_miri_v2v3_0005.asdf',
+    ('MIRIFULONG', 'MIR_MRS', '34', 'SHORT') : 'jwst_miri_v2v3_0006.asdf',
+    ('MIRIFUSHORT', 'MIR_MRS', '12', 'LONG') : 'jwst_miri_v2v3_0001.asdf',
+    ('MIRIFUSHORT', 'MIR_MRS', '12', 'MEDIUM') : 'jwst_miri_v2v3_0002.asdf',
+    ('MIRIFUSHORT', 'MIR_MRS', '12', 'SHORT') : 'jwst_miri_v2v3_0003.asdf',
+})

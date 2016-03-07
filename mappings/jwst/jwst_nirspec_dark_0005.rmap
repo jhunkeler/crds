@@ -1,0 +1,31 @@
+header = {
+    'classes' : ('Match', 'UseAfter'),
+    'derived_from' : 'jwst_nirspec_dark_0004.rmap',
+    'filekind' : 'DARK',
+    'instrument' : 'NIRSPEC',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_nirspec_dark_0005.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.SUBARRAY.NAME'), ('META.OBSERVATION.DATE', 'META.OBSERVATION.TIME')),
+    'sha1sum' : '83149bf87dee5f7354653949ffec3bffe635081f',
+    'substitutions' : {
+        'META.SUBARRAY.NAME' : {
+            'GENERIC' : 'N/A',
+        },
+    },
+}
+
+selector = Match({
+    ('NRS1', 'ALLSLITS') : UseAfter({
+        '1900-01-01 00:00:00' : 'jwst_nirspec_dark_0007.fits',
+    }),
+    ('NRS1', 'FULL') : UseAfter({
+        '2009-06-25 22:14:38.296' : 'jwst_nirspec_dark_0006.fits',
+    }),
+    ('NRS2', 'ALLSLITS') : UseAfter({
+        '1900-01-01 00:00:00' : 'jwst_nirspec_dark_0009.fits',
+    }),
+    ('NRS2', 'FULL') : UseAfter({
+        '2009-06-25 22:14:38.296' : 'jwst_nirspec_dark_0008.fits',
+    }),
+})

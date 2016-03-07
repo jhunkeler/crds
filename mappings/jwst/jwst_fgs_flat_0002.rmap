@@ -1,0 +1,19 @@
+header = {
+    'derived_from' : 'jwst_fgs_flat_0001.rmap',
+    'file_ext' : '.fits',
+    'filekind' : 'FLAT',
+    'filetype' : 'PIXEL-TO-PIXEL FLAT',
+    'instrument' : 'FGS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_fgs_flat_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : 'c35e91de8568b0676ec55a341bd5b7bc98ea5835',
+    'suffix' : 'flat',
+    'text_descr' : 'Flat Field',
+}
+
+selector = Match({
+    'GUIDER1' : 'jwst_fgs_flat_0001.fits',
+    'GUIDER2' : 'jwst_fgs_flat_0002.fits',
+})

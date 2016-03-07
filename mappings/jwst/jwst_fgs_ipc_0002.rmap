@@ -1,0 +1,15 @@
+header = {
+    'derived_from' : 'jwst_fgs_ipc_0001.rmap',
+    'filekind' : 'IPC',
+    'instrument' : 'FGS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_fgs_ipc_0002.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : '0e447ab5888ece635a7ef9d30b3d357d1120ca3d',
+}
+
+selector = Match({
+    'GUIDER1' : 'jwst_fgs_ipc_0003.fits',
+    'GUIDER2' : 'jwst_fgs_ipc_0004.fits',
+})

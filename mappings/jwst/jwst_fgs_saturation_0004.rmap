@@ -1,0 +1,15 @@
+header = {
+    'derived_from' : 'jwst_fgs_saturation_0003.rmap',
+    'filekind' : 'SATURATION',
+    'instrument' : 'FGS',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_fgs_saturation_0004.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR',),),
+    'sha1sum' : 'beca734a64408b46d889ff30a40c8f2721ecd44b',
+}
+
+selector = Match({
+    ('GUIDER1',) : 'jwst_fgs_saturation_0008.fits',
+    ('GUIDER2',) : 'jwst_fgs_saturation_0009.fits',
+})

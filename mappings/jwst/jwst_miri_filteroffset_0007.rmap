@@ -1,0 +1,27 @@
+header = {
+    'derived_from' : 'jwst_miri_filteroffset_0006.rmap',
+    'file_ext' : '.asdf',
+    'filekind' : 'filteroffset',
+    'filetype' : 'FILTEROFFSET',
+    'instrument' : 'MIRI',
+    'mapping' : 'REFERENCE',
+    'name' : 'jwst_miri_filteroffset_0007.rmap',
+    'observatory' : 'JWST',
+    'parkey' : (('META.INSTRUMENT.DETECTOR', 'META.EXPOSURE.TYPE'),),
+    'reference_to_dataset' : {
+        'DETECTOR' : 'META.INSTRUMENT.DETECTOR',
+        'EXP_TYPE' : 'META.EXPOSURE.TYPE',
+    },
+    'sha1sum' : '038c1f9e6860462854a9bba00ad92c08d2e2f032',
+    'suffix' : 'filteroffset',
+    'text_descr' : 'MIRI Imager Filter Offset',
+}
+
+selector = Match({
+    ('ANY', 'MIR_CORONCAL') : 'N/A',
+    ('ANY', 'MIR_LRS-FIXEDSLIT') : 'N/A',
+    ('ANY', 'MIR_LRS-SLITLESS') : 'N/A',
+    ('ANY', 'MIR_MRS') : 'N/A',
+    ('ANY', 'MIR_TACQ') : 'N/A',
+    ('MIRIMAGE', 'MIR_IMAGE') : 'jwst_miri_filteroffset_0001.asdf',
+})
